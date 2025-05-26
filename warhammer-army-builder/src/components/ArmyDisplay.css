@@ -1,0 +1,87 @@
+.army-display {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.army-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.army-header h2 {
+  color: #ffd700;
+  font-size: 2.5rem;
+  margin: 0 0 1rem 0;
+}
+
+.army-summary {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.army-summary span {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  color: #e0e0e0;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.points-total {
+  background: rgba(34, 197, 94, 0.2) !important;
+  border-color: rgba(34, 197, 94, 0.5) !important;
+  color: #86efac !important;
+}
+
+.army-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.scenario-info {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.scenario-info h3 {
+  color: #ffd700;
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.unit-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.unit-header h4 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.export-btn {
+  background: #059669;
+  color: white;
+  font-weight: bold;
+}
+
+.copy-btn {
+  background: #3b82f6;
+  color: white;
+  font-weight: bold;
+} 

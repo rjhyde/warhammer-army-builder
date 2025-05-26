@@ -1,0 +1,192 @@
+.scenario-selector {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.scenario-selector h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #ffd700;
+  font-size: 2rem;
+}
+
+.mode-selector {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.mode-selector button {
+  background: #374151;
+  color: #e0e0e0;
+  border: 2px solid #4b5563;
+}
+
+.mode-selector button.active {
+  background: #059669;
+  border-color: #10b981;
+}
+
+.random-button {
+  background: #7c3aed !important;
+  border-color: #8b5cf6 !important;
+}
+
+.random-button:hover {
+  background: #6d28d9 !important;
+}
+
+.predefined-scenarios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.scenario-card {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.scenario-card:hover {
+  border-color: #ffd700;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(255, 215, 0, 0.2);
+}
+
+.scenario-card h3 {
+  color: #ffd700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.scenario-card p {
+  color: #d1d5db;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.scenario-details {
+  margin-bottom: 1.5rem;
+}
+
+.scenario-details span {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.scenario-card button {
+  width: 100%;
+  background: #3b82f6;
+  color: white;
+  font-weight: bold;
+}
+
+.scenario-card button:hover {
+  background: #2563eb;
+}
+
+.custom-scenario {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+.custom-scenario h3 {
+  color: #ffd700;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.faction-checkboxes {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.checkbox-label {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.checkbox-label:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.custom-scenario button[type="submit"] {
+  background: #059669;
+  color: white;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.custom-scenario button[type="submit"]:hover {
+  background: #047857;
+}
+
+.custom-scenario button[type="submit"]:disabled {
+  background: #6b7280;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .predefined-scenarios {
+    grid-template-columns: 1fr;
+  }
+  
+  .mode-selector {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .faction-checkboxes {
+    flex-direction: column;
+  }
+} 
