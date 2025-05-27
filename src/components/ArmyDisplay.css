@@ -1,0 +1,95 @@
+/* Tactical Notes - Enhanced Styling */
+.tactical-notes {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-top: var(--space-xl);
+  backdrop-filter: blur(20px);
+  grid-column: 1 / -1; /* Full width on all screen sizes */
+}
+
+.tactical-notes h3 {
+  color: var(--accent-gold);
+  margin: 0 0 var(--space-lg) 0;
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.tactical-notes h3::before {
+  content: "🎯";
+  font-size: 1.2em;
+}
+
+.tactical-content {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tactical-content pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* Enhanced formatting for different tactical sections */
+.tactical-content pre {
+  /* Section headers with emojis */
+  background: transparent;
+}
+
+/* Make section headers more prominent */
+.tactical-content pre::before {
+  content: "";
+}
+
+/* Responsive adjustments for tactical notes */
+@media (max-width: 768px) {
+  .tactical-notes {
+    padding: var(--space-md);
+    margin-top: var(--space-lg);
+  }
+  
+  .tactical-content {
+    padding: var(--space-md);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  
+  .tactical-notes h3 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .tactical-notes {
+    padding: var(--space-sm);
+  }
+  
+  .tactical-content {
+    padding: var(--space-sm);
+    font-size: 0.8rem;
+  }
+}
+
+/* Dark theme specific adjustments */
+@media (prefers-color-scheme: dark) {
+  .tactical-content {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+} 

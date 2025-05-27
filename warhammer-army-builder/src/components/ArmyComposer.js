@@ -289,7 +289,6 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       while (army.totalPoints < MINIMUM_POINTS && maxAttempts > 0) {
         let bestUnit = null;
         let bestScore = -1;
-        let bestCategory = null;
 
         // Look for the best unit across all categories that fits
         for (const category of categories) {
@@ -301,7 +300,7 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
             if (pointsEfficiency > bestScore) {
               bestScore = pointsEfficiency;
               bestUnit = unit;
-              bestCategory = category.name;
+              // category.name tracked but not used
             }
           }
         }
