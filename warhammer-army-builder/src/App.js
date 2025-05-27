@@ -5,6 +5,7 @@ import DifficultySelector from './components/DifficultySelector';
 import FactionSelector from './components/FactionSelector';
 import ArmyComposer from './components/ArmyComposer';
 import ArmyDisplay from './components/ArmyDisplay';
+import UpdateNotification from './components/UpdateNotification';
 
 function App() {
   const [scenario, setScenario] = useState(null);
@@ -54,6 +55,8 @@ function App() {
       </header>
 
       <main className="App-main">
+        <UpdateNotification />
+        
         {currentStep === 'scenario' && (
           <ScenarioSelector onScenarioSelect={handleScenarioSelect} />
         )}

@@ -1,6 +1,19 @@
 // Tau Empire unit data for 10th Edition Warhammer 40,000
 // Points costs and unit compositions based on publicly available data
 
+// Data Version Information
+export const dataVersion = {
+  version: "1.0.0",
+  lastUpdated: "2024-01-15",
+  sources: [
+    "Warhammer 40,000 Core Rules",
+    "Codex: T'au Empire (10th Edition)",
+    "Chapter Approved 2024"
+  ],
+  updateCheckUrl: "https://api.github.com/repos/your-repo/releases/latest", // For checking updates
+  warhammerCommunityCheck: true // Enable checking for updates
+};
+
 export const tauUnits = {
   // HQ Units
   hq: [
@@ -155,22 +168,56 @@ export const tauUnits = {
   // Elites
   elites: [
     {
-      id: 'crisis_suits',
-      name: 'Crisis Battlesuits',
+      id: 'crisis_suits_sunforge',
+      name: 'Crisis Battlesuits (Sunforge)',
       points: 110,
       models: 3,
       keywords: ['Battlesuit', 'Fly', 'Crisis'],
       equipment: {
-        base: ['Burst cannon', 'Plasma rifle'],
-        options: [
-          { name: 'Cyclic ion blaster', cost: 5 },
-          { name: 'Fusion blaster', cost: 5 },
-          { name: 'Missile pod', cost: 10 },
-          { name: 'Gun drone x2', cost: 15 },
-          { name: 'Shield drone x2', cost: 20 }
-        ]
+        base: ['Burst cannon', 'Plasma rifle', 'Multi-tracker'],
+        options: []
       },
-      loreRoles: ['elite_assault', 'fire_support', 'battlesuit_core'],
+      loreRoles: ['elite_assault', 'anti_infantry', 'mobile_fire_support'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'very_high',
+        farsight_enclaves: 'high',
+        bork_an: 'very_high',
+        vior_la: 'very_high',
+        sacea: 'high'
+      }
+    },
+    {
+      id: 'crisis_suits_starscythe',
+      name: 'Crisis Battlesuits (Starscythe)',
+      points: 120,
+      models: 3,
+      keywords: ['Battlesuit', 'Fly', 'Crisis'],
+      equipment: {
+        base: ['Cyclic ion blaster', 'Missile pod', 'Target lock'],
+        options: []
+      },
+      loreRoles: ['elite_assault', 'fire_support', 'long_range'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        tau_empire: 'very_high',
+        farsight_enclaves: 'very_high',
+        bork_an: 'high',
+        vior_la: 'high',
+        sacea: 'medium'
+      }
+    },
+    {
+      id: 'crisis_suits_fireknife',
+      name: 'Crisis Battlesuits (Fireknife)',
+      points: 115,
+      models: 3,
+      keywords: ['Battlesuit', 'Fly', 'Crisis'],
+      equipment: {
+        base: ['Plasma rifle', 'Missile pod', 'Multi-tracker'],
+        options: []
+      },
+      loreRoles: ['elite_assault', 'fire_support', 'versatile'],
       competitiveLevel: 'very_high',
       subfactionSynergy: {
         tau_empire: 'very_high',
@@ -206,26 +253,54 @@ export const tauUnits = {
     {
       id: 'pathfinders',
       name: 'Pathfinder Team',
-      points: 95,
+      points: 90,
       models: 10,
-      keywords: ['Infantry', 'Pathfinder', 'Fire Caste'],
+      keywords: ['Infantry', 'Grenades', 'Markerlight'],
       equipment: {
-        base: ['Pulse carbine', 'Markerlight'],
+        base: ['Pulse carbine', 'Pulse pistol', 'Close combat weapon'],
         options: [
-          { name: 'Ion rifle', cost: 5 },
-          { name: 'Rail rifle', cost: 10 },
-          { name: 'Recon drone', cost: 15 },
-          { name: 'Grav-inhibitor drone', cost: 20 }
+          'Ion rifle (up to 3 models)',
+          'Rail rifle (up to 3 models)',
+          'Semi-automatic grenade launcher (1 model)',
+          'Gun drone (up to 2)',
+          'Marker drone (up to 2)', 
+          'Shield drone (up to 2)'
         ]
       },
-      loreRoles: ['reconnaissance', 'markerlight_support', 'special_weapons'],
+      // Shas'ui drone selection - choose one, no points cost
+      droneSelection: {
+        description: 'The Pathfinder Shas\'ui can be equipped with one of the following:',
+        options: [
+          {
+            name: 'Recon Drone',
+            effect: '+1 drone burst cannon, unit gains Infiltrators ability',
+            keywords: ['Infiltrators']
+          },
+          {
+            name: 'Grav-inhibitor Drone', 
+            effect: 'Subtract 2 from Charge rolls against this unit',
+            keywords: ['Charge Defense']
+          },
+          {
+            name: 'Pulse Accelerator Drone',
+            effect: 'Add 6" to Range of pulse carbines in this unit',
+            keywords: ['Extended Range']
+          }
+        ]
+      },
+      abilities: [
+        'Scouts 7"',
+        'For the Greater Good',
+        'Target Uploaded: Once per turn when using Greater Good, can select this unit as Observer twice'
+      ],
+      loreRoles: ['reconnaissance', 'support', 'markerlight'],
       competitiveLevel: 'high',
       subfactionSynergy: {
         tau_empire: 'very_high',
-        farsight_enclaves: 'medium',
+        farsight_enclaves: 'high', 
         bork_an: 'very_high',
         vior_la: 'very_high',
-        sacea: 'high'
+        sacea: 'very_high'
       }
     }
   ],
@@ -253,26 +328,6 @@ export const tauUnits = {
         bork_an: 'medium',
         vior_la: 'very_high',
         sacea: 'medium'
-      }
-    },
-    {
-      id: 'gun_drones',
-      name: 'Tactical Drones',
-      points: 30,
-      models: 4,
-      keywords: ['Drone', 'Fly'],
-      equipment: {
-        base: ['Gun drone weapons'],
-        options: []
-      },
-      loreRoles: ['support', 'screening', 'objective_securing'],
-      competitiveLevel: 'medium',
-      subfactionSynergy: {
-        tau_empire: 'very_high',
-        farsight_enclaves: 'high',
-        bork_an: 'high',
-        vior_la: 'high',
-        sacea: 'very_high'
       }
     }
   ],
@@ -390,7 +445,7 @@ export const scenarioModifiers = {
   },
   siege: {
     prioritize: ['crisis_suits', 'fire_warriors_breacher', 'hammerhead'],
-    avoid: ['gun_drones'],
+    avoid: ['pathfinder_drones'],
     characterPreference: ['commander_crisis', 'commander_enforcer']
   },
   excavation: {
