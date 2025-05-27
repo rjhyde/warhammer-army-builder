@@ -1001,28 +1001,276 @@ export const spaceMarineUnits = {
     {
       id: 'impulsor',
       name: 'Impulsor',
-      points: 100,
+      points: 110,
       models: 1,
-      keywords: ['Vehicle', 'Transport', 'Impulsor', 'Primaris'],
+      keywords: ['Vehicle', 'Transport', 'Primaris', 'Impulsor'],
       equipment: {
-        base: ['Twin bolt rifle', 'Impulsor shield dome'],
+        base: ['2 Storm bolters', 'Impulsor engines'],
         options: [
-          { name: 'Bellicatus missile array', cost: 0 },
-          { name: 'Fragstorm grenade launcher', cost: 0 },
+          { name: 'Shield dome', cost: 0 },
           { name: 'Ironhail heavy stubber', cost: 0 },
-          { name: 'Orbital comms array', cost: 0 }
+          { name: 'Multi-melta', cost: 0 }
         ]
       },
-      loreRoles: ['fast_transport', 'primaris_support'],
-      competitiveLevel: 'high',
+      loreRoles: ['transport', 'fast_support'],
+      competitiveLevel: 'medium',
       subfactionSynergy: {
-        ultramarines: 'very_high',
-        blood_angels: 'high',
+        ultramarines: 'high',
+        blood_angels: 'very_high',
         dark_angels: 'high',
         imperial_fists: 'high',
-        iron_hands: 'high',
+        iron_hands: 'medium',
         salamanders: 'high'
       }
+    }
+  ],
+
+  // NAMED CHARACTERS 
+  namedCharacters: [
+    // Blood Angels Named Characters
+    {
+      id: 'commander_dante',
+      name: 'Commander Dante',
+      points: 165,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Jump Pack', 'Fly', 'Chapter Master', 'Dante'],
+      leaderAttachment: {
+        canAttachTo: ['sanguinary_guard', 'assault_squad', 'vanguard_veterans'],
+        bonuses: ['Leader of the Host', 'Tactical Precision', 'Inspiring Presence']
+      },
+      equipment: {
+        base: ['Axe Mortalis', 'Perdition pistol', 'Jump pack'],
+        options: []
+      },
+      loreRoles: ['chapter_master', 'melee_specialist', 'inspirational_leader'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        blood_angels: 'very_high'
+      },
+      uniqueAbilities: ['Lord Regent of Nihilus', 'Tactical Genius', 'Ancient Warrior']
+    },
+    {
+      id: 'mephiston',
+      name: 'Mephiston, Lord of Death',
+      points: 150,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Psyker', 'Chief Librarian', 'Mephiston'],
+      leaderAttachment: {
+        canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'death_company'],
+        bonuses: ['Psychic Mastery', 'Blood Rage', 'Transhuman Physiology']
+      },
+      equipment: {
+        base: ['Vitarus', 'Plasma pistol', 'Psychic hood'],
+        options: []
+      },
+      loreRoles: ['chief_librarian', 'psyker', 'melee_specialist'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        blood_angels: 'very_high'
+      },
+      uniqueAbilities: ['Lord of Death', 'Transhuman', 'Psychic Mastery']
+    },
+    {
+      id: 'the_sanguinor',
+      name: 'The Sanguinor',
+      points: 150,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Jump Pack', 'Fly', 'The Sanguinor'],
+      leaderAttachment: {
+        canAttachTo: ['sanguinary_guard'],
+        bonuses: ['Avatar of Sanguinius', 'Inspiring Aura', 'Heavenly Intervention']
+      },
+      equipment: {
+        base: ['Encarmine blade', 'Jump pack', 'Glaive Encarmine'],
+        options: []
+      },
+      loreRoles: ['avatar', 'melee_specialist', 'inspirational_leader'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        blood_angels: 'very_high'
+      },
+      uniqueAbilities: ['Miraculous Saviour', 'Avatar of the Primarch', 'Blessing of Sanguinius']
+    },
+    // Dark Angels Named Characters
+    {
+      id: 'azrael',
+      name: 'Azrael, Supreme Grand Master',
+      points: 160,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Chapter Master', 'Azrael'],
+      leaderAttachment: {
+        canAttachTo: ['deathwing_knights', 'company_veterans', 'tactical_squad', 'intercessor_squad'],
+        bonuses: ['Lion Helm', 'Rites of Battle', 'Supreme Grand Master']
+      },
+      equipment: {
+        base: ['Sword of Secrets', 'Combi-plasma', 'Lion Helm'],
+        options: []
+      },
+      loreRoles: ['chapter_master', 'melee_specialist', 'supreme_leader'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        dark_angels: 'very_high'
+      },
+      uniqueAbilities: ['Lion Helm', 'Supreme Grand Master', 'Keeper of Secrets']
+    },
+    {
+      id: 'belial',
+      name: 'Belial, Grand Master of the Deathwing',
+      points: 120,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Terminator', 'Grand Master', 'Belial'],
+      leaderAttachment: {
+        canAttachTo: ['deathwing_knights', 'terminator_squad'],
+        bonuses: ['Hunt the Fallen', 'Deathwing Assault', 'Grand Master']
+      },
+      equipment: {
+        base: ['Sword of Silence', 'Storm bolter', 'Iron halo'],
+        options: []
+      },
+      loreRoles: ['grand_master', 'terminator_specialist', 'deathwing_leader'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        dark_angels: 'very_high'
+      },
+      uniqueAbilities: ['Grand Master of the Deathwing', 'Hunt the Fallen', 'Deathwing Assault']
+    },
+    // Ultramarines Named Characters
+    {
+      id: 'marneus_calgar',
+      name: 'Marneus Calgar, Chapter Master',
+      points: 180,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Chapter Master', 'Calgar'],
+      leaderAttachment: {
+        canAttachTo: ['honour_guard', 'sternguard_veterans', 'tactical_squad', 'intercessor_squad'],
+        bonuses: ['Chapter Master', 'Armour of Antilochus', 'God of War']
+      },
+      equipment: {
+        base: ['Gauntlets of Ultramar', 'Armour of Antilochus'],
+        options: []
+      },
+      loreRoles: ['chapter_master', 'melee_specialist', 'tactical_genius'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        ultramarines: 'very_high'
+      },
+      uniqueAbilities: ['Chapter Master', 'Armour of Antilochus', 'God of War']
+    },
+    {
+      id: 'roboute_guilliman',
+      name: 'Roboute Guilliman, Primarch',
+      points: 350,
+      models: 1,
+      keywords: ['Character', 'Monster', 'Primarch', 'Guilliman'],
+      leaderAttachment: {
+        canAttachTo: [], // Primarchs operate independently
+        bonuses: ['Primarch of the XIII', 'Lord Commander', 'Armour of Fate']
+      },
+      equipment: {
+        base: ['Emperor\'s Sword', 'Hand of Dominion', 'Armour of Fate'],
+        options: []
+      },
+      loreRoles: ['primarch', 'supreme_commander', 'legendary_warrior'],
+      competitiveLevel: 'legendary',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        imperial_fists: 'high',
+        iron_hands: 'high'
+      },
+      uniqueAbilities: ['Primarch', 'Lord Commander of the Imperium', 'Armour of Fate', 'Resurrection']
+    }
+  ],
+
+  // CHAPTER-SPECIFIC ELITE UNITS
+  eliteSpecialist: [
+    // Blood Angels Specialists
+    {
+      id: 'death_company_marines',
+      name: 'Death Company Marines',
+      points: 150,
+      models: 10,
+      keywords: ['Infantry', 'Jump Pack', 'Fly', 'Death Company'],
+      equipment: {
+        base: ['Bolt pistol', 'Chainsword', 'Jump pack'],
+        options: [
+          { name: 'Power weapon', cost: 0 },
+          { name: 'Thunder hammer', cost: 0 },
+          { name: 'Hand flamer', cost: 0 },
+          { name: 'Plasma pistol', cost: 0 }
+        ]
+      },
+      loreRoles: ['berserker', 'assault_specialist', 'black_rage'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        blood_angels: 'very_high'
+      },
+      uniqueAbilities: ['Black Rage', 'Feel No Pain (6+)', 'Relentless Assault']
+    },
+    {
+      id: 'sanguinary_priest',
+      name: 'Sanguinary Priest',
+      points: 90,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Sanguinary Priest'],
+      leaderAttachment: {
+        canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'sanguinary_guard', 'death_company'],
+        bonuses: ['Blood Chalice', 'Sanguinary healing', 'Feel No Pain bonus']
+      },
+      equipment: {
+        base: ['Bolt pistol', 'Chainsword', 'Blood Chalice', 'Narthecium'],
+        options: [
+          { name: 'Jump pack', cost: 0 },
+          { name: 'Power weapon', cost: 0 }
+        ]
+      },
+      loreRoles: ['apothecary', 'support', 'blood_priest'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        blood_angels: 'very_high'
+      },
+      uniqueAbilities: ['Blood Chalice', 'Sanguinary healing', 'Feel No Pain enhancement']
+    },
+    // Dark Angels Specialists  
+    {
+      id: 'deathwing_command_squad',
+      name: 'Deathwing Command Squad',
+      points: 200,
+      models: 5,
+      keywords: ['Infantry', 'Terminator', 'Deathwing', 'Command Squad'],
+      equipment: {
+        base: ['Storm bolter', 'Power fist'],
+        options: [
+          { name: 'Thunder hammer', cost: 0 },
+          { name: 'Lightning claws', cost: 0 },
+          { name: 'Assault cannon', cost: 0 },
+          { name: 'Company banner', cost: 0 }
+        ]
+      },
+      loreRoles: ['elite_terminators', 'command', 'deathwing_specialists'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        dark_angels: 'very_high'
+      },
+      uniqueAbilities: ['Inner Circle', 'Deathwing Assault', 'Hunt the Fallen']
+    },
+    {
+      id: 'ravenwing_black_knights',
+      name: 'Ravenwing Black Knights',
+      points: 120,
+      models: 3,
+      keywords: ['Mounted', 'Bike', 'Ravenwing', 'Black Knights'],
+      equipment: {
+        base: ['Plasma talon', 'Corvus hammer', 'Bike'],
+        options: [
+          { name: 'Ravenwing grenade launcher', cost: 0 }
+        ]
+      },
+      loreRoles: ['elite_bikers', 'plasma_specialists', 'ravenwing_hunters'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        dark_angels: 'very_high'
+      },
+      uniqueAbilities: ['Inner Circle', 'Speed of the Raven', 'Hunt the Fallen']
     }
   ]
 };

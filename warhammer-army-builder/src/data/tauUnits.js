@@ -183,6 +183,99 @@ export const tauUnits = {
         vior_la: 'high',
         sacea: 'very_high'
       }
+    },
+    // KROOT CHARACTER LEADERS - These are HQ units that can embed with Kroot Carnivores
+    {
+      id: 'kroot_flesh_shaper',
+      name: 'Kroot Flesh Shaper',
+      points: 50,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'Flesh Shaper'],
+      leaderAttachment: {
+        canAttachTo: ['kroot_carnivores'],
+        bonuses: ['Leader abilities', 'Battlefield surgery', 'Kroot unit coordination']
+      },
+      equipment: {
+        base: ['Kroot rifle', 'Flesh shaper tools', 'Ritual blade']
+      },
+      loreRoles: ['kroot_leader', 'field_surgery', 'auxiliary_command'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'high',
+        bork_an: 'low',
+        vior_la: 'medium',
+        sacea: 'medium'
+      }
+    },
+    {
+      id: 'kroot_lone_spear',
+      name: 'Kroot Lone-Spear',
+      points: 70,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'Lone-Spear'],
+      leaderAttachment: {
+        canAttachTo: ['kroot_carnivores'],
+        bonuses: ['Leader abilities', 'Precision targeting', 'Hunter coordination']
+      },
+      equipment: {
+        base: ['Kroot long gun', 'Hunting stave', 'Kroot blade']
+      },
+      loreRoles: ['kroot_sniper', 'lone_operative', 'hunter'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'very_high',
+        bork_an: 'medium',
+        vior_la: 'high',
+        sacea: 'medium'
+      }
+    },
+    {
+      id: 'kroot_trail_shaper',
+      name: 'Kroot Trail Shaper',
+      points: 60,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'Trail Shaper'],
+      leaderAttachment: {
+        canAttachTo: ['kroot_carnivores'],
+        bonuses: ['Leader abilities', 'Stealth coordination', 'Infiltration guidance']
+      },
+      equipment: {
+        base: ['Kroot rifle', 'Shaper kroot rifle', 'Ritual blade']
+      },
+      loreRoles: ['kroot_leader', 'tracker', 'stealth_specialist'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'high',
+        bork_an: 'medium',
+        vior_la: 'very_high',
+        sacea: 'high'
+      }
+    },
+    {
+      id: 'kroot_war_shaper',
+      name: 'Kroot War Shaper',
+      points: 65,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'War Shaper'],
+      leaderAttachment: {
+        canAttachTo: ['kroot_carnivores'],
+        bonuses: ['Leader abilities', 'War chants', 'Close combat coordination']
+      },
+      equipment: {
+        base: ['Kroot scattergun', 'Bladestaves', 'War shaper adornments']
+      },
+      loreRoles: ['kroot_leader', 'close_combat', 'war_chant'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'very_high',
+        bork_an: 'low',
+        vior_la: 'medium',
+        sacea: 'medium'
+      }
     }
   ],
 
@@ -488,98 +581,6 @@ export const tauUnits = {
         vior_la: 'very_high',
         sacea: 'very_high'
       }
-    },
-    {
-      id: 'kroot_flesh_shaper',
-      name: 'Kroot Flesh Shaper',
-      points: 50,
-      models: 1,
-      keywords: ['Character', 'Infantry', 'Kroot', 'Flesh Shaper'],
-      leaderAttachment: {
-        canAttachTo: ['kroot_carnivores'],
-        bonuses: ['Leader abilities', 'Battlefield surgery', 'Kroot unit coordination']
-      },
-      equipment: {
-        base: ['Kroot rifle', 'Flesh shaper tools', 'Ritual blade']
-      },
-      loreRoles: ['kroot_leader', 'field_surgery', 'auxiliary_command'],
-      competitiveLevel: 'medium',
-      subfactionSynergy: {
-        tau_empire: 'medium',
-        farsight_enclaves: 'high',
-        bork_an: 'low',
-        vior_la: 'medium',
-        sacea: 'medium'
-      }
-    },
-    {
-      id: 'kroot_lone_spear',
-      name: 'Kroot Lone-Spear',
-      points: 70,
-      models: 1,
-      keywords: ['Character', 'Infantry', 'Kroot', 'Lone-Spear'],
-      leaderAttachment: {
-        canAttachTo: ['kroot_carnivores'],
-        bonuses: ['Leader abilities', 'Precision targeting', 'Hunter coordination']
-      },
-      equipment: {
-        base: ['Kroot long gun', 'Hunting stave', 'Kroot blade']
-      },
-      loreRoles: ['kroot_sniper', 'lone_operative', 'hunter'],
-      competitiveLevel: 'high',
-      subfactionSynergy: {
-        tau_empire: 'medium',
-        farsight_enclaves: 'very_high',
-        bork_an: 'medium',
-        vior_la: 'high',
-        sacea: 'medium'
-      }
-    },
-    {
-      id: 'kroot_trail_shaper',
-      name: 'Kroot Trail Shaper',
-      points: 60,
-      models: 1,
-      keywords: ['Character', 'Infantry', 'Kroot', 'Trail Shaper'],
-      leaderAttachment: {
-        canAttachTo: ['kroot_carnivores'],
-        bonuses: ['Leader abilities', 'Stealth coordination', 'Infiltration guidance']
-      },
-      equipment: {
-        base: ['Kroot rifle', 'Shaper kroot rifle', 'Ritual blade']
-      },
-      loreRoles: ['kroot_leader', 'tracker', 'stealth_specialist'],
-      competitiveLevel: 'medium',
-      subfactionSynergy: {
-        tau_empire: 'high',
-        farsight_enclaves: 'high',
-        bork_an: 'medium',
-        vior_la: 'very_high',
-        sacea: 'high'
-      }
-    },
-    {
-      id: 'kroot_war_shaper',
-      name: 'Kroot War Shaper',
-      points: 65,
-      models: 1,
-      keywords: ['Character', 'Infantry', 'Kroot', 'War Shaper'],
-      leaderAttachment: {
-        canAttachTo: ['kroot_carnivores'],
-        bonuses: ['Leader abilities', 'War chants', 'Close combat coordination']
-      },
-      equipment: {
-        base: ['Kroot scattergun', 'Bladestaves', 'War shaper adornments']
-      },
-      loreRoles: ['kroot_leader', 'close_combat', 'war_chant'],
-      competitiveLevel: 'high',
-      subfactionSynergy: {
-        tau_empire: 'medium',
-        farsight_enclaves: 'very_high',
-        bork_an: 'low',
-        vior_la: 'medium',
-        sacea: 'medium'
-      }
     }
   ],
 
@@ -852,6 +853,88 @@ export const tauUnits = {
         bork_an: 'very_high',
         vior_la: 'high',
         sacea: 'very_high'
+      }
+    }
+  ],
+
+  // Auxiliary Forces (Extended)
+  auxiliaryForces: [
+    {
+      id: 'kroot_great_knarloc',
+      name: 'Great Knarloc',
+      points: 75,
+      models: 1,
+      keywords: ['Monster', 'Great Knarloc', 'Kroot'],
+      equipment: {
+        base: ['Great Knarloc beak', 'Kroot gun', 'Razor-sharp claws'],
+        options: [
+          { name: 'Kroot bolt thrower', cost: 0 },
+          { name: 'Kroot hunting rifle', cost: 0 }
+        ]
+      },
+      abilities: [
+        'Deadly Demise 1',
+        'Beast Pack: This unit can move through models and terrain as if they were not there'
+      ],
+      loreRoles: ['monster', 'kroot_heavy_support', 'beast_cavalry'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'medium',
+        bork_an: 'high',
+        vior_la: 'medium',
+        sacea: 'high'
+      }
+    },
+    {
+      id: 'vespid_stingwings_heavy',
+      name: 'Vespid Stingwings (Heavy Support)',
+      points: 90,
+      models: 8,
+      keywords: ['Infantry', 'Fly', 'Vespid', 'Stingwings'],
+      equipment: {
+        base: ['Neutron blaster', 'Strain leader neutron blaster'],
+        options: []
+      },
+      abilities: [
+        'Deep Strike',
+        'Shredding Burst: Each time this unit makes a ranged attack, improve the Armour Penetration characteristic of that attack by 1'
+      ],
+      loreRoles: ['deep_strike', 'anti_armor', 'mobile_support'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'low',
+        bork_an: 'high',
+        vior_la: 'medium',
+        sacea: 'high'
+      }
+    },
+    {
+      id: 'gue_vesa_auxiliaries',
+      name: 'Gue\'vesa Auxiliaries',
+      points: 65,
+      models: 10,
+      keywords: ['Infantry', 'Gue\'vesa', 'Auxiliary'],
+      equipment: {
+        base: ['Pulse rifle', 'Pulse pistol', 'Grenades'],
+        options: [
+          { name: 'Ion rifle', cost: 0 },
+          { name: 'Rail rifle', cost: 0 }
+        ]
+      },
+      abilities: [
+        'For the Greater Good',
+        'Human Adaptability: This unit can be deployed in any terrain without penalty'
+      ],
+      loreRoles: ['troops', 'auxiliary_support', 'versatile_infantry'],
+      competitiveLevel: 'low',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'high',
+        bork_an: 'medium',
+        vior_la: 'medium',
+        sacea: 'medium'
       }
     }
   ],

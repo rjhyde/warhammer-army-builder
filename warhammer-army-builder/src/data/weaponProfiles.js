@@ -1486,6 +1486,190 @@ export const weaponProfiles = {
     abilities: ['Heavy'],
     category: 'Vehicle Weapon',
     description: 'Impulsor missile system'
+  },
+  
+  // SPACE MARINE NAMED CHARACTER WEAPONS
+  'axe_mortalis': {
+    name: 'Axe Mortalis',
+    range: 'Melee',
+    attacks: '6',
+    skill: '2+',
+    strength: '7',
+    ap: '-3',
+    damage: '2',
+    abilities: ['Devastating Wounds']
+  },
+  'perdition_pistol': {
+    name: 'Perdition Pistol',
+    range: '6"',
+    attacks: '1',
+    skill: '2+',
+    strength: '8',
+    ap: '-4',
+    damage: 'D6',
+    abilities: ['Melta 2', 'Ignores Cover']
+  },
+  'vitarus': {
+    name: 'Vitarus',
+    range: 'Melee',
+    attacks: '6',
+    skill: '2+',
+    strength: '6',
+    ap: '-2',
+    damage: '2',
+    abilities: ['Psychic']
+  },
+  'glaive_encarmine': {
+    name: 'Glaive Encarmine',
+    range: 'Melee',
+    attacks: '5',
+    skill: '2+',
+    strength: '7',
+    ap: '-3',
+    damage: '3',
+    abilities: ['Devastating Wounds']
+  },
+  'sword_of_secrets': {
+    name: 'Sword of Secrets',
+    range: 'Melee',
+    attacks: '6',
+    skill: '2+',
+    strength: '6',
+    ap: '-3',
+    damage: '2',
+    abilities: ['Anti-Chaos 4+']
+  },
+  'sword_of_silence': {
+    name: 'Sword of Silence',
+    range: 'Melee',
+    attacks: '5',
+    skill: '2+',
+    strength: '6',
+    ap: '-3',
+    damage: '2',
+    abilities: ['Silent Strike']
+  },
+  'gauntlets_of_ultramar': {
+    name: 'Gauntlets of Ultramar',
+    range: 'Melee',
+    attacks: '6',
+    skill: '2+',
+    strength: '8',
+    ap: '-3',
+    damage: '3',
+    abilities: ['Twin-linked']
+  },
+  'emperors_sword': {
+    name: 'Emperor\'s Sword',
+    range: 'Melee',
+    attacks: '14',
+    skill: '2+',
+    strength: '9',
+    ap: '-4',
+    damage: '3',
+    abilities: ['Devastating Wounds']
+  },
+  'hand_of_dominion': {
+    name: 'Hand of Dominion',
+    range: '24"',
+    attacks: '3',
+    skill: '2+',
+    strength: '7',
+    ap: '-1',
+    damage: '2',
+    abilities: ['Rapid Fire 3']
+  },
+  'blood_talons': {
+    name: 'Blood Talons',
+    range: 'Melee',
+    attacks: '8',
+    skill: '3+',
+    strength: '8',
+    ap: '-2',
+    damage: '2',
+    abilities: ['Twin-linked']
+  },
+  'blood_chalice': {
+    name: 'Blood Chalice',
+    range: 'Aura',
+    attacks: '-',
+    skill: '-',
+    strength: '-',
+    ap: '-',
+    damage: '-',
+    abilities: ['Feel No Pain 5+ (aura 6")']
+  },
+  'plasma_talon': {
+    name: 'Plasma Talon',
+    range: '18"',
+    attacks: '2',
+    skill: '3+',
+    strength: '8',
+    ap: '-3',
+    damage: '2',
+    abilities: ['Rapid Fire 2']
+  },
+  'corvus_hammer': {
+    name: 'Corvus Hammer',
+    range: 'Melee',
+    attacks: '4',
+    skill: '3+',
+    strength: '6',
+    ap: '-1',
+    damage: '2',
+    abilities: ['Lance']
+  },
+  'plasma_storm_battery': {
+    name: 'Plasma Storm Battery',
+    range: '36"',
+    attacks: '2D6',
+    skill: '3+',
+    strength: '6',
+    ap: '-3',
+    damage: '1',
+    abilities: ['Blast']
+  },
+  
+  // T'AU EXTENDED WEAPONS
+  'great_knarloc_beak': {
+    name: 'Great Knarloc Beak',
+    range: 'Melee',
+    attacks: '4',
+    skill: '4+',
+    strength: '7',
+    ap: '-1',
+    damage: '2',
+    abilities: ['Extra Attacks']
+  },
+  'kroot_bolt_thrower': {
+    name: 'Kroot Bolt Thrower',
+    range: '48"',
+    attacks: '1',
+    skill: '4+',
+    strength: '7',
+    ap: '-1',
+    damage: '2',
+    abilities: ['Heavy']
+  },
+  'neutron_blaster': {
+    name: 'Neutron Blaster',
+    range: '18"',
+    attacks: '2',
+    skill: '4+',
+    strength: '5',
+    ap: '-1',
+    damage: '1',
+    abilities: ['Assault']
+  },
+  'strain_leader_neutron_blaster': {
+    name: 'Strain Leader Neutron Blaster',
+    range: '18"',
+    attacks: '3',
+    skill: '3+',
+    strength: '5',
+    ap: '-1',
+    damage: '1',
+    abilities: ['Assault', 'Leader']
   }
 };
 

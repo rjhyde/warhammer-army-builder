@@ -143,7 +143,8 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
           command: { min: totalPoints * 0.05, max: totalPoints * 0.15 },
           infantry: { min: totalPoints * 0.30, max: totalPoints * 0.60 },
           armor: { min: totalPoints * 0.20, max: totalPoints * 0.50 },
-          support: { min: totalPoints * 0.05, max: totalPoints * 0.25 }
+          support: { min: totalPoints * 0.05, max: totalPoints * 0.25 },
+          fastAttack: { min: totalPoints * 0.05, max: totalPoints * 0.20 }
         };
       }
 
@@ -165,6 +166,10 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
         support: { 
           min: totalPoints * (doctrine.support.min / 100), 
           max: totalPoints * (doctrine.support.max / 100) 
+        },
+        fastAttack: { 
+          min: totalPoints * (doctrine.fastAttack.min / 100), 
+          max: totalPoints * (doctrine.fastAttack.max / 100) 
         }
       };
     };
@@ -273,30 +278,222 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       return score;
     };
 
-    // Enhanced unit selection that accounts for Rule of Three
-    const selectBestUnit = (units, excludeIds = [], unitCounts = {}) => {
+    // Enhanced intelligent quantity selection based on real-world military doctrine
+    const calculateOptimalQuantity = (unit, scenario, currentArmy, remainingPoints, doctrineTargets, currentComposition) => {
+      // Base factors for quantity calculation
+      const unitCost = unit.points;
+      const unitRole = getMilitaryRole(unit);
+      const primaryRole = unit.loreRoles?.[0] || 'general';
+      
+      // Real-world military doctrine constraints
+      const currentRolePoints = currentComposition[unitRole] || 0;
+      const roleTarget = doctrineTargets[unitRole];
+      
+      // Cost-based quantity limits (Rule of Three maximum)
+      let maxQuantity = 3;
+      
+      // REAL-WORLD MILITARY DOCTRINE PRINCIPLES
+      
+      // 1. COMMAND SPAN OF CONTROL - Limited command elements
+      if (unitRole === 'command' || unit.keywords?.includes('Character')) {
+        // Real militaries: 1 leader per 3-12 subordinate units
+        const commandRatio = currentRolePoints / (currentArmy.totalPoints || 1);
+        if (commandRatio > 0.12) { // 12% command is already very high
+          return 0; // No more command units needed
+        }
+        maxQuantity = Math.min(2, maxQuantity); // Max 2 command units typically
+      }
+      
+      // 2. HEAVY ASSETS DOCTRINE - Expensive units require support
+      if (unitCost > 200) {
+        // Heavy assets (tanks, aircraft, etc.) - typically 10-25% of force
+        const heavyAssetRatio = (currentRolePoints + unitCost) / (currentArmy.totalPoints + unitCost);
+        if (heavyAssetRatio > 0.35) { // Don't exceed 35% heavy assets
+          maxQuantity = 1;
+        } else {
+          maxQuantity = Math.min(2, maxQuantity);
+        }
+        
+        // Super heavy assets (>400pts) - centerpiece units
+        if (unitCost > 400) {
+          maxQuantity = 1; // Only one centerpiece per army
+        }
+      }
+      
+      // 3. COMBINED ARMS BALANCE - Force composition ratios
+      let roleMultiplier = 1.0;
+      
+      if (roleTarget) {
+        const roleDeficit = roleTarget.min - currentRolePoints;
+        const roleExcess = currentRolePoints - roleTarget.max;
+        
+        if (roleDeficit > 0) {
+          // We need more of this role - encourage selection
+          roleMultiplier = Math.min(3.0, 1.0 + (roleDeficit / roleTarget.min));
+        } else if (roleExcess > 0) {
+          // We have too much of this role - discourage selection
+          roleMultiplier = Math.max(0.3, 1.0 - (roleExcess / roleTarget.max));
+        }
+      }
+      
+      // 4. MISSION-SPECIFIC DOCTRINE ADJUSTMENTS
+      let missionMultiplier = 1.0;
+      
+      // Real-world tactical considerations by scenario
+      switch (scenario) {
+        case 'defensive':
+          // Defensive operations: More fire support, fewer mobile units
+          if (primaryRole.includes('fire_support') || primaryRole.includes('heavy')) {
+            missionMultiplier = 1.4; // Favor defensive firepower
+          } else if (primaryRole.includes('fast') || primaryRole.includes('reconnaissance')) {
+            missionMultiplier = 0.7; // Fewer fast units in defense
+          }
+          break;
+          
+        case 'assault':
+          // Assault operations: More mobile/assault units, fewer static
+          if (primaryRole.includes('assault') || primaryRole.includes('mobile') || primaryRole.includes('fast')) {
+            missionMultiplier = 1.5; // Favor mobility and assault capability
+          } else if (primaryRole.includes('heavy_fire_support') || primaryRole.includes('firebase')) {
+            missionMultiplier = 0.6; // Fewer static fire support
+          }
+          break;
+          
+        case 'reconnaissance':
+          // Reconnaissance: More scouts, lighter forces
+          if (primaryRole.includes('scout') || primaryRole.includes('stealth') || primaryRole.includes('reconnaissance')) {
+            missionMultiplier = 1.8; // Heavily favor reconnaissance units
+          } else if (unitCost > 150) {
+            missionMultiplier = 0.5; // Fewer heavy units
+          }
+          break;
+          
+        case 'siege':
+          // Siege operations: Balance of heavy firepower and assault troops
+          if (primaryRole.includes('anti_armor') || primaryRole.includes('assault') || primaryRole.includes('heavy')) {
+            missionMultiplier = 1.3; // Favor siege-appropriate units
+          }
+          break;
+      }
+      
+      // 5. INFANTRY-CENTRIC DOCTRINE (80/20 rule)
+      // Real militaries are ~80% infantry, 20% everything else
+      const infantryRoles = ['line_infantry', 'core_infantry', 'troops', 'scouts', 'assault_infantry'];
+      if (infantryRoles.includes(primaryRole)) {
+        // Encourage more infantry units (backbone of any army)
+        const totalInfantryPoints = currentComposition.infantry || 0;
+        const infantryRatio = totalInfantryPoints / (currentArmy.totalPoints || 1);
+        
+        if (infantryRatio < 0.5) { // Less than 50% infantry
+          roleMultiplier *= 1.6; // Strongly encourage more infantry
+        } else if (infantryRatio < 0.7) { // Less than 70% infantry
+          roleMultiplier *= 1.2; // Moderately encourage more infantry
+        }
+      }
+      
+      // 6. SUPPORT-TO-COMBAT RATIO
+      // Real militaries maintain ~70% combat, 30% support
+      const supportRoles = ['fire_support', 'support', 'logistics', 'command'];
+      if (supportRoles.includes(primaryRole)) {
+        const totalSupportPoints = (currentComposition.support || 0) + (currentComposition.command || 0);
+        const supportRatio = totalSupportPoints / (currentArmy.totalPoints || 1);
+        
+        if (supportRatio > 0.4) { // More than 40% support
+          roleMultiplier *= 0.5; // Discourage more support
+        }
+      }
+      
+      // 7. BUDGET ALLOCATION DOCTRINE
+      // Don't spend more than 30% of budget on any single datasheet type
+      const budgetLimitQuantity = Math.floor(remainingPoints / (unitCost * 1.8));
+      const maxBudgetPerDatasheet = remainingPoints * 0.3;
+      const maxAffordableQuantity = Math.floor(maxBudgetPerDatasheet / unitCost);
+      
+      // 8. TACTICAL FLEXIBILITY DOCTRINE
+      // Different unit types have different optimal quantities based on real-world employment
+      const tacticalQuantityLimits = {
+        // Command elements - small numbers
+        'command': { min: 1, optimal: 1, max: 2 },
+        'character': { min: 1, optimal: 1, max: 2 },
+        
+        // Infantry - larger numbers for mass and redundancy
+        'line_infantry': { min: 2, optimal: 3, max: 4 },
+        'core_infantry': { min: 2, optimal: 3, max: 4 },
+        'troops': { min: 2, optimal: 3, max: 4 },
+        
+        // Specialists - moderate numbers
+        'elite_assault': { min: 1, optimal: 2, max: 3 },
+        'scouts': { min: 1, optimal: 2, max: 3 },
+        'fast_attack': { min: 1, optimal: 2, max: 3 },
+        
+        // Heavy assets - limited numbers
+        'heavy_fire_support': { min: 1, optimal: 1, max: 2 },
+        'anti_armor': { min: 1, optimal: 1, max: 2 },
+        'centerpiece': { min: 1, optimal: 1, max: 1 },
+        'super_heavy': { min: 1, optimal: 1, max: 1 },
+        
+        // Support - minimal numbers
+        'support': { min: 1, optimal: 1, max: 2 },
+        'logistics': { min: 1, optimal: 1, max: 2 }
+      };
+      
+      const tacticalLimits = tacticalQuantityLimits[primaryRole] || { min: 1, optimal: 2, max: 3 };
+      
+      // Calculate final quantity using all doctrine considerations
+      let targetQuantity = Math.max(1, Math.floor(roleMultiplier * missionMultiplier * tacticalLimits.optimal));
+      
+      // Apply all military doctrine constraints
+      const finalQuantity = Math.min(
+        maxQuantity,                    // Rule of Three
+        targetQuantity,                 // Doctrine-calculated target
+        budgetLimitQuantity,           // Budget constraints
+        maxAffordableQuantity,         // Budget allocation limits
+        tacticalLimits.max,            // Tactical employment limits
+        Math.floor(remainingPoints / unitCost) // Absolute affordability
+      );
+      
+      // Ensure minimum tactical requirements
+      const minimumQuantity = Math.max(1, tacticalLimits.min);
+      
+      return Math.max(minimumQuantity, finalQuantity);
+    };
+
+    // Enhanced unit selection with intelligent quantity and role balancing
+    const selectUnitsWithQuantity = (units, excludeIds = [], unitCounts = {}, remainingPoints, doctrineTargets = {}, currentComposition = {}) => {
       const availableUnits = filterUnitsByFaction(units, faction).filter(unit => {
-        // Rule of Three: max 3 of any datasheet
         const currentCount = unitCounts[unit.id] || 0;
         if (currentCount >= 3) return false;
         
-        // Character uniqueness: only one of each character
         if (unit.keywords?.includes('Character') && excludeIds.includes(unit.id)) {
           return false;
         }
         
-        return true;
+        return unit.points <= remainingPoints;
       });
       
-      if (availableUnits.length === 0) return null;
+      if (availableUnits.length === 0) return [];
       
       const scoredUnits = availableUnits.map(unit => ({
         ...unit,
-        score: scoreUnit(unit)
+        score: scoreUnit(unit),
+        optimalQuantity: calculateOptimalQuantity(unit, scenario.context, army, remainingPoints, doctrineTargets, currentComposition)
       }));
       
       scoredUnits.sort((a, b) => b.score - a.score);
-      return scoredUnits[0];
+      
+      // Return the best unit with its optimal quantity
+      const bestUnit = scoredUnits[0];
+      const currentCount = unitCounts[bestUnit.id] || 0;
+      const remainingPossible = Math.min(
+        3 - currentCount, // Rule of Three
+        bestUnit.optimalQuantity,
+        Math.floor(remainingPoints / bestUnit.points)
+      );
+      
+      return {
+        unit: bestUnit,
+        quantity: Math.max(1, remainingPossible)
+      };
     };
 
     // Enhanced equipment processing with proper replacement handling
@@ -561,168 +758,9 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       const TARGET_POINTS = 2000;
       const MINIMUM_POINTS = 1900; // Allow some flexibility
 
-      // Enhanced helper function to add unit with wargear selection
-      const addUnit = (unit) => {
-        if (!unit) return false;
-        
-        // Select optimal wargear for this unit
-        const wargearSelection = selectOptimalWargear(unit, scenario.context, difficulty, factionData.mainFaction);
-        const equipmentCost = calculateEquipmentCost(wargearSelection.selectedOptions);
-        const totalUnitCost = unit.points + equipmentCost;
-        
-        // Create enhanced unit with selected wargear
-        const enhancedUnit = {
-          ...unit,
-          selectedOptions: wargearSelection.selectedOptions,
-          optionsPoints: equipmentCost,
-          tacticalRationale: wargearSelection.tacticalRationale,
-          wargearDescription: wargearSelection.description
-        };
-        
-        // Process equipment
-        const equipmentResult = processUnitEquipment(enhancedUnit, wargearSelection);
-        enhancedUnit.equipment = equipmentResult.equipment;
-        enhancedUnit.equipmentChanges = equipmentResult.changes;
-        
-        army.units.push(enhancedUnit);
-        army.totalPoints += totalUnitCost;
-        unitCounts[unit.id] = (unitCounts[unit.id] || 0) + 1;
-        
-        // Only add to excludeIds for first instance (for HQ uniqueness)
-        if (!usedUnitIds.includes(unit.id)) {
-          usedUnitIds.push(unit.id);
-        }
-        
-        console.log(`Added ${unit.name} with wargear: ${wargearSelection.selectedOptions.map(opt => opt.name).join(', ')} (+${equipmentCost}pts)`);
-        
-        return true;
-      };
-
-      // Phase 1: Establish command structure (mandatory HQ) with 10th Edition Leader Embedding
-      const bestHQ = selectBestUnit(units.hq, usedUnitIds, unitCounts);
-      if (bestHQ) {
-        addUnit(bestHQ);
-        
-        // 10th Edition Leader Embedding: Ensure HQ has a compatible unit to attach to
-        if (bestHQ.leaderAttachment && bestHQ.leaderAttachment.canAttachTo.length > 0) {
-          const attached = ensureLeaderHasCompatibleUnit(army, bestHQ, units);
-          
-          if (!attached && needsCompatibleUnitForLeader(bestHQ, army, units)) {
-            // Need to add a compatible unit for the leader to attach to
-            const compatibleUnits = findCompatibleUnitsForLeader(bestHQ, units);
-            
-            if (compatibleUnits.length > 0) {
-              // Score compatible units and select the best one
-              const scoredCompatibleUnits = compatibleUnits.map(unit => ({
-                ...unit,
-                score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
-              }));
-              
-              scoredCompatibleUnits.sort((a, b) => b.score - a.score);
-              const bestCompatibleUnit = scoredCompatibleUnits[0];
-              
-              if (bestCompatibleUnit && army.totalPoints + bestCompatibleUnit.points <= TARGET_POINTS - 200) {
-                addUnit(bestCompatibleUnit);
-                
-                // Attach the leader to this unit
-                const addedUnit = army.units[army.units.length - 1];
-                addedUnit.attachedLeader = {
-                  id: bestHQ.id,
-                  name: bestHQ.name,
-                  bonuses: bestHQ.leaderAttachment?.bonuses || []
-                };
-                
-                console.log(`Added ${bestCompatibleUnit.name} for ${bestHQ.name} to attach to`);
-              }
-            }
-          }
-        }
-      }
-
-      // Phase 2: Add named character for major operations (doctrine-based) with Leader Embedding
-      const namedCharacterThreshold = militaryDoctrine.commandStructure?.namedCharacterThreshold || 500;
-      if (difficultyMods.namedCharacters && army.totalPoints >= namedCharacterThreshold) {
-        const namedChar = selectBestUnit(units.namedCharacters, usedUnitIds, unitCounts);
-        if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 300) {
-          addUnit(namedChar);
-          
-          // 10th Edition Leader Embedding for Named Characters
-          if (namedChar.leaderAttachment && namedChar.leaderAttachment.canAttachTo.length > 0) {
-            const attached = ensureLeaderHasCompatibleUnit(army, namedChar, units);
-            
-            if (!attached && needsCompatibleUnitForLeader(namedChar, army, units)) {
-              // Need to add a compatible unit for the named character
-              const compatibleUnits = findCompatibleUnitsForLeader(namedChar, units);
-              
-              if (compatibleUnits.length > 0) {
-                const scoredCompatibleUnits = compatibleUnits.map(unit => ({
-                  ...unit,
-                  score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
-                }));
-                
-                scoredCompatibleUnits.sort((a, b) => b.score - a.score);
-                const bestCompatibleUnit = scoredCompatibleUnits[0];
-                
-                if (bestCompatibleUnit && army.totalPoints + bestCompatibleUnit.points <= TARGET_POINTS - 100) {
-                  addUnit(bestCompatibleUnit);
-                  
-                  // Attach the named character to this unit
-                  const addedUnit = army.units[army.units.length - 1];
-                  addedUnit.attachedLeader = {
-                    id: namedChar.id,
-                    name: namedChar.name,
-                    bonuses: namedChar.leaderAttachment?.bonuses || []
-                  };
-                  
-                  console.log(`Added ${bestCompatibleUnit.name} for ${namedChar.name} to attach to`);
-                }
-              }
-            }
-          }
-        }
-      }
-
-      // Phase 3: Core doctrine-based force structure
-      const maxAttempts = 30;
-      let attempts = 0;
-      
-      while (army.totalPoints < MINIMUM_TARGET && attempts < maxAttempts) {
-        let addedAnyUnit = false;
-        
-        // Select best unit from any category using doctrine scoring
-        const allCategories = [units.troops, units.elites, units.fastAttack, units.heavySupport];
-        let bestUnit = null;
-        let bestScore = -1;
-        
-        for (const category of allCategories) {
-          const unit = selectBestUnit(category, [], unitCounts);
-          if (unit && army.totalPoints + unit.points + 50 <= TARGET_POINTS) { // Leave room for equipment
-            if (unit.score > bestScore) {
-              bestScore = unit.score;
-              bestUnit = unit;
-            }
-          }
-        }
-        
-        if (bestUnit) {
-          addUnit(bestUnit);
-          addedAnyUnit = true;
-        }
-        
-        if (!addedAnyUnit) break;
-        attempts++;
-      }
-
-    } else {
-      // Easy-create: Automatic army generation with Rule of Three and Military Doctrine
-      const usedUnitIds = [];
-      const unitCounts = {}; // Track how many of each datasheet we have
-      const TARGET_POINTS = 2000;
-      const MINIMUM_TARGET = 1980; // Much more aggressive target
-      
-      // Calculate military doctrine targets
+      // Calculate military doctrine targets for custom mode too
       const doctrineTargets = calculateDoctrineTargets(TARGET_POINTS, customChoices.useRealWorldDoctrine);
-      let currentComposition = { command: 0, infantry: 0, armor: 0, support: 0 };
+      let currentComposition = { command: 0, infantry: 0, armor: 0, support: 0, fastAttack: 0 };
 
       // Enhanced helper function to add unit with wargear selection
       const addUnit = (unit) => {
@@ -765,38 +803,18 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
         return true;
       };
 
-      // Enhanced unit selection with doctrine scoring
-      const selectBestUnitWithDoctrine = (units, excludeIds = [], unitCounts = {}) => {
-        const availableUnits = filterUnitsByFaction(units, faction).filter(unit => {
-          if (excludeIds.includes(unit.id)) return false;
-          const currentCount = unitCounts[unit.id] || 0;
-          if (currentCount >= 3) return false;
-          return true;
-        });
-        
-        if (availableUnits.length === 0) return null;
-        
-        const scoredUnits = availableUnits.map(unit => ({
-          ...unit,
-          score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
-        }));
-        
-        scoredUnits.sort((a, b) => b.score - a.score);
-        return scoredUnits[0];
-      };
-
       // Phase 1: Establish command structure (mandatory HQ) with 10th Edition Leader Embedding
-      const bestHQ = selectBestUnitWithDoctrine(units.hq, usedUnitIds, unitCounts);
-      if (bestHQ) {
-        addUnit(bestHQ);
+      const bestHQ = selectUnitsWithQuantity(units.hq, usedUnitIds, unitCounts, TARGET_POINTS, doctrineTargets, currentComposition);
+      if (bestHQ.unit) {
+        addUnit(bestHQ.unit);
         
         // 10th Edition Leader Embedding: Ensure HQ has a compatible unit to attach to
-        if (bestHQ.leaderAttachment && bestHQ.leaderAttachment.canAttachTo.length > 0) {
-          const attached = ensureLeaderHasCompatibleUnit(army, bestHQ, units);
+        if (bestHQ.unit.leaderAttachment && bestHQ.unit.leaderAttachment.canAttachTo.length > 0) {
+          const attached = ensureLeaderHasCompatibleUnit(army, bestHQ.unit, units);
           
-          if (!attached && needsCompatibleUnitForLeader(bestHQ, army, units)) {
+          if (!attached && needsCompatibleUnitForLeader(bestHQ.unit, army, units)) {
             // Need to add a compatible unit for the leader to attach to
-            const compatibleUnits = findCompatibleUnitsForLeader(bestHQ, units);
+            const compatibleUnits = findCompatibleUnitsForLeader(bestHQ.unit, units);
             
             if (compatibleUnits.length > 0) {
               // Score compatible units and select the best one
@@ -814,12 +832,12 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
                 // Attach the leader to this unit
                 const addedUnit = army.units[army.units.length - 1];
                 addedUnit.attachedLeader = {
-                  id: bestHQ.id,
-                  name: bestHQ.name,
-                  bonuses: bestHQ.leaderAttachment?.bonuses || []
+                  id: bestHQ.unit.id,
+                  name: bestHQ.unit.name,
+                  bonuses: bestHQ.unit.leaderAttachment?.bonuses || []
                 };
                 
-                console.log(`Added ${bestCompatibleUnit.name} for ${bestHQ.name} to attach to`);
+                console.log(`Added ${bestCompatibleUnit.name} for ${bestHQ.unit.name} to attach to`);
               }
             }
           }
@@ -829,17 +847,17 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       // Phase 2: Add named character for major operations (doctrine-based) with Leader Embedding
       const namedCharacterThreshold = militaryDoctrine.commandStructure?.namedCharacterThreshold || 500;
       if (difficultyMods.namedCharacters && army.totalPoints >= namedCharacterThreshold) {
-        const namedChar = selectBestUnitWithDoctrine(units.namedCharacters, usedUnitIds, unitCounts);
-        if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 300) {
-          addUnit(namedChar);
+        const namedChar = selectUnitsWithQuantity(units.namedCharacters, usedUnitIds, unitCounts, TARGET_POINTS, doctrineTargets, currentComposition);
+        if (namedChar.unit && army.totalPoints + namedChar.unit.points <= TARGET_POINTS - 300) {
+          addUnit(namedChar.unit);
           
           // 10th Edition Leader Embedding for Named Characters
-          if (namedChar.leaderAttachment && namedChar.leaderAttachment.canAttachTo.length > 0) {
-            const attached = ensureLeaderHasCompatibleUnit(army, namedChar, units);
+          if (namedChar.unit.leaderAttachment && namedChar.unit.leaderAttachment.canAttachTo.length > 0) {
+            const attached = ensureLeaderHasCompatibleUnit(army, namedChar.unit, units);
             
-            if (!attached && needsCompatibleUnitForLeader(namedChar, army, units)) {
+            if (!attached && needsCompatibleUnitForLeader(namedChar.unit, army, units)) {
               // Need to add a compatible unit for the named character
-              const compatibleUnits = findCompatibleUnitsForLeader(namedChar, units);
+              const compatibleUnits = findCompatibleUnitsForLeader(namedChar.unit, units);
               
               if (compatibleUnits.length > 0) {
                 const scoredCompatibleUnits = compatibleUnits.map(unit => ({
@@ -856,12 +874,12 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
                   // Attach the named character to this unit
                   const addedUnit = army.units[army.units.length - 1];
                   addedUnit.attachedLeader = {
-                    id: namedChar.id,
-                    name: namedChar.name,
-                    bonuses: namedChar.leaderAttachment?.bonuses || []
+                    id: namedChar.unit.id,
+                    name: namedChar.unit.name,
+                    bonuses: namedChar.unit.leaderAttachment?.bonuses || []
                   };
                   
-                  console.log(`Added ${bestCompatibleUnit.name} for ${namedChar.name} to attach to`);
+                  console.log(`Added ${bestCompatibleUnit.name} for ${namedChar.unit.name} to attach to`);
                 }
               }
             }
@@ -869,31 +887,259 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
         }
       }
 
-      // Phase 3: Core doctrine-based force structure
+      // Phase 3: Core doctrine-based force structure with intelligent quantity
+      const maxAttempts = 30;
+      let attempts = 0;
+      
+      while (army.totalPoints < MINIMUM_POINTS && attempts < maxAttempts) {
+        let addedAnyUnit = false;
+        
+        // Select best unit from any category using doctrine scoring with quantity
+        const allCategories = [units.troops, units.elites, units.fastAttack, units.heavySupport];
+        let bestSelection = null;
+        let bestScore = -1;
+        
+        for (const category of allCategories) {
+          const selection = selectUnitsWithQuantity(category, [], unitCounts, TARGET_POINTS - army.totalPoints, doctrineTargets, currentComposition);
+          if (selection.unit && army.totalPoints + (selection.unit.points * selection.quantity) + 100 <= TARGET_POINTS) {
+            // Calculate value score (effectiveness per point spent)
+            const totalCost = selection.unit.points * selection.quantity;
+            const valueScore = (selection.unit.score || 0) * selection.quantity / totalCost;
+            
+            if (valueScore > bestScore) {
+              bestScore = valueScore;
+              bestSelection = selection;
+            }
+          }
+        }
+        
+        if (bestSelection) {
+          // Add the optimal quantity of the selected unit
+          for (let i = 0; i < bestSelection.quantity; i++) {
+            if (army.totalPoints + bestSelection.unit.points + 50 <= TARGET_POINTS) {
+              addUnit(bestSelection.unit);
+              addedAnyUnit = true;
+            } else {
+              break; // Can't afford more of this unit
+            }
+          }
+          
+          console.log(`Added ${bestSelection.quantity}x ${bestSelection.unit.name} (military doctrine optimized - role: ${bestSelection.unit.loreRoles?.[0] || 'general'}, cost: ${bestSelection.unit.points}pts each)`);
+        }
+        
+        if (!addedAnyUnit) break;
+        attempts++;
+      }
+
+    } else {
+      // Easy-create: Automatic army generation with intelligent quantity management
+      const usedUnitIds = [];
+      const unitCounts = {}; // Track how many of each datasheet we have
+      const TARGET_POINTS = 2000;
+      const MINIMUM_TARGET = 1980; // Much more aggressive target
+      
+      // Calculate military doctrine targets
+      const doctrineTargets = calculateDoctrineTargets(TARGET_POINTS, customChoices.useRealWorldDoctrine);
+      let currentComposition = { command: 0, infantry: 0, armor: 0, support: 0, fastAttack: 0 };
+
+      // Enhanced helper function to add unit with wargear selection
+      const addUnit = (unit) => {
+        if (!unit) return false;
+        
+        // Select optimal wargear for this unit
+        const wargearSelection = selectOptimalWargear(unit, scenario.context, difficulty, factionData.mainFaction);
+        const equipmentCost = calculateEquipmentCost(wargearSelection.selectedOptions);
+        const totalUnitCost = unit.points + equipmentCost;
+        
+        // Create enhanced unit with selected wargear
+        const enhancedUnit = {
+          ...unit,
+          selectedOptions: wargearSelection.selectedOptions,
+          optionsPoints: equipmentCost,
+          tacticalRationale: wargearSelection.tacticalRationale,
+          wargearDescription: wargearSelection.description
+        };
+        
+        // Process equipment
+        const equipmentResult = processUnitEquipment(enhancedUnit, wargearSelection);
+        enhancedUnit.equipment = equipmentResult.equipment;
+        enhancedUnit.equipmentChanges = equipmentResult.changes;
+        
+        army.units.push(enhancedUnit);
+        army.totalPoints += totalUnitCost;
+        unitCounts[unit.id] = (unitCounts[unit.id] || 0) + 1;
+        
+        // Update military composition tracking
+        const unitRole = getMilitaryRole(unit);
+        currentComposition[unitRole] += totalUnitCost;
+        
+        // Only add to excludeIds for first instance (for HQ uniqueness)
+        if (!usedUnitIds.includes(unit.id)) {
+          usedUnitIds.push(unit.id);
+        }
+        
+        console.log(`Added ${unit.name} with wargear: ${wargearSelection.selectedOptions.map(opt => opt.name).join(', ')} (+${equipmentCost}pts)`);
+        
+        return true;
+      };
+
+      // Enhanced unit selection with doctrine scoring and quantity awareness
+      const selectBestUnitWithQuantityAndDoctrine = (units, excludeIds = [], unitCounts = {}, remainingPoints) => {
+        const availableUnits = filterUnitsByFaction(units, faction).filter(unit => {
+          if (excludeIds.includes(unit.id)) return false;
+          const currentCount = unitCounts[unit.id] || 0;
+          if (currentCount >= 3) return false;
+          return unit.points <= remainingPoints;
+        });
+        
+        if (availableUnits.length === 0) return null;
+        
+        const scoredUnits = availableUnits.map(unit => ({
+          ...unit,
+          score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine),
+          optimalQuantity: calculateOptimalQuantity(unit, scenario.context, army, remainingPoints, doctrineTargets, currentComposition)
+        }));
+        
+        scoredUnits.sort((a, b) => b.score - a.score);
+        
+        const bestUnit = scoredUnits[0];
+        const currentCount = unitCounts[bestUnit.id] || 0;
+        const remainingPossible = Math.min(
+          3 - currentCount, // Rule of Three
+          bestUnit.optimalQuantity,
+          Math.floor(remainingPoints / bestUnit.points)
+        );
+        
+        return {
+          unit: bestUnit,
+          quantity: Math.max(1, remainingPossible)
+        };
+      };
+
+      // Phase 1: Establish command structure (mandatory HQ) with 10th Edition Leader Embedding
+      const bestHQSelection = selectBestUnitWithQuantityAndDoctrine(units.hq, usedUnitIds, unitCounts, TARGET_POINTS);
+      if (bestHQSelection?.unit) {
+        addUnit(bestHQSelection.unit);
+        
+        // 10th Edition Leader Embedding: Ensure HQ has a compatible unit to attach to
+        if (bestHQSelection.unit.leaderAttachment && bestHQSelection.unit.leaderAttachment.canAttachTo.length > 0) {
+          const attached = ensureLeaderHasCompatibleUnit(army, bestHQSelection.unit, units);
+          
+          if (!attached && needsCompatibleUnitForLeader(bestHQSelection.unit, army, units)) {
+            // Need to add a compatible unit for the leader to attach to
+            const compatibleUnits = findCompatibleUnitsForLeader(bestHQSelection.unit, units);
+            
+            if (compatibleUnits.length > 0) {
+              // Score compatible units and select the best one
+              const scoredCompatibleUnits = compatibleUnits.map(unit => ({
+                ...unit,
+                score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
+              }));
+              
+              scoredCompatibleUnits.sort((a, b) => b.score - a.score);
+              const bestCompatibleUnit = scoredCompatibleUnits[0];
+              
+              if (bestCompatibleUnit && army.totalPoints + bestCompatibleUnit.points <= TARGET_POINTS - 200) {
+                addUnit(bestCompatibleUnit);
+                
+                // Attach the leader to this unit
+                const addedUnit = army.units[army.units.length - 1];
+                addedUnit.attachedLeader = {
+                  id: bestHQSelection.unit.id,
+                  name: bestHQSelection.unit.name,
+                  bonuses: bestHQSelection.unit.leaderAttachment?.bonuses || []
+                };
+                
+                console.log(`Added ${bestCompatibleUnit.name} for ${bestHQSelection.unit.name} to attach to`);
+              }
+            }
+          }
+        }
+      }
+
+      // Phase 2: Add named character for major operations (doctrine-based) with Leader Embedding
+      const namedCharacterThreshold = militaryDoctrine.commandStructure?.namedCharacterThreshold || 500;
+      if (difficultyMods.namedCharacters && army.totalPoints >= namedCharacterThreshold) {
+        const namedCharSelection = selectBestUnitWithQuantityAndDoctrine(units.namedCharacters, usedUnitIds, unitCounts, TARGET_POINTS - army.totalPoints);
+        if (namedCharSelection?.unit && army.totalPoints + namedCharSelection.unit.points <= TARGET_POINTS - 300) {
+          addUnit(namedCharSelection.unit);
+          
+          // 10th Edition Leader Embedding for Named Characters
+          if (namedCharSelection.unit.leaderAttachment && namedCharSelection.unit.leaderAttachment.canAttachTo.length > 0) {
+            const attached = ensureLeaderHasCompatibleUnit(army, namedCharSelection.unit, units);
+            
+            if (!attached && needsCompatibleUnitForLeader(namedCharSelection.unit, army, units)) {
+              // Need to add a compatible unit for the named character
+              const compatibleUnits = findCompatibleUnitsForLeader(namedCharSelection.unit, units);
+              
+              if (compatibleUnits.length > 0) {
+                const scoredCompatibleUnits = compatibleUnits.map(unit => ({
+                  ...unit,
+                  score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
+                }));
+                
+                scoredCompatibleUnits.sort((a, b) => b.score - a.score);
+                const bestCompatibleUnit = scoredCompatibleUnits[0];
+                
+                if (bestCompatibleUnit && army.totalPoints + bestCompatibleUnit.points <= TARGET_POINTS - 100) {
+                  addUnit(bestCompatibleUnit);
+                  
+                  // Attach the named character to this unit
+                  const addedUnit = army.units[army.units.length - 1];
+                  addedUnit.attachedLeader = {
+                    id: namedCharSelection.unit.id,
+                    name: namedCharSelection.unit.name,
+                    bonuses: namedCharSelection.unit.leaderAttachment?.bonuses || []
+                  };
+                  
+                  console.log(`Added ${bestCompatibleUnit.name} for ${namedCharSelection.unit.name} to attach to`);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Phase 3: Core doctrine-based force structure with intelligent quantity selection
       const maxAttempts = 30;
       let attempts = 0;
       
       while (army.totalPoints < MINIMUM_TARGET && attempts < maxAttempts) {
         let addedAnyUnit = false;
         
-        // Select best unit from any category using doctrine scoring
+        // Select best unit from any category using doctrine scoring with quantity awareness
         const allCategories = [units.troops, units.elites, units.fastAttack, units.heavySupport];
-        let bestUnit = null;
+        let bestSelection = null;
         let bestScore = -1;
         
         for (const category of allCategories) {
-          const unit = selectBestUnitWithDoctrine(category, [], unitCounts);
-          if (unit && army.totalPoints + unit.points + 50 <= TARGET_POINTS) { // Leave room for equipment
-            if (unit.score > bestScore) {
-              bestScore = unit.score;
-              bestUnit = unit;
+          const selection = selectBestUnitWithQuantityAndDoctrine(category, [], unitCounts, TARGET_POINTS - army.totalPoints);
+          if (selection?.unit) {
+            // Calculate value score (effectiveness per point spent)
+            const totalCost = selection.unit.points * selection.quantity;
+            if (army.totalPoints + totalCost + 100 <= TARGET_POINTS) {
+              const valueScore = (selection.unit.score || 0) * selection.quantity / totalCost;
+              
+              if (valueScore > bestScore) {
+                bestScore = valueScore;
+                bestSelection = selection;
+              }
             }
           }
         }
         
-        if (bestUnit) {
-          addUnit(bestUnit);
-          addedAnyUnit = true;
+        if (bestSelection) {
+          // Add the optimal quantity of the selected unit
+          for (let i = 0; i < bestSelection.quantity; i++) {
+            if (army.totalPoints + bestSelection.unit.points + 50 <= TARGET_POINTS) {
+              addUnit(bestSelection.unit);
+              addedAnyUnit = true;
+            } else {
+              break; // Can't afford more of this unit
+            }
+          }
+          
+          console.log(`Added ${bestSelection.quantity}x ${bestSelection.unit.name} (military doctrine optimized - role: ${bestSelection.unit.loreRoles?.[0] || 'general'}, cost: ${bestSelection.unit.points}pts each)`);
         }
         
         if (!addedAnyUnit) break;
@@ -981,13 +1227,16 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       
       justification += `**Military Doctrine Composition:**\n`;
       justification += `• Command Elements: ${Math.round((comp.command / total) * 100)}% (${comp.command}pts) - ${militaryRoles.command?.description || 'Command structure'}\n`;
-      justification += `• Infantry Forces: ${Math.round((comp.infantry / total) * 100)}% (${comp.infantry}pts) - ${militaryRoles.line_infantry?.description || 'Main battle line'}\n`;
+      justification += `• Infantry Forces: ${Math.round((comp.infantry / total) * 100)}% (${comp.infantry}pts) - ${militaryRoles.infantry?.description || 'Main battle line'}\n`;
       
       if (comp.armor) {
-        justification += `• Armored Units: ${Math.round((comp.armor / total) * 100)}% (${comp.armor}pts) - ${militaryRoles.elite_assault?.description || 'Heavy assault'}\n`;
+        justification += `• Armored Units: ${Math.round((comp.armor / total) * 100)}% (${comp.armor}pts) - ${militaryRoles.armor?.description || 'Heavy assault'}\n`;
       }
       if (comp.support) {
-        justification += `• Support Elements: ${Math.round((comp.support / total) * 100)}% (${comp.support}pts) - ${militaryRoles.fire_support?.description || 'Fire support'}\n`;
+        justification += `• Support Elements: ${Math.round((comp.support / total) * 100)}% (${comp.support}pts) - ${militaryRoles.support?.description || 'Fire support'}\n`;
+      }
+      if (comp.fastAttack) {
+        justification += `• Fast Attack: ${Math.round((comp.fastAttack / total) * 100)}% (${comp.fastAttack}pts) - ${militaryRoles.fastAttack?.description || 'Mobile assault'}\n`;
       }
       
       justification += `\n${army.militaryDoctrine.adherence}\n`;
@@ -1239,22 +1488,38 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
         <ul>
           <li>All armies are built to 2000 points (targeting 1980-2000 range)</li>
           <li>🎯 <strong>Rule of Three:</strong> Maximum 3 of each datasheet (matched play rules)</li>
-          <li>🏛️ <strong>Military Doctrine:</strong> Optional real-world force composition ratios for realistic armies</li>
-          <li>Unit selection prioritizes lore-appropriate choices</li>
-          <li>Equipment is optimized based on difficulty level</li>
-          <li>Subfaction abilities and synergies are considered</li>
+          <li>🏛️ <strong>Enhanced Military Doctrine:</strong> Real-world force composition and tactical employment principles</li>
+          <li>⚔️ <strong>Intelligent Quantity Selection:</strong> Unit quantities optimized based on role, cost, and mission requirements</li>
+          <li>Unit selection prioritizes lore-appropriate choices and subfaction synergies</li>
+          <li>Equipment is optimized based on difficulty level and scenario context</li>
+          <li>Subfaction abilities and tactical doctrines are considered</li>
           <li>Tactical Drones removed (now integrated as equipment/wargear)</li>
           <li>⚡ <strong>Aggressive Point Allocation:</strong> Maximizes point usage with equipment and additional units</li>
         </ul>
         
         <div className="doctrine-info">
-          <h4>🎯 Military Doctrine Features:</h4>
+          <h4>🎯 Enhanced Military Doctrine Features:</h4>
           <ul>
-            <li><strong>Realistic Ratios:</strong> Command 8-15%, Infantry 35-55%, Armor 15-35%, Support 10-25%</li>
-            <li><strong>Scenario Adaptation:</strong> Force composition adapts to mission type (defensive, assault, siege, etc.)</li>
-            <li><strong>Command Structure:</strong> Proper span of control and leadership ratios</li>
-            <li><strong>Combined Arms:</strong> Balanced integration of different unit types</li>
-            <li><strong>Real-World Analogs:</strong> Based on modern military doctrine and proven tactics</li>
+            <li><strong>Real Force Ratios:</strong> Command 5-12%, Infantry 50-70%, Heavy Assets 15-35%, Support 10-25%</li>
+            <li><strong>Mission-Specific Adaptation:</strong> Unit quantities adapt to operational requirements (defensive, assault, reconnaissance, siege)</li>
+            <li><strong>Command Span of Control:</strong> Limited command elements following real military leadership ratios</li>
+            <li><strong>Combined Arms Integration:</strong> Balanced mix ensures mutual support between unit types</li>
+            <li><strong>Tactical Employment:</strong> Unit quantities based on real-world tactical doctrine and proven effectiveness</li>
+            <li><strong>Cost-Effectiveness:</strong> Expensive units limited to prevent over-investment in single capabilities</li>
+            <li><strong>Infantry-Centric Doctrine:</strong> Emphasis on infantry backbone (80/20 rule) with appropriate support</li>
+            <li><strong>Budget Allocation:</strong> No single unit type consumes more than 30% of total force budget</li>
+          </ul>
+        </div>
+
+        <div className="tactical-principles">
+          <h4>⚖️ Real-World Tactical Principles Applied:</h4>
+          <ul>
+            <li><strong>Fire and Maneuver:</strong> Balance of firepower and mobility units</li>
+            <li><strong>Redundancy:</strong> Multiple units of core capabilities to prevent single points of failure</li>
+            <li><strong>Force Multipliers:</strong> Specialized units in limited quantities for maximum impact</li>
+            <li><strong>Logistics Constraints:</strong> Heavy units require proportional support elements</li>
+            <li><strong>Operational Flexibility:</strong> Mixed unit types provide tactical options</li>
+            <li><strong>Mission Command:</strong> Appropriate command structure for force size and complexity</li>
           </ul>
         </div>
       </div>
