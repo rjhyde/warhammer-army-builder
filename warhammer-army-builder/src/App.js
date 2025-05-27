@@ -13,7 +13,18 @@ function App() {
   const [selectedFaction, setSelectedFaction] = useState(null);
   const [selectedSubfaction, setSelectedSubfaction] = useState(null);
   const [generatedArmy, setGeneratedArmy] = useState(null);
-  const [currentStep, setCurrentStep] = useState('scenario');
+  const [currentStep, setCurrentStep] = useState('faction');
+
+  const handleFactionChange = (factionId, subfactionId, factionData, subfactionData) => {
+    setSelectedFaction(factionId);
+    setSelectedSubfaction(subfactionId);
+    setGeneratedArmy(null); // Reset army when faction changes
+    
+    // Proceed to scenario selection once faction is chosen
+    if (factionId && subfactionId) {
+      setCurrentStep('scenario');
+    }
+  };
 
   const handleScenarioSelect = (selectedScenario) => {
     setScenario(selectedScenario);
@@ -22,18 +33,7 @@ function App() {
 
   const handleDifficultySelect = (selectedDifficulty) => {
     setDifficulty(selectedDifficulty);
-    setCurrentStep('faction');
-  };
-
-  const handleFactionChange = (factionId, subfactionId, factionData, subfactionData) => {
-    setSelectedFaction(factionId);
-    setSelectedSubfaction(subfactionId);
-    setGeneratedArmy(null); // Reset army when faction changes
-    
-    // Only proceed to compose step if we have both faction and subfaction selected
-    if (factionId && subfactionId) {
-      setCurrentStep('compose');
-    }
+    setCurrentStep('compose');
   };
 
   const handleArmyGenerated = (army) => {
@@ -47,7 +47,7 @@ function App() {
     setSelectedFaction(null);
     setSelectedSubfaction(null);
     setGeneratedArmy(null);
-    setCurrentStep('scenario');
+    setCurrentStep('faction'); // Reset to faction selection
   };
 
   // For backward compatibility with ArmyComposer that expects the old faction string format
@@ -68,22 +68,26 @@ function App() {
       <main className="App-main">
         <UpdateNotification />
         
+        {currentStep === 'faction' && (
+          <FactionSelector 
+            onFactionChange={handleFactionChange}
+            selectedFaction={selectedFaction}
+            selectedSubfaction={selectedSubfaction}
+          />
+        )}
+
         {currentStep === 'scenario' && (
-          <ScenarioSelector onScenarioSelect={handleScenarioSelect} />
+          <ScenarioSelector 
+            onScenarioSelect={handleScenarioSelect}
+            selectedFaction={selectedFaction}
+            selectedSubfaction={selectedSubfaction}
+          />
         )}
 
         {currentStep === 'difficulty' && (
           <DifficultySelector 
             onDifficultySelect={handleDifficultySelect}
             scenario={scenario}
-          />
-        )}
-
-        {currentStep === 'faction' && (
-          <FactionSelector 
-            onFactionChange={handleFactionChange}
-            selectedFaction={selectedFaction}
-            selectedSubfaction={selectedSubfaction}
           />
         )}
 

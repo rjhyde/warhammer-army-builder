@@ -5,48 +5,48 @@ const difficultyLevels = [
   {
     id: 'easy',
     name: 'Easy',
-    description: 'Basic army composition with limited synergies',
+    description: 'Basic army composition with straightforward tactics',
     details: [
-      'Standard troop formations',
-      'Limited special characters',
+      'Standard unit formations',
       'Basic equipment loadouts',
-      'Straightforward tactics'
+      'Limited special characters',
+      'Straightforward deployment'
     ],
     color: '#4CAF50'
   },
   {
     id: 'medium',
     name: 'Medium',
-    description: 'Balanced force with moderate synergies and competitive elements',
+    description: 'Balanced force with moderate synergies and tactical flexibility',
     details: [
-      'Mixed unit types with some synergy',
+      'Mixed unit types with synergy',
       'Moderate use of special rules',
       'Balanced equipment choices',
-      'Tactical flexibility'
+      'Tactical coordination'
     ],
     color: '#FF9800'
   },
   {
     id: 'hard',
     name: 'Hard',
-    description: 'Highly optimized army with strong synergies and competitive build',
+    description: 'Highly optimized army with strong synergies and veteran formations',
     details: [
       'Optimized unit combinations',
-      'Named characters and relics',
+      'Named characters and heroes',
       'Competitive equipment loadouts',
-      'Strong tactical synergies'
+      'Elite tactical coordination'
     ],
     color: '#F44336'
   },
   {
     id: 'extreme',
     name: 'Extreme',
-    description: 'Tournament-level army with maximum synergies and optimization',
+    description: 'Tournament-level army with maximum optimization and legendary leaders',
     details: [
       'Meta-optimized compositions',
-      'Maximum character support',
+      'Legendary character support',
       'Highly specialized loadouts',
-      'Complex tactical interactions'
+      'Complex tactical synergies'
     ],
     color: '#9C27B0'
   }
@@ -57,39 +57,39 @@ function DifficultySelector({ onDifficultySelect, scenario }) {
     onDifficultySelect(difficulty);
   };
 
-  const getTauContextualInfo = (difficulty, scenario) => {
+  const getContextualInfo = (difficulty, scenario) => {
     const contextMap = {
       easy: {
-        defensive: 'Basic Fire Warrior teams with Pulse Rifle support',
-        assault: 'Standard Strike Teams with minimal drone support',
-        siege: 'Straightforward gunline tactics',
-        excavation: 'Basic Pathfinder reconnaissance',
-        research: 'Simple infiltration teams'
+        defensive: 'Basic infantry formations with standard defensive equipment',
+        assault: 'Standard assault troops with straightforward tactics',
+        siege: 'Simple combined arms approach',
+        reconnaissance: 'Basic reconnaissance units with limited support',
+        research: 'Standard security detachment with basic equipment'
       },
       medium: {
-        defensive: 'Fire Warriors with Crisis Suit support and tactical drones',
-        assault: 'Balanced Strike Teams with Stealth Suit reconnaissance',
-        siege: 'Combined arms with moderate Battlesuit support',
-        excavation: 'Pathfinders with Crisis Suit excavation teams',
-        research: 'Stealth teams with technical specialists'
+        defensive: 'Balanced force with heavy weapons support and tactical coordination',
+        assault: 'Combined arms assault with specialized units and support',
+        siege: 'Coordinated siege tactics with appropriate equipment',
+        reconnaissance: 'Fast attack units with moderate specialist support',
+        research: 'Balanced security force with specialized equipment'
       },
       hard: {
-        defensive: 'Optimized gunlines with Commander support and drone screens',
-        assault: 'Crisis Suit spearhead with coordinated drone support',
-        siege: 'Heavy Battlesuit presence with named Commander',
-        excavation: 'Specialized archaeological teams with heavy protection',
-        research: 'Elite infiltration with advanced technology'
+        defensive: 'Optimized defensive formation with veteran units and character support',
+        assault: 'Elite assault spearhead with veteran formations and leaders',
+        siege: 'Specialized siege warfare units with experienced commanders',
+        reconnaissance: 'Elite fast attack formations with specialist equipment',
+        research: 'Elite security forces with advanced technology and tactics'
       },
       extreme: {
-        defensive: 'Meta-optimized castle with maximum synergies',
-        assault: 'Tournament-level alpha strike composition',
-        siege: 'Competitive Battlesuit spam with character support',
-        excavation: 'Overwhelming technological superiority',
-        research: 'Elite special operations force'
+        defensive: 'Meta-optimized defensive castle with legendary commanders',
+        assault: 'Tournament-level alpha strike with maximum synergies',
+        siege: 'Elite siege specialists with legendary leader support',
+        reconnaissance: 'Maximum mobility with overwhelming specialist support',
+        research: 'Elite special operations force with legendary commanders'
       }
     };
 
-    return contextMap[difficulty]?.[scenario?.context] || contextMap[difficulty]?.general || 'Standard Tau deployment';
+    return contextMap[difficulty]?.[scenario?.context] || 'Standard military deployment for this difficulty';
   };
 
   return (
@@ -99,8 +99,8 @@ function DifficultySelector({ onDifficultySelect, scenario }) {
         <strong>Scenario:</strong> {scenario?.name}
       </p>
       <p className="difficulty-explanation">
-        Difficulty determines how optimized and synergistic the Tau army will be. 
-        Higher difficulties result in more competitive, well-coordinated forces.
+        Difficulty determines how optimized and tactically sophisticated the army will be. 
+        Higher difficulties result in more competitive, well-coordinated forces with veteran units and legendary leaders.
       </p>
 
       <div className="difficulty-grid">
@@ -124,7 +124,7 @@ function DifficultySelector({ onDifficultySelect, scenario }) {
 
               <h4>For This Scenario:</h4>
               <p className="contextual-info">
-                {getTauContextualInfo(level.id, scenario)}
+                {getContextualInfo(level.id, scenario)}
               </p>
             </div>
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { tauUnits, scenarioModifiers, difficultyModifiers } from '../data/tauUnits';
-import { militaryDoctrine, tauMilitaryRoles, realismScaling } from '../data/militaryDoctrine';
+import { getFactionData } from '../data/factionRegistry';
 import './ArmyComposer.css';
 
 function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
@@ -15,9 +14,48 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
     useRealWorldDoctrine: true
   });
 
+  // Get faction data dynamically
+  const getFactionUnitsAndData = (selectedFaction) => {
+    // Determine the main faction from subfaction
+    let mainFaction;
+    if (['tau_sept', 'farsight_enclaves', 'bork_an', 'vior_la', 'sacea'].includes(selectedFaction)) {
+      mainFaction = 'tau_empire';
+    } else if (['ultramarines', 'blood_angels', 'dark_angels', 'imperial_fists', 'iron_hands', 'salamanders'].includes(selectedFaction)) {
+      mainFaction = 'space_marines';
+    } else {
+      // If it's already a main faction
+      mainFaction = selectedFaction;
+    }
+
+    const factionData = getFactionData(mainFaction);
+    if (!factionData) {
+      console.error(`No faction data found for ${mainFaction}`);
+      return null;
+    }
+
+    return {
+      units: factionData.units,
+      scenarioModifiers: factionData.scenarioModifiers,
+      difficultyModifiers: factionData.difficultyModifiers,
+      militaryDoctrine: factionData.militaryDoctrine,
+      militaryRoles: factionData.militaryRoles,
+      mainFaction,
+      subfaction: selectedFaction
+    };
+  };
+
   const generateArmy = (useCustomChoices = false) => {
+    const factionData = getFactionUnitsAndData(faction);
+    if (!factionData) {
+      console.error('Failed to get faction data');
+      return;
+    }
+
+    const { units, scenarioModifiers, difficultyModifiers, militaryDoctrine, militaryRoles } = factionData;
+
     const army = {
       faction: faction,
+      mainFaction: factionData.mainFaction,
       scenario: scenario.name,
       difficulty: difficulty,
       units: [],
@@ -25,15 +63,23 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       loreJustification: ''
     };
 
-    const scenarioMods = scenarioModifiers[scenario.context] || scenarioModifiers.general;
+    const scenarioMods = scenarioModifiers[scenario.context] || scenarioModifiers.general || {
+      prioritize: [],
+      avoid: [],
+      characterPreference: [],
+      bonusUnits: []
+    };
     const difficultyMods = difficultyModifiers[difficulty];
-    const doctrineSettings = realismScaling[difficulty];
-    const scenarioDoctrine = militaryDoctrine.scenarioDoctrine[scenario.context] || militaryDoctrine.scenarioDoctrine.assault;
+    
+    // Use scenario doctrine if available, otherwise fall back to basic structure
+    const scenarioDoctrine = militaryDoctrine.scenarioDoctrine?.[scenario.context] || 
+                            militaryDoctrine.combatDoctrines?.[scenario.context] ||
+                            { composition: { command: { min: 5, max: 15 }, infantry: { min: 30, max: 60 }, armor: { min: 20, max: 50 }, support: { min: 5, max: 25 } } };
     
     // Helper function to categorize units by military role
     const getMilitaryRole = (unit) => {
-      for (const [role, roleData] of Object.entries(tauMilitaryRoles)) {
-        if (roleData.units.includes(unit.id)) {
+      for (const [role, roleData] of Object.entries(militaryRoles)) {
+        if (roleData.units && roleData.units.includes(unit.id)) {
           return role;
         }
       }
@@ -94,12 +140,12 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       }
       
       // Special doctrine bonuses
-      if (scenarioDoctrine.priorityRoles.some(role => unit.loreRoles?.includes(role))) {
+      if (scenarioDoctrine.priorityRoles?.some(role => unit.loreRoles?.includes(role))) {
         score += 3; // Bonus for scenario-specific roles
       }
       
-      // Command structure realism
-      if (unitRole === 'command') {
+      // Command structure realism (if doctrine has command structure)
+      if (unitRole === 'command' && militaryDoctrine.commandStructure) {
         const commandRatio = currentRolePoints / (army.totalPoints || 1);
         if (commandRatio < militaryDoctrine.commandStructure.minCommandRatio) {
           score += 4; // Need more command
@@ -114,12 +160,12 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
     // Helper function to get unit by ID
     const getUnitById = (id) => {
       const allUnits = [
-        ...tauUnits.hq,
-        ...tauUnits.troops,
-        ...tauUnits.elites,
-        ...tauUnits.fastAttack,
-        ...tauUnits.heavySupport,
-        ...tauUnits.namedCharacters
+        ...units.hq,
+        ...units.troops,
+        ...units.elites,
+        ...units.fastAttack,
+        ...units.heavySupport,
+        ...units.namedCharacters
       ];
       return allUnits.find(unit => unit.id === id);
     };
@@ -142,16 +188,23 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       let score = 0;
       
       // Base synergy with subfaction
-      const synergy = unit.subfactionSynergy[faction] || 'medium';
+      const synergy = unit.subfactionSynergy?.[faction] || 'medium';
       const synergyScores = { none: 0, low: 1, medium: 2, high: 3, very_high: 4 };
       score += synergyScores[synergy];
 
-      // Scenario preference
-      if (scenarioMods.prioritize.includes(unit.id)) score += 3;
-      if (scenarioMods.avoid.includes(unit.id)) score -= 2;
+      // Scenario preference - handle both T'au and Space Marine structures
+      if (scenarioMods.prioritize?.includes(unit.id)) {
+        score += 3;
+      } else if (scenarioMods.bonusUnits?.includes(unit.id)) {
+        score += 3; // Space Marine bonus units
+      }
+      
+      if (scenarioMods.avoid?.includes(unit.id)) {
+        score -= 2;
+      }
 
       // Character preference for scenario
-      if (unit.keywords?.includes('Character') && scenarioMods.characterPreference.includes(unit.id)) {
+      if (unit.keywords?.includes('Character') && scenarioMods.characterPreference?.includes(unit.id)) {
         score += 2;
       }
 
@@ -227,7 +280,7 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
           addUnit(hqUnit);
         }
       } else {
-        const bestHQ = selectBestUnit(tauUnits.hq, usedUnitIds, unitCounts);
+        const bestHQ = selectBestUnit(units.hq, usedUnitIds, unitCounts);
         if (bestHQ) {
           addUnit(bestHQ);
         }
@@ -235,7 +288,7 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
 
       // Add Named Character if requested
       if (customChoices.includeNamedCharacter && difficultyMods.namedCharacters) {
-        const namedChar = selectBestUnit(tauUnits.namedCharacters, usedUnitIds, unitCounts);
+        const namedChar = selectBestUnit(units.namedCharacters, usedUnitIds, unitCounts);
         if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 200) {
           addUnit(namedChar);
         }
@@ -251,7 +304,7 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
 
       // Add minimum troops first (mandatory)
       for (let i = 0; i < Math.min(minimumCounts.troops, 2); i++) {
-        const troopUnit = selectBestUnit(tauUnits.troops, [], unitCounts);
+        const troopUnit = selectBestUnit(units.troops, [], unitCounts);
         if (troopUnit && army.totalPoints + troopUnit.points <= TARGET_POINTS - 300) {
           addUnit(troopUnit);
         }
@@ -259,10 +312,10 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
 
       // Phase 3: Distribute remaining points according to preferences
       const categories = [
-        { units: tauUnits.troops, requestedCount: Math.max(0, minimumCounts.troops - 2), name: 'troops' },
-        { units: tauUnits.elites, requestedCount: minimumCounts.elites, name: 'elites' },
-        { units: tauUnits.fastAttack, requestedCount: minimumCounts.fastAttack, name: 'fastAttack' },
-        { units: tauUnits.heavySupport, requestedCount: minimumCounts.heavySupport, name: 'heavySupport' }
+        { units: units.troops, requestedCount: Math.max(0, minimumCounts.troops - 2), name: 'troops' },
+        { units: units.elites, requestedCount: minimumCounts.elites, name: 'elites' },
+        { units: units.fastAttack, requestedCount: minimumCounts.fastAttack, name: 'fastAttack' },
+        { units: units.heavySupport, requestedCount: minimumCounts.heavySupport, name: 'heavySupport' }
       ];
 
       // Sort categories by user preference (higher counts first)
@@ -385,14 +438,15 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       };
 
       // Phase 1: Establish command structure (mandatory HQ)
-      const bestHQ = selectBestUnitWithDoctrine(tauUnits.hq, usedUnitIds, unitCounts);
+      const bestHQ = selectBestUnitWithDoctrine(units.hq, usedUnitIds, unitCounts);
       if (bestHQ) {
         addUnit(bestHQ);
       }
 
       // Phase 2: Add named character for major operations (doctrine-based)
-      if (difficultyMods.namedCharacters && army.totalPoints >= militaryDoctrine.commandStructure.namedCharacterThreshold) {
-        const namedChar = selectBestUnitWithDoctrine(tauUnits.namedCharacters, usedUnitIds, unitCounts);
+      const namedCharacterThreshold = militaryDoctrine.commandStructure?.namedCharacterThreshold || 500;
+      if (difficultyMods.namedCharacters && army.totalPoints >= namedCharacterThreshold) {
+        const namedChar = selectBestUnitWithDoctrine(units.namedCharacters, usedUnitIds, unitCounts);
         if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 100) {
           addUnit(namedChar);
         }
@@ -420,19 +474,19 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
         let selectedUnit = null;
         
         if (neededRole === 'command') {
-          selectedUnit = selectBestUnitWithDoctrine(tauUnits.hq, [], unitCounts);
+          selectedUnit = selectBestUnitWithDoctrine(units.hq, [], unitCounts);
         } else if (neededRole === 'infantry') {
-          selectedUnit = selectBestUnitWithDoctrine(tauUnits.troops, [], unitCounts);
+          selectedUnit = selectBestUnitWithDoctrine(units.troops, [], unitCounts);
         } else if (neededRole === 'armor') {
-          const armorUnits = [...tauUnits.elites, ...tauUnits.heavySupport];
+          const armorUnits = [...units.elites, ...units.heavySupport];
           selectedUnit = selectBestUnitWithDoctrine(armorUnits, [], unitCounts);
         } else if (neededRole === 'support') {
-          selectedUnit = selectBestUnitWithDoctrine(tauUnits.fastAttack, [], unitCounts);
+          selectedUnit = selectBestUnitWithDoctrine(units.fastAttack, [], unitCounts);
         }
         
         // Fallback to any good unit if specific role selection fails
         if (!selectedUnit || army.totalPoints + selectedUnit.points > TARGET_POINTS) {
-          const allCategories = [tauUnits.troops, tauUnits.elites, tauUnits.heavySupport, tauUnits.fastAttack];
+          const allCategories = [units.troops, units.elites, units.heavySupport, units.fastAttack];
           for (const category of allCategories) {
             selectedUnit = selectBestUnitWithDoctrine(category, [], unitCounts);
             if (selectedUnit && army.totalPoints + selectedUnit.points <= TARGET_POINTS) {
@@ -480,7 +534,7 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
         
         // Try smaller units if equipment doesn't work
         if (!foundSomething) {
-          const allCategories = [tauUnits.fastAttack, tauUnits.elites, tauUnits.troops, tauUnits.heavySupport];
+          const allCategories = [units.fastAttack, units.elites, units.troops, units.heavySupport];
           
           for (const category of allCategories) {
             const unit = selectBestUnitWithDoctrine(category, [], unitCounts);
@@ -498,13 +552,16 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
 
       // Add doctrine information to army
       if (customChoices.useRealWorldDoctrine) {
+        const realismDescription = militaryDoctrine.realismScaling?.[difficulty]?.description || 
+                                 getDifficultyDescription(difficulty, army.mainFaction);
+                                 
         army.militaryDoctrine = {
-          scenario: scenarioDoctrine.name,
-          description: scenarioDoctrine.description,
-          realWorldAnalog: scenarioDoctrine.realWorldAnalog,
+          scenario: scenarioDoctrine.name || scenario.name,
+          description: scenarioDoctrine.description || scenario.description,
+          realWorldAnalog: scenarioDoctrine.realWorldAnalog || 'Combined arms doctrine',
           composition: currentComposition,
           targets: doctrineTargets,
-          adherence: doctrineSettings.description
+          adherence: realismDescription
         };
       }
     }
@@ -525,7 +582,7 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
     }
 
     // Generate lore justification
-    army.loreJustification = generateLoreJustification(army, scenario, faction, difficulty);
+    army.loreJustification = generateLoreJustification(army, scenario, faction, difficulty, militaryRoles);
 
     onArmyGenerated(army);
   };
@@ -551,69 +608,108 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
     return options;
   };
 
-  const generateLoreJustification = (army, scenario, subfaction, difficulty) => {
+  const generateLoreJustification = (army, scenario, subfaction, difficulty, militaryRoles) => {
     const factionNames = {
-      tau_empire: 'T\'au Sept',
+      // T'au Empire subfactions
+      tau_sept: 'T\'au Sept',
       farsight_enclaves: 'Farsight Enclaves',
       bork_an: 'Bork\'an Sept',
       vior_la: 'Vior\'la Sept',
-      sacea: 'Sa\'cea Sept'
-    };
-
-    const contextDescriptions = {
-      defensive: 'defensive positions',
-      assault: 'aggressive assault operations',
-      siege: 'siege warfare',
-      excavation: 'archaeological excavation',
-      research: 'research facility operations'
-    };
-
-    let justification = `The ${factionNames[subfaction]} has deployed this force for ${contextDescriptions[scenario.context] || 'general operations'}. `;
-
-    // Add military doctrine explanation if enabled
-    if (army.militaryDoctrine) {
-      justification += `\n\n🎯 **Military Doctrine:** ${army.militaryDoctrine.scenario}\n`;
-      justification += `${army.militaryDoctrine.description} `;
-      justification += `This composition follows ${army.militaryDoctrine.realWorldAnalog.toLowerCase()}, `;
-      justification += `with ${army.militaryDoctrine.adherence.toLowerCase()}.\n\n`;
+      sacea: 'Sa\'cea Sept',
       
-      // Add composition breakdown
-      justification += '**Force Composition Analysis:**\n';
+      // Space Marine chapters
+      ultramarines: 'Ultramarines',
+      blood_angels: 'Blood Angels',
+      dark_angels: 'Dark Angels',
+      imperial_fists: 'Imperial Fists',
+      iron_hands: 'Iron Hands',
+      salamanders: 'Salamanders',
+      
+      // Fallback main factions
+      tau_empire: 'T\'au Empire',
+      space_marines: 'Adeptus Astartes'
+    };
+
+    const factionName = factionNames[subfaction] || factionNames[army.mainFaction] || subfaction;
+    let justification = `**${factionName} Force Deployment Analysis**\n\n`;
+    
+    justification += `**Mission:** ${scenario.name}\n`;
+    justification += `**Force Size:** ${army.totalPoints} points (${army.units.length} units)\n`;
+    justification += `**Operational Difficulty:** ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}\n\n`;
+
+    // Add faction-specific tactical doctrine
+    if (army.mainFaction === 'tau_empire') {
+      justification += `**T'au Tactical Doctrine:**\n`;
+      justification += `This force follows the principles of the Greater Good, emphasizing combined arms warfare and technological superiority. `;
+      justification += `Fire Warrior teams provide flexible firepower, while battlesuits deliver precision strikes and heavy weapons support.\n\n`;
+    } else if (army.mainFaction === 'space_marines') {
+      justification += `**Adeptus Astartes Tactical Doctrine:**\n`;
+      justification += `This force follows the tenets of the Codex Astartes, emphasizing tactical flexibility and combined arms warfare. `;
+      justification += `Space Marine squads provide versatile infantry backbone, while elite units deliver decisive strikes at critical moments.\n\n`;
+    }
+
+    // List key units with tactical roles
+    justification += `**Key Force Elements:**\n`;
+    army.units.forEach(unit => {
+      const role = unit.loreRoles?.[0] || 'Combat Unit';
+      justification += `• ${unit.name}: ${role} (${unit.points}pts)\n`;
+    });
+
+    // Military doctrine composition if used
+    if (army.militaryDoctrine) {
       const total = army.totalPoints;
       const comp = army.militaryDoctrine.composition;
       
-      justification += `• Command Elements: ${Math.round((comp.command / total) * 100)}% (${comp.command}pts) - ${tauMilitaryRoles.command.realWorldRole}\n`;
-      justification += `• Infantry Forces: ${Math.round((comp.infantry / total) * 100)}% (${comp.infantry}pts) - ${tauMilitaryRoles.infantry.realWorldRole}\n`;
-      justification += `• Armored Units: ${Math.round((comp.armor / total) * 100)}% (${comp.armor}pts) - ${tauMilitaryRoles.armor.realWorldRole}\n`;
-      justification += `• Support Elements: ${Math.round((comp.support / total) * 100)}% (${comp.support}pts) - ${tauMilitaryRoles.support.realWorldRole}\n\n`;
-    }
-
-    const hasNamedCharacter = army.units.some(unit => unit.keywords?.includes('Epic Hero'));
-    const hasBattlesuits = army.units.some(unit => unit.keywords?.includes('Battlesuit'));
-    const hasFireWarriors = army.units.some(unit => unit.keywords?.includes('Fire Warrior'));
-
-    if (hasNamedCharacter) {
-      justification += 'The presence of a legendary commander indicates the critical importance of this mission. ';
-    }
-
-    if (subfaction === 'farsight_enclaves' && hasBattlesuits) {
-      justification += 'True to Farsight doctrine, the force emphasizes elite battlesuit formations for close-range engagement. ';
-    } else if (subfaction === 'bork_an') {
-      justification += 'Leveraging Bork\'an\'s technological superiority, the force is optimized for long-range engagement. ';
-    } else if (hasFireWarriors && hasBattlesuits) {
-      justification += 'The balanced composition reflects T\'au combined arms doctrine, integrating Fire Warrior flexibility with battlesuit superiority. ';
-    }
-
-    if (difficulty === 'extreme') {
-      justification += 'This represents a maximum-effort deployment with the sect\'s most experienced warriors and advanced equipment.';
-    } else if (difficulty === 'hard') {
-      justification += 'The force includes veteran units and optimized equipment for competitive advantage.';
+      justification += `\n**Military Doctrine Composition:**\n`;
+      justification += `• Command Elements: ${Math.round((comp.command / total) * 100)}% (${comp.command}pts) - ${militaryRoles.command?.description || 'Command structure'}\n`;
+      justification += `• Infantry Forces: ${Math.round((comp.infantry / total) * 100)}% (${comp.infantry}pts) - ${militaryRoles.line_infantry?.description || 'Main battle line'}\n`;
+      
+      if (comp.armor) {
+        justification += `• Armored Units: ${Math.round((comp.armor / total) * 100)}% (${comp.armor}pts) - ${militaryRoles.elite_assault?.description || 'Heavy assault'}\n`;
+      }
+      if (comp.support) {
+        justification += `• Support Elements: ${Math.round((comp.support / total) * 100)}% (${comp.support}pts) - ${militaryRoles.fire_support?.description || 'Fire support'}\n`;
+      }
+      
+      justification += `\n${army.militaryDoctrine.adherence}\n`;
     }
 
     return justification;
   };
 
-  const availableHQChoices = filterUnitsByFaction(tauUnits.hq, faction);
+  // Helper function to get faction-agnostic difficulty descriptions
+  const getDifficultyDescription = (difficulty, factionType) => {
+    const descriptions = {
+      easy: {
+        title: 'Basic Operations',
+        description: 'Straightforward deployment with standard tactical formations and basic equipment loadouts'
+      },
+      medium: {
+        title: 'Standard Campaign', 
+        description: 'Balanced force composition with mix of standard and specialized units, moderate tactical complexity'
+      },
+      hard: {
+        title: 'Elite Operations',
+        description: 'Veteran formations with specialized equipment, complex tactical coordination and elite unit deployment'
+      },
+      extreme: {
+        title: 'Maximum Effort Deployment',
+        description: 'Legendary commanders leading elite forces with optimized equipment in the most demanding scenarios'
+      }
+    };
+
+    return descriptions[difficulty]?.description || 'Standard military operations';
+  };
+
+  // Get faction data for render
+  const factionData = getFactionUnitsAndData(faction);
+  if (!factionData) {
+    return <div>Error: Cannot load faction data</div>;
+  }
+
+  const { units, difficultyModifiers } = factionData;
+  const difficultyMods = difficultyModifiers[difficulty];
+  const availableHQChoices = filterUnitsByFaction(units.hq, faction);
 
   return (
     <div className="army-composer">
@@ -703,7 +799,7 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
                 </select>
               </div>
 
-              {difficultyModifiers[difficulty].namedCharacters && (
+              {difficultyMods.namedCharacters && (
                 <div className="form-group">
                   <label className="checkbox-label">
                     <input
