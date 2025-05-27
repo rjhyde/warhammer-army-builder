@@ -94,9 +94,58 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
   };
 
   const generateArmy = (useCustomChoices = false) => {
-    const factionData = getFactionUnitsAndData(faction);
-    if (!factionData) {
-      console.error('Failed to get faction data');
+    console.log('🚀 Generate Army started', { useCustomChoices, faction, scenario, difficulty });
+    
+    try {
+      const factionData = getFactionUnitsAndData(faction);
+      if (!factionData) {
+        console.error('❌ Failed to get faction data for:', faction);
+        alert('Error: Could not load faction data. Please try refreshing the page.');
+        return;
+      }
+      
+      console.log('✅ Faction data loaded:', factionData.mainFaction);
+
+      const { units, scenarioModifiers, difficultyModifiers, militaryDoctrine, militaryRoles } = factionData;
+
+      const army = {
+        faction: faction,
+        mainFaction: factionData.mainFaction,
+        scenario: scenario.name,
+        difficulty: difficulty,
+        units: [],
+        totalPoints: 0,
+        loreJustification: ''
+      };
+
+      console.log('✅ Army object initialized');
+
+      const scenarioMods = scenarioModifiers[scenario.context] || scenarioModifiers.general || {
+        prioritize: [],
+        avoid: [],
+        characterPreference: [],
+        bonusUnits: []
+      };
+      const difficultyMods = difficultyModifiers[difficulty];
+      
+      // Use scenario doctrine if available, otherwise fall back to basic structure
+      const scenarioDoctrine = militaryDoctrine.scenarioDoctrine?.[scenario.context] || 
+                              militaryDoctrine.combatDoctrines?.[scenario.context] ||
+                              { 
+                                composition: { 
+                                  command: { min: 5, max: 15 }, 
+                                  infantry: { min: 30, max: 60 }, 
+                                  armor: { min: 20, max: 50 }, 
+                                  support: { min: 5, max: 25 },
+                                  fastAttack: { min: 5, max: 15 }
+                                } 
+                              };
+      
+      console.log('✅ Doctrine loaded:', scenarioDoctrine.name || 'fallback');
+      
+    } catch (error) {
+      console.error('❌ Error in generateArmy:', error);
+      alert('Error generating army: ' + error.message + '\n\nPlease check the browser console for details.');
       return;
     }
 
@@ -123,7 +172,15 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
     // Use scenario doctrine if available, otherwise fall back to basic structure
     const scenarioDoctrine = militaryDoctrine.scenarioDoctrine?.[scenario.context] || 
                             militaryDoctrine.combatDoctrines?.[scenario.context] ||
-                            { composition: { command: { min: 5, max: 15 }, infantry: { min: 30, max: 60 }, armor: { min: 20, max: 50 }, support: { min: 5, max: 25 } } };
+                            { 
+                              composition: { 
+                                command: { min: 5, max: 15 }, 
+                                infantry: { min: 30, max: 60 }, 
+                                armor: { min: 20, max: 50 }, 
+                                support: { min: 5, max: 25 },
+                                fastAttack: { min: 5, max: 15 }
+                              } 
+                            };
     
     // Helper function to categorize units by military role
     const getMilitaryRole = (unit) => {
