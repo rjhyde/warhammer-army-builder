@@ -190,6 +190,14 @@ function ArmyDisplay({ army, scenario, difficulty, faction, onStartOver }) {
           const unitNumber = units.length > 1 ? ` ${index + 1}` : '';
           text += `${unit.name}${unitNumber}\n`;
           
+          // Show attached leader if present (10th Edition)
+          if (unit.attachedLeader) {
+            text += `  ↳ Attached Leader: ${unit.attachedLeader.name}\n`;
+            if (unit.attachedLeader.bonuses && unit.attachedLeader.bonuses.length > 0) {
+              text += `    Bonuses: ${unit.attachedLeader.bonuses.join(', ')}\n`;
+            }
+          }
+          
           if (unit.models > 1) {
             text += `  Models: ${unit.models}\n`;
           }
@@ -371,6 +379,26 @@ function ArmyDisplay({ army, scenario, difficulty, faction, onStartOver }) {
                   </div>
                   
                   <div className="unit-details">
+                    {/* Leader attachment display (10th Edition) */}
+                    {unit.attachedLeader && (
+                      <div className="attached-leader">
+                        <h5 className="leader-title">📋 Attached Leader</h5>
+                        <div className="leader-info">
+                          <span className="leader-name">{unit.attachedLeader.name}</span>
+                          {unit.attachedLeader.bonuses && unit.attachedLeader.bonuses.length > 0 && (
+                            <div className="leader-bonuses">
+                              <strong>Leader Abilities:</strong>
+                              <ul>
+                                {unit.attachedLeader.bonuses.map((bonus, bonusIdx) => (
+                                  <li key={bonusIdx}>{bonus}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
                     {/* Quick overview - always visible */}
                     <div className="equipment-overview">
                       <div className="equipment-category">

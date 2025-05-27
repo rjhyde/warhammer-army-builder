@@ -14,6 +14,63 @@ export const dataVersion = {
   warhammerCommunityCheck: true // Enable checking for updates
 };
 
+// 10th Edition Leader Attachment Rules for T'au Empire
+export const leaderAttachmentRules = {
+  // T'au Empire HQ units can embed with specific unit types
+  commander_crisis: {
+    canAttachTo: ['crisis_suits_sunforge', 'crisis_suits_starscythe', 'crisis_suits_fireknife'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', '+1 to hit rolls', 'Can use leader abilities']
+  },
+  commander_enforcer: {
+    canAttachTo: ['crisis_suits_sunforge', 'crisis_suits_starscythe', 'crisis_suits_fireknife'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', '+1 to hit rolls', 'Can use leader abilities']
+  },
+  ethereal: {
+    canAttachTo: ['fire_warriors_strike', 'fire_warriors_breacher'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', 'Aura abilities', 'Inspiring Presence']
+  },
+  cadre_fireblade: {
+    canAttachTo: ['fire_warriors_strike', 'fire_warriors_breacher'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', 'Volley Fire', 'Markerlight support']
+  },
+  // Kroot Character leaders
+  kroot_flesh_shaper: {
+    canAttachTo: ['kroot_carnivores'],
+    restrictions: ['Cannot attach to units that already have a leader', 'Kroot units only'],
+    bonuses: ['Unit gains Leader keyword', 'Battlefield surgery', 'Kroot leadership']
+  },
+  kroot_lone_spear: {
+    canAttachTo: ['kroot_carnivores'],
+    restrictions: ['Cannot attach to units that already have a leader', 'Kroot units only'],
+    bonuses: ['Unit gains Leader keyword', 'Precision shots', 'Hunter instincts']
+  },
+  kroot_trail_shaper: {
+    canAttachTo: ['kroot_carnivores'],
+    restrictions: ['Cannot attach to units that already have a leader', 'Kroot units only'],
+    bonuses: ['Unit gains Leader keyword', 'Stealth guidance', 'Tracking abilities']
+  },
+  kroot_war_shaper: {
+    canAttachTo: ['kroot_carnivores'],
+    restrictions: ['Cannot attach to units that already have a leader', 'Kroot units only'],
+    bonuses: ['Unit gains Leader keyword', 'War chants', 'Combat bonuses']
+  },
+  // Named Characters
+  commander_farsight: {
+    canAttachTo: ['crisis_suits_sunforge', 'crisis_suits_starscythe', 'crisis_suits_fireknife'],
+    restrictions: ['Cannot attach to units that already have a leader', 'Farsight Enclaves only'],
+    bonuses: ['Unit gains Leader keyword', 'Inspiring Leader', 'Dawn Blade abilities']
+  },
+  commander_shadowsun: {
+    canAttachTo: ['stealth_suits'],
+    restrictions: ['Cannot attach to units that already have a leader', 'Cannot be used with Farsight Enclaves'],
+    bonuses: ['Unit gains Leader keyword', 'Master of Stealth', 'Infiltration bonuses']
+  }
+};
+
 export const tauUnits = {
   // HQ Units
   hq: [
@@ -23,6 +80,10 @@ export const tauUnits = {
       points: 90,
       models: 1,
       keywords: ['Character', 'Battlesuit', 'Fly', 'Commander'],
+      leaderAttachment: {
+        canAttachTo: ['crisis_suits_sunforge', 'crisis_suits_starscythe', 'crisis_suits_fireknife'],
+        bonuses: ['Leader abilities', 'Re-roll 1s to hit', 'Tactical coordination']
+      },
       equipment: {
         base: ['Plasma rifle', 'Fusion blaster', 'Shield generator'],
         options: [
@@ -50,6 +111,10 @@ export const tauUnits = {
       points: 110,
       models: 1,
       keywords: ['Character', 'Battlesuit', 'Fly', 'Commander'],
+      leaderAttachment: {
+        canAttachTo: ['crisis_suits_sunforge', 'crisis_suits_starscythe', 'crisis_suits_fireknife'],
+        bonuses: ['Leader abilities', 'Re-roll 1s to hit', 'Defensive coordination']
+      },
       equipment: {
         base: ['Plasma rifle', 'Missile pod', 'Shield generator'],
         options: [
@@ -75,6 +140,10 @@ export const tauUnits = {
       points: 65,
       models: 1,
       keywords: ['Character', 'Infantry', 'Ethereal'],
+      leaderAttachment: {
+        canAttachTo: ['fire_warriors_strike', 'fire_warriors_breacher'],
+        bonuses: ['Leader abilities', 'Aura of leadership', 'Inspiring Presence']
+      },
       equipment: {
         base: ['Honour blade', 'Hover drone'],
         options: []
@@ -95,6 +164,10 @@ export const tauUnits = {
       points: 55,
       models: 1,
       keywords: ['Character', 'Infantry', 'Fire Caste'],
+      leaderAttachment: {
+        canAttachTo: ['fire_warriors_strike', 'fire_warriors_breacher'],
+        bonuses: ['Leader abilities', 'Volley Fire', 'Markerlight coordination']
+      },
       equipment: {
         base: ['Pulse rifle', 'Markerlight'],
         options: [
@@ -294,17 +367,17 @@ export const tauUnits = {
     {
       id: 'riptide_battlesuit',
       name: 'Riptide Battlesuit',
-      points: 280,
+      points: 190,
       models: 1,
-      keywords: ['Battlesuit', 'Fly', 'Riptide', 'Titanic'],
+      keywords: ['Battlesuit', 'Fly', 'Riptide', 'Vehicle', 'Walker'],
       equipment: {
-        base: ['Ion accelerator', 'Smart missile system x2', 'Velocity tracker'],
+        base: ['Heavy burst cannon', 'Twin plasma rifle', 'Riptide fists'],
         options: [
-          { name: 'Heavy burst cannon', cost: 0 },
-          { name: 'Twin plasma rifle', cost: 0 },
-          { name: 'Twin fusion blaster', cost: 0 },
-          { name: 'Amplified ion accelerator', cost: 0 },
-          { name: 'Target lock', cost: 0 }
+          { name: 'Ion accelerator (replaces heavy burst cannon)', cost: 0 },
+          { name: 'Twin fusion blaster (replaces twin plasma rifle)', cost: 0 },
+          { name: 'Twin smart missile system (replaces twin plasma rifle)', cost: 0 },
+          { name: 'Missile drone', cost: 0 },
+          { name: 'Missile drone x2', cost: 0 }
         ]
       },
       loreRoles: ['centerpiece', 'heavy_fire_support', 'anti_armor'],
@@ -349,6 +422,10 @@ export const tauUnits = {
       equipment: {
         base: ['Ripping fangs']
       },
+      abilities: [
+        'Loping Pounce: This unit can declare a charge in a turn in which it Advanced',
+        'Hunting Hounds: While this unit is within 6" of a friendly Kroot Character, models in this unit have an Objective Control characteristic of 1 instead of 0'
+      ],
       loreRoles: ['fast_assault', 'scouts', 'harassment'],
       competitiveLevel: 'medium',
       subfactionSynergy: {
@@ -411,6 +488,98 @@ export const tauUnits = {
         vior_la: 'very_high',
         sacea: 'very_high'
       }
+    },
+    {
+      id: 'kroot_flesh_shaper',
+      name: 'Kroot Flesh Shaper',
+      points: 50,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'Flesh Shaper'],
+      leaderAttachment: {
+        canAttachTo: ['kroot_carnivores'],
+        bonuses: ['Leader abilities', 'Battlefield surgery', 'Kroot unit coordination']
+      },
+      equipment: {
+        base: ['Kroot rifle', 'Flesh shaper tools', 'Ritual blade']
+      },
+      loreRoles: ['kroot_leader', 'field_surgery', 'auxiliary_command'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'high',
+        bork_an: 'low',
+        vior_la: 'medium',
+        sacea: 'medium'
+      }
+    },
+    {
+      id: 'kroot_lone_spear',
+      name: 'Kroot Lone-Spear',
+      points: 70,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'Lone-Spear'],
+      leaderAttachment: {
+        canAttachTo: ['kroot_carnivores'],
+        bonuses: ['Leader abilities', 'Precision targeting', 'Hunter coordination']
+      },
+      equipment: {
+        base: ['Kroot long gun', 'Hunting stave', 'Kroot blade']
+      },
+      loreRoles: ['kroot_sniper', 'lone_operative', 'hunter'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'very_high',
+        bork_an: 'medium',
+        vior_la: 'high',
+        sacea: 'medium'
+      }
+    },
+    {
+      id: 'kroot_trail_shaper',
+      name: 'Kroot Trail Shaper',
+      points: 60,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'Trail Shaper'],
+      leaderAttachment: {
+        canAttachTo: ['kroot_carnivores'],
+        bonuses: ['Leader abilities', 'Stealth coordination', 'Infiltration guidance']
+      },
+      equipment: {
+        base: ['Kroot rifle', 'Shaper kroot rifle', 'Ritual blade']
+      },
+      loreRoles: ['kroot_leader', 'tracker', 'stealth_specialist'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'high',
+        bork_an: 'medium',
+        vior_la: 'very_high',
+        sacea: 'high'
+      }
+    },
+    {
+      id: 'kroot_war_shaper',
+      name: 'Kroot War Shaper',
+      points: 65,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'War Shaper'],
+      leaderAttachment: {
+        canAttachTo: ['kroot_carnivores'],
+        bonuses: ['Leader abilities', 'War chants', 'Close combat coordination']
+      },
+      equipment: {
+        base: ['Kroot scattergun', 'Bladestaves', 'War shaper adornments']
+      },
+      loreRoles: ['kroot_leader', 'close_combat', 'war_chant'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'very_high',
+        bork_an: 'low',
+        vior_la: 'medium',
+        sacea: 'medium'
+      }
     }
   ],
 
@@ -459,21 +628,49 @@ export const tauUnits = {
       }
     },
     {
-      id: 'kroot_shapers',
-      name: 'Kroot Shapers',
-      points: 45,
-      models: 1,
-      keywords: ['Character', 'Infantry', 'Kroot', 'Auxiliary'],
+      id: 'krootox_rampagers',
+      name: 'Krootox Rampagers',
+      points: 80,
+      models: 3,
+      keywords: ['Beast', 'Kroot', 'Auxiliary', 'Krootox'],
       equipment: {
-        base: ['Kroot rifle', 'Ritual blade']
+        base: ['Krootox fists', 'Kroot gun']
       },
-      loreRoles: ['auxiliary_command', 'kroot_support', 'melee_specialist'],
-      competitiveLevel: 'medium',
+      abilities: [
+        'Berserk Rampage: Each time this unit makes a Charge move, until the end of the turn, melee weapons equipped by models in this unit have the [DEVASTATING WOUNDS] ability'
+      ],
+      loreRoles: ['assault', 'shock_troops', 'auxiliary'],
+      competitiveLevel: 'high',
       subfactionSynergy: {
         tau_empire: 'medium',
-        farsight_enclaves: 'high',
+        farsight_enclaves: 'very_high',
         bork_an: 'low',
         vior_la: 'medium',
+        sacea: 'low'
+      }
+    },
+    {
+      id: 'krootox_riders',
+      name: 'Krootox Riders',
+      points: 115,
+      models: 3,
+      keywords: ['Beast', 'Kroot', 'Auxiliary', 'Krootox'],
+      equipment: {
+        base: ['Kroot gun', 'Krootox fists'],
+        options: [
+          { name: 'Kroot bolt-thrower (1 model)', cost: 0 }
+        ]
+      },
+      abilities: [
+        'Kroot Packmates: Each time an enemy unit targets a friendly Kroot unit within 6" of this unit with ranged attacks, this unit can shoot at that enemy unit as if it were your Shooting phase'
+      ],
+      loreRoles: ['fire_support', 'mobile_artillery', 'auxiliary'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'high',
+        bork_an: 'medium',
+        vior_la: 'high',
         sacea: 'medium'
       }
     }
@@ -603,6 +800,62 @@ export const tauUnits = {
     }
   ],
 
+  // Aircraft
+  aircraft: [
+    {
+      id: 'sun_shark_bomber',
+      name: 'Sun Shark Bomber',
+      points: 160,
+      models: 1,
+      keywords: ['Vehicle', 'Aircraft', 'Fly', 'Sun Shark Bomber'],
+      equipment: {
+        base: ['Missile pod', 'Seeker missile x2', 'Twin ion rifle x2', 'Armoured hull'],
+        options: [
+          { name: 'Twin missile pod (replaces missile pod)', cost: 0 }
+        ]
+      },
+      abilities: [
+        'Deadly Demise D3',
+        'Pulse Bombs: Each time this model ends a Normal move, you can select one enemy unit it moved over during that move and roll six D6: for each 4+, that unit suffers 1 mortal wound'
+      ],
+      loreRoles: ['bomber', 'ground_attack', 'air_support'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'medium',
+        bork_an: 'very_high',
+        vior_la: 'high',
+        sacea: 'very_high'
+      }
+    },
+    {
+      id: 'razorshark_strike_fighter',
+      name: 'Razorshark Strike Fighter',
+      points: 150,
+      models: 1,
+      keywords: ['Vehicle', 'Aircraft', 'Fly', 'Razorshark'],
+      equipment: {
+        base: ['Quad ion turret', 'Accelerator burst cannon', 'Seeker missile x2'],
+        options: [
+          { name: 'Missile pod (replaces accelerator burst cannon)', cost: 0 }
+        ]
+      },
+      abilities: [
+        'Deadly Demise D3',
+        'Interceptor: Each time this model makes a ranged attack that targets a unit that can FLY, add 1 to the Hit roll'
+      ],
+      loreRoles: ['interceptor', 'air_superiority', 'anti_aircraft'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'high',
+        bork_an: 'very_high',
+        vior_la: 'high',
+        sacea: 'very_high'
+      }
+    }
+  ],
+
   // Named Characters
   namedCharacters: [
     {
@@ -611,6 +864,10 @@ export const tauUnits = {
       points: 130,
       models: 1,
       keywords: ['Character', 'Battlesuit', 'Fly', 'Commander', 'Epic Hero'],
+      leaderAttachment: {
+        canAttachTo: ['crisis_suits_sunforge', 'crisis_suits_starscythe', 'crisis_suits_fireknife'],
+        bonuses: ['Leader abilities', 'Inspiring Leader', 'Dawn Blade combat bonuses']
+      },
       equipment: {
         base: ['Dawn blade', 'High-intensity plasma rifle', 'Shield generator'],
         options: []
@@ -632,6 +889,10 @@ export const tauUnits = {
       points: 120,
       models: 1,
       keywords: ['Character', 'Battlesuit', 'Fly', 'Commander', 'Epic Hero'],
+      leaderAttachment: {
+        canAttachTo: ['stealth_suits'],
+        bonuses: ['Leader abilities', 'Master of Stealth', 'Infiltration coordination']
+      },
       equipment: {
         base: ['Flechette launcher', 'High-energy fusion blaster', 'Light missile pod'],
         options: []

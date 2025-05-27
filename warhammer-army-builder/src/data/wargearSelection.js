@@ -819,12 +819,24 @@ export function selectWargear(unit, scenario, difficulty) {
       break;
 
     case 'riptide_battlesuit':
+      // Choose main gun replacement
       if (Math.random() < scenarioRules.weaponChance) {
-        selectedOptions.push('Ion accelerator');
-        selectedOptions.push('Twin fusion blaster');
+        selectedOptions.push('Ion accelerator (replaces heavy burst cannon)');
       }
-      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
-        selectedOptions.push(scenarioRules.secondaryWeapon);
+      
+      // Choose secondary weapon replacement
+      if (Math.random() < scenarioRules.weaponChance) {
+        const secondaryOptions = [
+          'Twin fusion blaster (replaces twin plasma rifle)',
+          'Twin smart missile system (replaces twin plasma rifle)'
+        ];
+        selectedOptions.push(secondaryOptions[Math.floor(Math.random() * secondaryOptions.length)]);
+      }
+      
+      // Add missile drones
+      if (Math.random() < scenarioRules.upgradeChance) {
+        const droneOptions = ['Missile drone', 'Missile drone x2'];
+        selectedOptions.push(droneOptions[Math.floor(Math.random() * droneOptions.length)]);
       }
       break;
 
@@ -871,6 +883,44 @@ export function selectWargear(unit, scenario, difficulty) {
     case 'vespid_stingwings':
       if (Math.random() < scenarioRules.weaponChance) {
         selectedOptions.push('Neutron blaster');
+      }
+      break;
+
+    case 'kroot_flesh_shaper':
+      // Character with fixed equipment - no additional options needed
+      break;
+
+    case 'kroot_lone_spear':
+      // Character with fixed equipment - no additional options needed
+      break;
+
+    case 'kroot_trail_shaper':
+      // Character with fixed equipment - no additional options needed
+      break;
+
+    case 'kroot_war_shaper':
+      // Character with fixed equipment - no additional options needed
+      break;
+
+    case 'krootox_rampagers':
+      // Fixed equipment assault unit
+      break;
+
+    case 'krootox_riders':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Kroot bolt-thrower (1 model)');
+      }
+      break;
+
+    case 'sun_shark_bomber':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Twin missile pod (replaces missile pod)');
+      }
+      break;
+
+    case 'razorshark_strike_fighter':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Missile pod (replaces accelerator burst cannon)');
       }
       break;
 

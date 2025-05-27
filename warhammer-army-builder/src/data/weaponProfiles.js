@@ -922,7 +922,132 @@ export const weaponProfiles = {
     category: 'Melee Weapon',
     description: 'Vespid natural weapons'
   },
-
+  
+  // Additional Kroot Weapons
+  'krootox_fists': {
+    name: 'Krootox Fists',
+    range: 'Melee',
+    type: 'Melee',
+    strength: '+2',
+    ap: -1,
+    damage: 2,
+    abilities: ['Melee'],
+    category: 'Melee Weapon',
+    description: 'Krootox natural weapons'
+  },
+  'kroot_bolt_thrower': {
+    name: 'Kroot Bolt-thrower',
+    range: '24"',
+    type: 'Heavy 4',
+    strength: 6,
+    ap: -1,
+    damage: 1,
+    abilities: ['Heavy', 'Indirect Fire'],
+    category: 'Heavy Weapon',
+    description: 'Kroot artillery weapon'
+  },
+  'kroot_long_gun': {
+    name: 'Kroot Long Gun',
+    range: '30"',
+    type: 'Heavy 1',
+    strength: 5,
+    ap: -1,
+    damage: 2,
+    abilities: ['Heavy', 'Precision'],
+    category: 'Sniper Weapon',
+    description: 'Kroot Lone-Spear precision rifle'
+  },
+  'hunting_stave': {
+    name: 'Hunting Stave',
+    range: 'Melee',
+    type: 'Melee',
+    strength: '+1',
+    ap: 0,
+    damage: 1,
+    abilities: ['Melee'],
+    category: 'Melee Weapon',
+    description: 'Kroot Lone-Spear melee weapon'
+  },
+  'shaper_kroot_rifle': {
+    name: 'Shaper Kroot Rifle',
+    range: '24"',
+    type: 'Rapid Fire 2',
+    strength: 4,
+    ap: 0,
+    damage: 1,
+    abilities: ['Rapid Fire'],
+    category: 'Basic Weapon',
+    description: 'Enhanced Kroot rifle'
+  },
+  'kroot_scattergun': {
+    name: 'Kroot Scattergun',
+    range: '12"',
+    type: 'Assault 2',
+    strength: 3,
+    ap: 0,
+    damage: 1,
+    abilities: ['Assault', 'Torrent'],
+    category: 'Basic Weapon',
+    description: 'Kroot close-range weapon'
+  },
+  'bladestaves': {
+    name: 'Bladestaves',
+    range: 'Melee',
+    type: 'Melee',
+    strength: '+1',
+    ap: -1,
+    damage: 1,
+    abilities: ['Melee', 'Twin-linked'],
+    category: 'Melee Weapon',
+    description: 'Kroot War Shaper paired weapons'
+  },
+  'flesh_shaper_tools': {
+    name: 'Flesh Shaper Tools',
+    range: '-',
+    type: 'Support',
+    strength: '-',
+    ap: '-',
+    damage: '-',
+    abilities: ['Medical Support'],
+    category: 'Support Equipment',
+    description: 'Kroot medical instruments'
+  },
+  
+  // Aircraft Weapons
+  'quad_ion_turret': {
+    name: 'Quad Ion Turret',
+    range: '30"',
+    type: 'Heavy 6',
+    strength: 7,
+    ap: -2,
+    damage: 2,
+    abilities: ['Heavy', 'Overcharge'],
+    category: 'Aircraft Weapon',
+    description: 'Razorshark primary weapon'
+  },
+  'accelerator_burst_cannon': {
+    name: 'Accelerator Burst Cannon',
+    range: '18"',
+    type: 'Assault 4',
+    strength: 6,
+    ap: 0,
+    damage: 1,
+    abilities: ['Assault'],
+    category: 'Aircraft Weapon',
+    description: 'Razorshark secondary weapon'
+  },
+  'armoured_hull': {
+    name: 'Armoured Hull',
+    range: 'Melee',
+    type: 'Melee',
+    strength: 6,
+    ap: 0,
+    damage: 1,
+    abilities: ['Melee'],
+    category: 'Melee Weapon',
+    description: 'Aircraft ramming attack'
+  },
+  
   // SPACE MARINE WEAPONS
   
   // Dreadnought Weapons

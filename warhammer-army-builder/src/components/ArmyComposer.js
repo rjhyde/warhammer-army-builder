@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { getFactionData } from '../data/factionRegistry';
 import { selectWargear } from '../data/wargearSelection';
 import { selectSpaceMarineWargear } from '../data/spaceMarineWargear';
+import { leaderAttachmentRules as tauLeaderRules } from '../data/tauUnits';
+import { leaderAttachmentRules as spaceMarineLeaderRules } from '../data/spaceMarineUnits';
 import './ArmyComposer.css';
 
 function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
@@ -476,6 +478,82 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       };
     };
 
+    // 10th Edition Leader Embedding System
+    const getLeaderAttachmentRules = (factionType) => {
+      if (factionType === 'tau_empire' || ['tau_sept', 'farsight_enclaves', 'bork_an', 'vior_la', 'sacea'].includes(factionType)) {
+        return tauLeaderRules;
+      } else if (factionType === 'space_marines' || ['ultramarines', 'blood_angels', 'dark_angels', 'imperial_fists', 'iron_hands', 'salamanders'].includes(factionType)) {
+        return spaceMarineLeaderRules;
+      }
+      return {};
+    };
+
+    const findCompatibleUnitsForLeader = (leader, allUnits) => {
+      const leaderRules = getLeaderAttachmentRules(faction);
+      const leaderAttachment = leaderRules[leader.id];
+      
+      if (!leaderAttachment || !leaderAttachment.canAttachTo) {
+        console.log(`No attachment rules found for leader: ${leader.name}`);
+        return [];
+      }
+
+      const compatibleUnits = [];
+      
+      // Search through all unit categories for compatible units
+      Object.values(allUnits).forEach(category => {
+        if (Array.isArray(category)) {
+          category.forEach(unit => {
+            if (leaderAttachment.canAttachTo.includes(unit.id)) {
+              compatibleUnits.push(unit);
+            }
+          });
+        }
+      });
+
+      console.log(`Leader ${leader.name} can attach to: ${compatibleUnits.map(u => u.name).join(', ')}`);
+      return compatibleUnits;
+    };
+
+    const ensureLeaderHasCompatibleUnit = (army, leader, allUnits) => {
+      const compatibleUnits = findCompatibleUnitsForLeader(leader, allUnits);
+      
+      if (compatibleUnits.length === 0) {
+        console.warn(`Leader ${leader.name} has no compatible units to attach to`);
+        return false;
+      }
+
+      // Check if army already has a compatible unit that doesn't have a leader
+      const existingCompatibleUnit = army.units.find(unit => 
+        compatibleUnits.some(comp => comp.id === unit.id) && !unit.attachedLeader
+      );
+
+      if (existingCompatibleUnit) {
+        // Attach leader to existing unit
+        existingCompatibleUnit.attachedLeader = {
+          id: leader.id,
+          name: leader.name,
+          bonuses: leader.leaderAttachment?.bonuses || []
+        };
+        console.log(`Attached ${leader.name} to existing ${existingCompatibleUnit.name}`);
+        return true;
+      }
+
+      return false; // Will need to add a compatible unit
+    };
+
+    const needsCompatibleUnitForLeader = (leader, army, allUnits) => {
+      const compatibleUnits = findCompatibleUnitsForLeader(leader, allUnits);
+      
+      if (compatibleUnits.length === 0) return false;
+
+      // Check if army has any compatible units without leaders
+      const hasCompatibleUnit = army.units.some(unit => 
+        compatibleUnits.some(comp => comp.id === unit.id) && !unit.attachedLeader
+      );
+
+      return !hasCompatibleUnit;
+    };
+
     if (useCustomChoices) {
       // Custom army composition logic - Point-aware generation with Rule of Three
       const usedUnitIds = [];
@@ -520,119 +598,119 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
         return true;
       };
 
-      // Phase 1: Add mandatory/preferred units
-      
-      // Add HQ
-      if (customChoices.hqChoice) {
-        const hqUnit = getUnitById(customChoices.hqChoice);
-        if (hqUnit) {
-          addUnit(hqUnit);
-        }
-      } else {
-        const bestHQ = selectBestUnit(units.hq, usedUnitIds, unitCounts);
-        if (bestHQ) {
-          addUnit(bestHQ);
-        }
-      }
-
-      // Add Named Character if requested
-      if (customChoices.includeNamedCharacter && difficultyMods.namedCharacters) {
-        const namedChar = selectBestUnit(units.namedCharacters, usedUnitIds, unitCounts);
-        if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 200) {
-          addUnit(namedChar);
-        }
-      }
-
-      // Phase 2: Add minimum required units from each category
-      const minimumCounts = {
-        troops: Math.max(2, customChoices.troopsCount), // Always at least 2 troops
-        elites: customChoices.elitesCount,
-        fastAttack: customChoices.fastAttackCount,
-        heavySupport: customChoices.heavySupportCount
-      };
-
-      // Add minimum troops first (mandatory)
-      for (let i = 0; i < Math.min(minimumCounts.troops, 2); i++) {
-        const troopUnit = selectBestUnit(units.troops, [], unitCounts);
-        if (troopUnit && army.totalPoints + troopUnit.points <= TARGET_POINTS - 300) {
-          addUnit(troopUnit);
-        }
-      }
-
-      // Phase 3: Distribute remaining points according to preferences
-      const categories = [
-        { units: units.troops, requestedCount: Math.max(0, minimumCounts.troops - 2), name: 'troops' },
-        { units: units.elites, requestedCount: minimumCounts.elites, name: 'elites' },
-        { units: units.fastAttack, requestedCount: minimumCounts.fastAttack, name: 'fastAttack' },
-        { units: units.heavySupport, requestedCount: minimumCounts.heavySupport, name: 'heavySupport' }
-      ];
-
-      // Sort categories by user preference (higher counts first)
-      categories.sort((a, b) => b.requestedCount - a.requestedCount);
-
-      // Add units from each category based on preference and points available
-      for (const category of categories) {
-        let addedFromCategory = 0;
-        const maxToAdd = category.requestedCount;
+      // Phase 1: Establish command structure (mandatory HQ) with 10th Edition Leader Embedding
+      const bestHQ = selectBestUnit(units.hq, usedUnitIds, unitCounts);
+      if (bestHQ) {
+        addUnit(bestHQ);
         
-        while (addedFromCategory < maxToAdd && army.totalPoints < MINIMUM_POINTS) {
-          const unit = selectBestUnit(category.units, [], unitCounts);
-          if (unit && army.totalPoints + unit.points <= TARGET_POINTS) {
-            addUnit(unit);
-            addedFromCategory++;
-          } else {
-            break; // Can't add more from this category
-          }
-        }
-      }
-
-      // Phase 4: Fill remaining points intelligently with diverse units
-      let maxAttempts = 20; // Prevent infinite loops
-      while (army.totalPoints < MINIMUM_POINTS && maxAttempts > 0) {
-        let bestUnit = null;
-        let bestScore = -1;
-
-        // Look for the best unit across all categories that fits
-        for (const category of categories) {
-          const unit = selectBestUnit(category.units, [], unitCounts);
-          if (unit && army.totalPoints + unit.points <= TARGET_POINTS) {
-            const score = scoreUnit(unit);
-            const pointsEfficiency = score / Math.max(unit.points / 100, 1); // Prefer efficient units
+        // 10th Edition Leader Embedding: Ensure HQ has a compatible unit to attach to
+        if (bestHQ.leaderAttachment && bestHQ.leaderAttachment.canAttachTo.length > 0) {
+          const attached = ensureLeaderHasCompatibleUnit(army, bestHQ, units);
+          
+          if (!attached && needsCompatibleUnitForLeader(bestHQ, army, units)) {
+            // Need to add a compatible unit for the leader to attach to
+            const compatibleUnits = findCompatibleUnitsForLeader(bestHQ, units);
             
-            if (pointsEfficiency > bestScore) {
-              bestScore = pointsEfficiency;
-              bestUnit = unit;
-              // category.name tracked but not used
+            if (compatibleUnits.length > 0) {
+              // Score compatible units and select the best one
+              const scoredCompatibleUnits = compatibleUnits.map(unit => ({
+                ...unit,
+                score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
+              }));
+              
+              scoredCompatibleUnits.sort((a, b) => b.score - a.score);
+              const bestCompatibleUnit = scoredCompatibleUnits[0];
+              
+              if (bestCompatibleUnit && army.totalPoints + bestCompatibleUnit.points <= TARGET_POINTS - 200) {
+                addUnit(bestCompatibleUnit);
+                
+                // Attach the leader to this unit
+                const addedUnit = army.units[army.units.length - 1];
+                addedUnit.attachedLeader = {
+                  id: bestHQ.id,
+                  name: bestHQ.name,
+                  bonuses: bestHQ.leaderAttachment?.bonuses || []
+                };
+                
+                console.log(`Added ${bestCompatibleUnit.name} for ${bestHQ.name} to attach to`);
+              }
             }
           }
         }
-
-        if (bestUnit) {
-          addUnit(bestUnit);
-        } else {
-          break; // Can't add anything else
-        }
-        
-        maxAttempts--;
       }
 
-      // Phase 5: Final fill - try to get closer to 2000 points with smaller/cheaper units
-      maxAttempts = 10;
-      while (army.totalPoints < TARGET_POINTS - 50 && maxAttempts > 0) {
-        // Look for any unit that can still fit
-        let foundUnit = false;
+      // Phase 2: Add named character for major operations (doctrine-based) with Leader Embedding
+      const namedCharacterThreshold = militaryDoctrine.commandStructure?.namedCharacterThreshold || 500;
+      if (difficultyMods.namedCharacters && army.totalPoints >= namedCharacterThreshold) {
+        const namedChar = selectBestUnit(units.namedCharacters, usedUnitIds, unitCounts);
+        if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 300) {
+          addUnit(namedChar);
+          
+          // 10th Edition Leader Embedding for Named Characters
+          if (namedChar.leaderAttachment && namedChar.leaderAttachment.canAttachTo.length > 0) {
+            const attached = ensureLeaderHasCompatibleUnit(army, namedChar, units);
+            
+            if (!attached && needsCompatibleUnitForLeader(namedChar, army, units)) {
+              // Need to add a compatible unit for the named character
+              const compatibleUnits = findCompatibleUnitsForLeader(namedChar, units);
+              
+              if (compatibleUnits.length > 0) {
+                const scoredCompatibleUnits = compatibleUnits.map(unit => ({
+                  ...unit,
+                  score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
+                }));
+                
+                scoredCompatibleUnits.sort((a, b) => b.score - a.score);
+                const bestCompatibleUnit = scoredCompatibleUnits[0];
+                
+                if (bestCompatibleUnit && army.totalPoints + bestCompatibleUnit.points <= TARGET_POINTS - 100) {
+                  addUnit(bestCompatibleUnit);
+                  
+                  // Attach the named character to this unit
+                  const addedUnit = army.units[army.units.length - 1];
+                  addedUnit.attachedLeader = {
+                    id: namedChar.id,
+                    name: namedChar.name,
+                    bonuses: namedChar.leaderAttachment?.bonuses || []
+                  };
+                  
+                  console.log(`Added ${bestCompatibleUnit.name} for ${namedChar.name} to attach to`);
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // Phase 3: Core doctrine-based force structure
+      const maxAttempts = 30;
+      let attempts = 0;
+      
+      while (army.totalPoints < MINIMUM_TARGET && attempts < maxAttempts) {
+        let addedAnyUnit = false;
         
-        for (const category of categories) {
-          const unit = selectBestUnit(category.units, [], unitCounts);
-          if (unit && army.totalPoints + unit.points <= TARGET_POINTS) {
-            addUnit(unit);
-            foundUnit = true;
-            break;
+        // Select best unit from any category using doctrine scoring
+        const allCategories = [units.troops, units.elites, units.fastAttack, units.heavySupport];
+        let bestUnit = null;
+        let bestScore = -1;
+        
+        for (const category of allCategories) {
+          const unit = selectBestUnit(category, [], unitCounts);
+          if (unit && army.totalPoints + unit.points + 50 <= TARGET_POINTS) { // Leave room for equipment
+            if (unit.score > bestScore) {
+              bestScore = unit.score;
+              bestUnit = unit;
+            }
           }
         }
         
-        if (!foundUnit) break;
-        maxAttempts--;
+        if (bestUnit) {
+          addUnit(bestUnit);
+          addedAnyUnit = true;
+        }
+        
+        if (!addedAnyUnit) break;
+        attempts++;
       }
 
     } else {
@@ -707,18 +785,87 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
         return scoredUnits[0];
       };
 
-      // Phase 1: Establish command structure (mandatory HQ)
+      // Phase 1: Establish command structure (mandatory HQ) with 10th Edition Leader Embedding
       const bestHQ = selectBestUnitWithDoctrine(units.hq, usedUnitIds, unitCounts);
       if (bestHQ) {
         addUnit(bestHQ);
+        
+        // 10th Edition Leader Embedding: Ensure HQ has a compatible unit to attach to
+        if (bestHQ.leaderAttachment && bestHQ.leaderAttachment.canAttachTo.length > 0) {
+          const attached = ensureLeaderHasCompatibleUnit(army, bestHQ, units);
+          
+          if (!attached && needsCompatibleUnitForLeader(bestHQ, army, units)) {
+            // Need to add a compatible unit for the leader to attach to
+            const compatibleUnits = findCompatibleUnitsForLeader(bestHQ, units);
+            
+            if (compatibleUnits.length > 0) {
+              // Score compatible units and select the best one
+              const scoredCompatibleUnits = compatibleUnits.map(unit => ({
+                ...unit,
+                score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
+              }));
+              
+              scoredCompatibleUnits.sort((a, b) => b.score - a.score);
+              const bestCompatibleUnit = scoredCompatibleUnits[0];
+              
+              if (bestCompatibleUnit && army.totalPoints + bestCompatibleUnit.points <= TARGET_POINTS - 200) {
+                addUnit(bestCompatibleUnit);
+                
+                // Attach the leader to this unit
+                const addedUnit = army.units[army.units.length - 1];
+                addedUnit.attachedLeader = {
+                  id: bestHQ.id,
+                  name: bestHQ.name,
+                  bonuses: bestHQ.leaderAttachment?.bonuses || []
+                };
+                
+                console.log(`Added ${bestCompatibleUnit.name} for ${bestHQ.name} to attach to`);
+              }
+            }
+          }
+        }
       }
 
-      // Phase 2: Add named character for major operations (doctrine-based)
+      // Phase 2: Add named character for major operations (doctrine-based) with Leader Embedding
       const namedCharacterThreshold = militaryDoctrine.commandStructure?.namedCharacterThreshold || 500;
       if (difficultyMods.namedCharacters && army.totalPoints >= namedCharacterThreshold) {
         const namedChar = selectBestUnitWithDoctrine(units.namedCharacters, usedUnitIds, unitCounts);
         if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 300) {
           addUnit(namedChar);
+          
+          // 10th Edition Leader Embedding for Named Characters
+          if (namedChar.leaderAttachment && namedChar.leaderAttachment.canAttachTo.length > 0) {
+            const attached = ensureLeaderHasCompatibleUnit(army, namedChar, units);
+            
+            if (!attached && needsCompatibleUnitForLeader(namedChar, army, units)) {
+              // Need to add a compatible unit for the named character
+              const compatibleUnits = findCompatibleUnitsForLeader(namedChar, units);
+              
+              if (compatibleUnits.length > 0) {
+                const scoredCompatibleUnits = compatibleUnits.map(unit => ({
+                  ...unit,
+                  score: scoreUnitWithDoctrine(unit, currentComposition, doctrineTargets, customChoices.useRealWorldDoctrine)
+                }));
+                
+                scoredCompatibleUnits.sort((a, b) => b.score - a.score);
+                const bestCompatibleUnit = scoredCompatibleUnits[0];
+                
+                if (bestCompatibleUnit && army.totalPoints + bestCompatibleUnit.points <= TARGET_POINTS - 100) {
+                  addUnit(bestCompatibleUnit);
+                  
+                  // Attach the named character to this unit
+                  const addedUnit = army.units[army.units.length - 1];
+                  addedUnit.attachedLeader = {
+                    id: namedChar.id,
+                    name: namedChar.name,
+                    bonuses: namedChar.leaderAttachment?.bonuses || []
+                  };
+                  
+                  console.log(`Added ${bestCompatibleUnit.name} for ${namedChar.name} to attach to`);
+                }
+              }
+            }
+          }
         }
       }
 

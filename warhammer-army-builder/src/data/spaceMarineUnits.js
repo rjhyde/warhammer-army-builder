@@ -14,6 +14,48 @@ export const dataVersion = {
   warhammerCommunityCheck: true // Enable checking for updates
 };
 
+// 10th Edition Leader Attachment Rules for Space Marines
+export const leaderAttachmentRules = {
+  // Space Marine HQ units can embed with specific unit types
+  captain: {
+    canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'devastator_squad', 'sternguard_veterans', 'vanguard_veterans'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', 'Rites of Battle', 'Re-roll 1s to hit and wound']
+  },
+  lieutenant: {
+    canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'devastator_squad', 'sternguard_veterans'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', 'Tactical Precision', 'Re-roll 1s to wound']
+  },
+  librarian: {
+    canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'devastator_squad', 'sternguard_veterans', 'vanguard_veterans'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', 'Psychic abilities', 'Mental Fortress']
+  },
+  chaplain: {
+    canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'vanguard_veterans', 'sternguard_veterans'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', 'Spiritual Leader', 'Litanies of Battle']
+  },
+  techmarine: {
+    canAttachTo: ['tactical_squad', 'intercessor_squad', 'devastator_squad'],
+    restrictions: ['Cannot attach to units that already have a leader'],
+    bonuses: ['Unit gains Leader keyword', 'Blessing of the Omnissiah', 'Tech support']
+  },
+  // Dreadnought characters (if any exist)
+  librarian_dreadnought: {
+    canAttachTo: [], // Dreadnoughts typically cannot attach to units
+    restrictions: ['Independent character'],
+    bonuses: ['Psychic Dreadnought', 'Unyielding Ancient']
+  },
+  // Chapter-specific characters
+  sanguinary_priest: {
+    canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'sanguinary_guard', 'death_company'],
+    restrictions: ['Cannot attach to units that already have a leader', 'Blood Angels only'],
+    bonuses: ['Unit gains Leader keyword', 'Sanguinary healing', 'Blood Chalice']
+  }
+};
+
 export const spaceMarineUnits = {
   // HQ
   hq: [
@@ -23,6 +65,10 @@ export const spaceMarineUnits = {
       points: 80,
       models: 1,
       keywords: ['Character', 'Infantry', 'Captain'],
+      leaderAttachment: {
+        canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'devastator_squad', 'sternguard_veterans', 'vanguard_veterans'],
+        bonuses: ['Leader abilities', 'Rites of Battle', 'Re-roll 1s to hit and wound']
+      },
       equipment: {
         base: ['Bolt pistol', 'Chainsword'],
         options: [
@@ -50,6 +96,10 @@ export const spaceMarineUnits = {
       points: 70,
       models: 1,
       keywords: ['Character', 'Infantry', 'Lieutenant', 'Primaris'],
+      leaderAttachment: {
+        canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'devastator_squad', 'sternguard_veterans'],
+        bonuses: ['Leader abilities', 'Tactical Precision', 'Re-roll 1s to wound']
+      },
       equipment: {
         base: ['Bolt pistol', 'Chainsword'],
         options: [
@@ -76,6 +126,10 @@ export const spaceMarineUnits = {
       points: 90,
       models: 1,
       keywords: ['Character', 'Infantry', 'Psyker', 'Librarian'],
+      leaderAttachment: {
+        canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'devastator_squad', 'sternguard_veterans', 'vanguard_veterans'],
+        bonuses: ['Leader abilities', 'Psychic abilities', 'Mental Fortress']
+      },
       equipment: {
         base: ['Bolt pistol', 'Force weapon', 'Psychic hood'],
         options: [
@@ -102,6 +156,10 @@ export const spaceMarineUnits = {
       points: 85,
       models: 1,
       keywords: ['Character', 'Infantry', 'Chaplain'],
+      leaderAttachment: {
+        canAttachTo: ['tactical_squad', 'intercessor_squad', 'assault_squad', 'vanguard_veterans', 'sternguard_veterans'],
+        bonuses: ['Leader abilities', 'Spiritual Leader', 'Litanies of Battle']
+      },
       equipment: {
         base: ['Bolt pistol', 'Crozius arcanum', 'Rosarius'],
         options: [
@@ -127,6 +185,10 @@ export const spaceMarineUnits = {
       points: 75,
       models: 1,
       keywords: ['Character', 'Infantry', 'Techmarine'],
+      leaderAttachment: {
+        canAttachTo: ['tactical_squad', 'intercessor_squad', 'devastator_squad'],
+        bonuses: ['Leader abilities', 'Blessing of the Omnissiah', 'Tech support']
+      },
       equipment: {
         base: ['Bolt pistol', 'Power axe', 'Servo-arm', 'Mechadendrites'],
         options: [

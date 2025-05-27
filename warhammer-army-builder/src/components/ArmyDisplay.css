@@ -631,4 +631,92 @@
 .equipment-change:before {
   content: "⚙️ ";
   margin-right: var(--space-xs);
+}
+
+/* Leader Attachment Styling (10th Edition) */
+.attached-leader {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #6c757d;
+  border-radius: 8px;
+  padding: 12px;
+  margin: 8px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.leader-title {
+  color: #495057;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.leader-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leader-name {
+  font-weight: 700;
+  color: #212529;
+  font-size: 1rem;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 4px;
+  border-left: 4px solid #007bff;
+}
+
+.leader-bonuses {
+  margin-top: 6px;
+}
+
+.leader-bonuses strong {
+  color: #495057;
+  font-size: 0.85rem;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.leader-bonuses ul {
+  margin: 0;
+  padding-left: 16px;
+  list-style-type: none;
+}
+
+.leader-bonuses li {
+  position: relative;
+  color: #6c757d;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  margin-bottom: 2px;
+}
+
+.leader-bonuses li:before {
+  content: "➤";
+  color: #007bff;
+  position: absolute;
+  left: -12px;
+  font-weight: bold;
+}
+
+/* Responsive adjustments for leader display */
+@media (max-width: 768px) {
+  .attached-leader {
+    padding: 10px;
+    margin: 6px 0;
+  }
+  
+  .leader-name {
+    font-size: 0.9rem;
+  }
+  
+  .leader-bonuses strong {
+    font-size: 0.8rem;
+  }
+  
+  .leader-bonuses li {
+    font-size: 0.75rem;
+  }
 } 
