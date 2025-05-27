@@ -3,62 +3,63 @@
 .faction-selector {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  padding: var(--space-xl);
+  font-family: inherit;
 }
 
 .faction-selector-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-3xl);
 }
 
 .faction-selector-header h2 {
-  font-size: 2.5rem;
+  font-size: var(--font-size-4xl);
   font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .faction-selector-header p {
-  font-size: 1.1rem;
-  color: #6b7280;
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
   margin: 0;
 }
 
 /* Faction Grid */
 .faction-grid {
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-3xl);
 }
 
 .faction-grid h3 {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: var(--space-lg);
   text-align: center;
 }
 
 .faction-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
 }
 
 .faction-card {
-  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-  border: 2px solid #e5e7eb;
-  border-radius: 1rem;
-  padding: 1.5rem;
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .faction-card::before {
@@ -68,15 +69,15 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, #667eea, #764ba2);
+  background: var(--gradient-primary);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .faction-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
-  border-color: #9ca3af;
+  box-shadow: var(--shadow-xl);
+  border-color: var(--accent-blue);
 }
 
 .faction-card:hover::before {
@@ -85,8 +86,10 @@
 
 .faction-card.selected {
   border-width: 3px;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: var(--accent-blue);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
   transform: translateY(-2px);
+  box-shadow: var(--shadow-xl);
 }
 
 .faction-card.selected::before {
@@ -96,242 +99,251 @@
 .faction-icon {
   font-size: 3rem;
   text-align: center;
-  margin-bottom: 1rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  margin-bottom: var(--space-lg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .faction-info h4 {
-  font-size: 1.5rem;
+  font-size: var(--font-size-xl);
   font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
   text-align: center;
 }
 
 .faction-description {
-  color: #6b7280;
-  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
   line-height: 1.5;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-lg);
   text-align: center;
 }
 
 .faction-meta {
   display: flex;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: var(--space-sm);
 }
 
 .faction-meta span {
-  background: #f3f4f6;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  font-size: 0.85rem;
+  background: var(--secondary-bg);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  color: #374151;
+  color: var(--text-secondary);
   flex: 1;
   text-align: center;
+  border: 1px solid var(--card-border);
 }
 
 .playstyle {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
-  color: #92400e !important;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1)) !important;
+  color: var(--accent-gold) !important;
+  border-color: rgba(251, 191, 36, 0.3) !important;
 }
 
 .difficulty {
-  background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%) !important;
-  color: #5b21b6 !important;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(196, 181, 253, 0.1)) !important;
+  color: var(--accent-purple) !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
 }
 
 /* Subfaction Grid */
 .subfaction-grid {
-  margin-bottom: 3rem;
+  margin-bottom: var(--space-3xl);
   animation: fadeInUp 0.5s ease;
 }
 
 .subfaction-grid h3 {
-  font-size: 1.3rem;
+  font-size: var(--font-size-xl);
   font-weight: 600;
-  color: #374151;
-  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: var(--space-lg);
   text-align: center;
 }
 
 .subfaction-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+  gap: var(--space-md);
 }
 
 .subfaction-card {
-  background: #ffffff;
-  border: 2px solid #e5e7eb;
-  border-radius: 0.75rem;
-  padding: 1.25rem;
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
 }
 
 .subfaction-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
-  border-color: #9ca3af;
+  box-shadow: var(--shadow-lg);
+  border-color: var(--accent-blue);
 }
 
 .subfaction-card.selected {
-  border-color: #3b82f6;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: var(--accent-blue);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .subfaction-info h4 {
-  font-size: 1.2rem;
+  font-size: var(--font-size-lg);
   font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
 }
 
 .subfaction-description {
-  color: #6b7280;
-  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
   line-height: 1.4;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-md);
 }
 
 .subfaction-playstyle {
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-md);
 }
 
 .subfaction-playstyle span {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  color: #92400e;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.85rem;
+  background: var(--secondary-bg);
+  color: var(--text-secondary);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
   font-weight: 500;
+  border: 1px solid var(--card-border);
 }
 
 .subfaction-bonuses {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
 }
 
 .bonus-tag {
-  background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
-  color: #0277bd;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.1));
+  color: var(--success);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  border: 1px solid #81d4fa;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
-/* Faction Summary */
+/* Summary Section */
 .faction-summary {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 2px solid #e2e8f0;
-  border-radius: 1rem;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-md);
 }
 
 .summary-header {
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  align-items: center;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
 }
 
 .summary-icon {
   font-size: 2.5rem;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .summary-text h3 {
-  font-size: 1.75rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
 }
 
 .subfaction-name {
-  color: #6366f1;
+  color: var(--accent-blue);
   font-weight: 600;
 }
 
 .summary-text p {
-  color: #6b7280;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  margin: 0;
 }
 
+/* Subfaction Summary */
 .subfaction-summary {
-  color: #4338ca;
-  font-style: italic;
-  font-weight: 500;
+  background: var(--secondary-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
 }
 
 .summary-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
 }
 
 .stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  text-align: center;
 }
 
 .stat-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #6b7280;
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.025em;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
 }
 
 .stat-value {
-  font-size: 0.95rem;
-  color: #1f2937;
-  font-weight: 500;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
+/* Special Rules */
 .special-rules {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
 }
 
 .rule-tag {
-  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-  color: #047857;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.1));
+  color: var(--accent-blue);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
   font-weight: 500;
-  border: 1px solid #6ee7b7;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 /* Action Prompt */
 .action-prompt {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-  border: 2px solid #7dd3fc;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
   text-align: center;
+  margin-top: var(--space-xl);
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .action-prompt p {
-  color: #0c4a6e;
-  font-size: 1.1rem;
-  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
   margin: 0;
+  font-weight: 500;
 }
 
 /* Animations */
@@ -349,25 +361,25 @@
 /* Responsive Design */
 @media (max-width: 768px) {
   .faction-selector {
-    padding: 1rem;
+    padding: var(--space-lg) var(--space-md);
   }
 
   .faction-selector-header h2 {
-    font-size: 2rem;
+    font-size: var(--font-size-3xl);
   }
 
   .faction-cards {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: var(--space-md);
   }
 
   .faction-card {
-    padding: 1rem;
+    padding: var(--space-lg);
   }
 
   .faction-meta {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--space-xs);
   }
 
   .subfaction-cards {
@@ -377,27 +389,28 @@
   .summary-header {
     flex-direction: column;
     text-align: center;
+    gap: var(--space-md);
   }
 
   .stat-item {
-    text-align: center;
+    padding: var(--space-sm);
   }
 
   .stat-label {
-    font-size: 0.8rem;
+    font-size: var(--font-size-xs);
   }
 }
 
 @media (max-width: 480px) {
   .faction-selector-header h2 {
-    font-size: 1.75rem;
+    font-size: var(--font-size-2xl);
   }
 
   .faction-summary {
-    padding: 1.5rem;
+    padding: var(--space-lg);
   }
 
   .summary-text h3 {
-    font-size: 1.5rem;
+    font-size: var(--font-size-xl);
   }
 } 

@@ -27,11 +27,11 @@ export const tauUnits = {
         base: ['Plasma rifle', 'Fusion blaster', 'Shield generator'],
         options: [
           { name: 'Burst cannon', cost: 0 },
-          { name: 'Cyclic ion blaster', cost: 5 },
           { name: 'Flamer', cost: 0 },
-          { name: 'Missile pod', cost: 10 },
-          { name: 'Multi-tracker', cost: 5 },
-          { name: 'Stimm injectors', cost: 10 }
+          { name: 'Missile pod', cost: 0 },
+          { name: 'Airbursting fragmentation projector', cost: 0 },
+          { name: 'Multi-tracker', cost: 0 },
+          { name: 'Stimm injectors', cost: 0 }
         ]
       },
       loreRoles: ['elite_command', 'battlesuit_support', 'tactical_coordination'],
@@ -54,9 +54,9 @@ export const tauUnits = {
         base: ['Plasma rifle', 'Missile pod', 'Shield generator'],
         options: [
           { name: 'Burst cannon', cost: 0 },
-          { name: 'Cyclic ion blaster', cost: 5 },
-          { name: 'Fusion blaster', cost: 5 },
-          { name: 'Airbursting fragmentation projector', cost: 10 }
+          { name: 'Fusion blaster', cost: 0 },
+          { name: 'Flamer', cost: 0 },
+          { name: 'Airbursting fragmentation projector', cost: 0 }
         ]
       },
       loreRoles: ['elite_command', 'fire_support', 'defensive_coordination'],
@@ -125,8 +125,8 @@ export const tauUnits = {
         base: ['Pulse rifle'],
         options: [
           { name: 'Pulse pistol + close combat weapon', cost: 0 },
-          { name: 'Markerlight (Shas\'ui)', cost: 5 },
-          { name: 'Support turret', cost: 15 }
+          { name: 'Markerlight (Shas\'ui)', cost: 0 },
+          { name: 'Support turret', cost: 0 }
         ]
       },
       loreRoles: ['line_infantry', 'fire_support', 'objective_holding'],
@@ -149,8 +149,8 @@ export const tauUnits = {
         base: ['Pulse blaster'],
         options: [
           { name: 'Pulse pistol + close combat weapon', cost: 0 },
-          { name: 'Guardian drone', cost: 10 },
-          { name: 'Gun drone x2', cost: 15 }
+          { name: 'Guardian drone', cost: 0 },
+          { name: 'Gun drone x2', cost: 0 }
         ]
       },
       loreRoles: ['close_assault', 'urban_warfare', 'breaching_operations'],
@@ -170,14 +170,18 @@ export const tauUnits = {
     {
       id: 'crisis_suits_sunforge',
       name: 'Crisis Battlesuits (Sunforge)',
-      points: 110,
+      points: 160,
       models: 3,
       keywords: ['Battlesuit', 'Fly', 'Crisis'],
       equipment: {
-        base: ['Burst cannon', 'Plasma rifle', 'Multi-tracker'],
-        options: []
+        base: ['Fusion blaster x2', 'Shield generator'],
+        options: [
+          { name: 'Gun drone', cost: 0 },
+          { name: 'Marker drone', cost: 0 },
+          { name: 'Shield drone', cost: 0 }
+        ]
       },
-      loreRoles: ['elite_assault', 'anti_infantry', 'mobile_fire_support'],
+      loreRoles: ['elite_assault', 'anti_vehicle', 'tank_hunting'],
       competitiveLevel: 'high',
       subfactionSynergy: {
         tau_empire: 'very_high',
@@ -190,14 +194,20 @@ export const tauUnits = {
     {
       id: 'crisis_suits_starscythe',
       name: 'Crisis Battlesuits (Starscythe)',
-      points: 120,
+      points: 110,
       models: 3,
       keywords: ['Battlesuit', 'Fly', 'Crisis'],
       equipment: {
-        base: ['Cyclic ion blaster', 'Missile pod', 'Target lock'],
-        options: []
+        base: ['Burst cannon', 'T\'au flamer', 'Battlesuit support system'],
+        options: [
+          { name: 'Replace burst cannon with T\'au flamer', cost: 0 },
+          { name: 'Replace T\'au flamer with burst cannon', cost: 0 },
+          { name: 'Gun drone', cost: 0 },
+          { name: 'Marker drone', cost: 0 },
+          { name: 'Shield drone', cost: 0 }
+        ]
       },
-      loreRoles: ['elite_assault', 'fire_support', 'long_range'],
+      loreRoles: ['elite_assault', 'anti_infantry', 'close_range_fire_support'],
       competitiveLevel: 'very_high',
       subfactionSynergy: {
         tau_empire: 'very_high',
@@ -214,8 +224,14 @@ export const tauUnits = {
       models: 3,
       keywords: ['Battlesuit', 'Fly', 'Crisis'],
       equipment: {
-        base: ['Plasma rifle', 'Missile pod', 'Multi-tracker'],
-        options: []
+        base: ['Missile pod', 'Plasma rifle', 'Weapon support system'],
+        options: [
+          { name: 'Replace missile pod with plasma rifle', cost: 0 },
+          { name: 'Replace plasma rifle with missile pod', cost: 0 },
+          { name: 'Gun drone', cost: 0 },
+          { name: 'Marker drone', cost: 0 },
+          { name: 'Shield drone', cost: 0 }
+        ]
       },
       loreRoles: ['elite_assault', 'fire_support', 'versatile'],
       competitiveLevel: 'very_high',
@@ -236,8 +252,8 @@ export const tauUnits = {
       equipment: {
         base: ['Burst cannon', 'Markerlight'],
         options: [
-          { name: 'Fusion blaster', cost: 5 },
-          { name: 'Gun drone', cost: 10 }
+          { name: 'Fusion blaster', cost: 0 },
+          { name: 'Gun drone', cost: 0 }
         ]
       },
       loreRoles: ['reconnaissance', 'infiltration', 'markerlight_support'],
@@ -248,6 +264,99 @@ export const tauUnits = {
         bork_an: 'medium',
         vior_la: 'very_high',
         sacea: 'high'
+      }
+    },
+    {
+      id: 'ghostkeel_battlesuit',
+      name: 'Ghostkeel Battlesuit',
+      points: 160,
+      models: 1,
+      keywords: ['Battlesuit', 'Fly', 'Ghostkeel', 'Stealth'],
+      equipment: {
+        base: ['Fusion collider', 'Twin burst cannon', 'Stealth drones x2'],
+        options: [
+          { name: 'Cyclic ion raker', cost: 0 },
+          { name: 'Target lock', cost: 0 },
+          { name: 'Advanced targeting system', cost: 0 },
+          { name: 'Shield generator', cost: 0 }
+        ]
+      },
+      loreRoles: ['stealth_assault', 'anti_armor', 'infiltration'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'very_high',
+        bork_an: 'medium',
+        vior_la: 'very_high',
+        sacea: 'high'
+      }
+    },
+    {
+      id: 'riptide_battlesuit',
+      name: 'Riptide Battlesuit',
+      points: 280,
+      models: 1,
+      keywords: ['Battlesuit', 'Fly', 'Riptide', 'Titanic'],
+      equipment: {
+        base: ['Ion accelerator', 'Smart missile system x2', 'Velocity tracker'],
+        options: [
+          { name: 'Heavy burst cannon', cost: 0 },
+          { name: 'Twin plasma rifle', cost: 0 },
+          { name: 'Twin fusion blaster', cost: 0 },
+          { name: 'Amplified ion accelerator', cost: 0 },
+          { name: 'Target lock', cost: 0 }
+        ]
+      },
+      loreRoles: ['centerpiece', 'heavy_fire_support', 'anti_armor'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        tau_empire: 'very_high',
+        farsight_enclaves: 'high',
+        bork_an: 'very_high',
+        vior_la: 'high',
+        sacea: 'very_high'
+      }
+    },
+    {
+      id: 'kroot_carnivores',
+      name: 'Kroot Carnivores',
+      points: 75,
+      models: 10,
+      keywords: ['Infantry', 'Kroot', 'Auxiliary'],
+      equipment: {
+        base: ['Kroot rifle', 'Kroot blade'],
+        options: [
+          { name: 'Kroot gun (1 per 10)', cost: 0 },
+          { name: 'Kroot hound x3', cost: 0 }
+        ]
+      },
+      loreRoles: ['auxiliary_infantry', 'scouts', 'melee_support'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'very_high',
+        bork_an: 'medium',
+        vior_la: 'high',
+        sacea: 'high'
+      }
+    },
+    {
+      id: 'kroot_hounds',
+      name: 'Kroot Hounds',
+      points: 30,
+      models: 5,
+      keywords: ['Beast', 'Kroot', 'Auxiliary'],
+      equipment: {
+        base: ['Ripping fangs']
+      },
+      loreRoles: ['fast_assault', 'scouts', 'harassment'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'high',
+        bork_an: 'low',
+        vior_la: 'high',
+        sacea: 'medium'
       }
     },
     {
@@ -316,8 +425,8 @@ export const tauUnits = {
       equipment: {
         base: ['Burst cannon', 'Gun drone'],
         options: [
-          { name: 'Fusion blaster', cost: 10 },
-          { name: 'Seeker missiles x2', cost: 10 }
+          { name: 'Fusion blaster', cost: 0 },
+          { name: 'Seeker missiles x2', cost: 0 }
         ]
       },
       loreRoles: ['fast_attack', 'reconnaissance', 'harassment'],
@@ -327,6 +436,44 @@ export const tauUnits = {
         farsight_enclaves: 'high',
         bork_an: 'medium',
         vior_la: 'very_high',
+        sacea: 'medium'
+      }
+    },
+    {
+      id: 'vespid_stingwings',
+      name: 'Vespid Stingwings',
+      points: 65,
+      models: 5,
+      keywords: ['Infantry', 'Fly', 'Vespid', 'Auxiliary'],
+      equipment: {
+        base: ['Neutron blaster', 'Stingwing claws']
+      },
+      loreRoles: ['mobile_fire_support', 'auxiliary', 'aerial_assault'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'medium',
+        bork_an: 'very_high',
+        vior_la: 'high',
+        sacea: 'high'
+      }
+    },
+    {
+      id: 'kroot_shapers',
+      name: 'Kroot Shapers',
+      points: 45,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Kroot', 'Auxiliary'],
+      equipment: {
+        base: ['Kroot rifle', 'Ritual blade']
+      },
+      loreRoles: ['auxiliary_command', 'kroot_support', 'melee_specialist'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        tau_empire: 'medium',
+        farsight_enclaves: 'high',
+        bork_an: 'low',
+        vior_la: 'medium',
         sacea: 'medium'
       }
     }
@@ -343,9 +490,9 @@ export const tauUnits = {
       equipment: {
         base: ['Railgun', 'Gun drones x2'],
         options: [
-          { name: 'Ion cannon', cost: -10 },
+          { name: 'Ion cannon', cost: 0 },
           { name: 'Burst cannon', cost: 0 },
-          { name: 'Smart missile system', cost: 15 }
+          { name: 'Smart missile system', cost: 0 }
         ]
       },
       loreRoles: ['heavy_fire_support', 'anti_tank', 'long_range'],
@@ -367,9 +514,9 @@ export const tauUnits = {
       equipment: {
         base: ['Heavy rail rifle', 'Smart missile system'],
         options: [
-          { name: 'High-yield missile pod', cost: 5 },
-          { name: 'Seeker missiles x2', cost: 10 },
-          { name: 'Velocity tracker', cost: 5 }
+          { name: 'High-yield missile pod', cost: 0 },
+          { name: 'Seeker missiles x2', cost: 0 },
+          { name: 'Velocity tracker', cost: 0 }
         ]
       },
       loreRoles: ['heavy_fire_support', 'anti_armor', 'firebase'],
@@ -380,6 +527,78 @@ export const tauUnits = {
         bork_an: 'very_high',
         vior_la: 'medium',
         sacea: 'very_high'
+      }
+    },
+    {
+      id: 'stormsurge_battlesuit',
+      name: 'Stormsurge Battlesuit',
+      points: 400,
+      models: 1,
+      keywords: ['Battlesuit', 'Stormsurge', 'Titanic'],
+      equipment: {
+        base: ['Pulse blast cannon', 'Twin smart missile system', 'Twin burst cannon', 'Destroyer missiles'],
+        options: [
+          { name: 'Pulse driver cannon', cost: 0 },
+          { name: 'Shield generator', cost: 0 },
+          { name: 'Velocity tracker', cost: 0 },
+          { name: 'Target lock', cost: 0 }
+        ]
+      },
+      loreRoles: ['super_heavy', 'firebase', 'centerpiece'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        tau_empire: 'very_high',
+        farsight_enclaves: 'medium',
+        bork_an: 'very_high',
+        vior_la: 'medium',
+        sacea: 'very_high'
+      }
+    },
+    {
+      id: 'taunar_supremacy_armour',
+      name: 'Ta\'unar Supremacy Armour',
+      points: 750,
+      models: 1,
+      keywords: ['Battlesuit', 'Ta\'unar', 'Titanic', 'Forge World'],
+      equipment: {
+        base: ['Tri-axis ion cannon', 'Fusion eradicator', 'Smart missile system x4', 'Twin burst cannon x2'],
+        options: [
+          { name: 'Pulse ordnance multi-driver', cost: 0 },
+          { name: 'Nexus missile system', cost: 0 },
+          { name: 'Shield generator', cost: 0 }
+        ]
+      },
+      loreRoles: ['apocalypse', 'super_heavy', 'fortress_breaker'],
+      competitiveLevel: 'legendary',
+      subfactionSynergy: {
+        tau_empire: 'very_high',
+        farsight_enclaves: 'high',
+        bork_an: 'very_high',
+        vior_la: 'medium',
+        sacea: 'very_high'
+      }
+    },
+    {
+      id: 'devilfish',
+      name: 'Devilfish Transport',
+      points: 90,
+      models: 1,
+      keywords: ['Vehicle', 'Fly', 'Transport', 'Devilfish'],
+      equipment: {
+        base: ['Burst cannon', 'Gun drone x2', 'Landing bay'],
+        options: [
+          { name: 'Smart missile system', cost: 0 },
+          { name: 'Seeker missiles x2', cost: 0 }
+        ]
+      },
+      loreRoles: ['transport', 'mobile_support', 'fire_support'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        tau_empire: 'high',
+        farsight_enclaves: 'high',
+        bork_an: 'medium',
+        vior_la: 'very_high',
+        sacea: 'high'
       }
     }
   ],

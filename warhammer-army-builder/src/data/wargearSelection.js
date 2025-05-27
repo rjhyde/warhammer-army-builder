@@ -1,5 +1,19 @@
-// T'au Empire Wargear Selection System
+// T'au Empire Wargear Selection System for 10th Edition Warhammer 40,000
 // Intelligently selects equipment based on scenario, unit role, and tactical considerations
+// Note: In 10th Edition, all wargear options are free
+
+// Data Version Information
+export const dataVersion = {
+  version: "1.0.0",
+  lastUpdated: "2024-01-15",
+  sources: [
+    "Warhammer 40,000 Core Rules",
+    "Codex: T'au Empire (10th Edition)", 
+    "Chapter Approved 2024"
+  ],
+  updateCheckUrl: "https://api.github.com/repos/your-repo/releases/latest", // For checking updates
+  warhammerCommunityCheck: true // Enable checking for updates
+};
 
 export const wargearSelectionRules = {
   // Fire Warriors Strike Team
@@ -165,7 +179,7 @@ export const wargearSelectionRules = {
       },
       assault: {
         mainWeapon: 'railgun', // Breakthrough capability
-        secondaryWeapon: 'burst_cannon', // Infantry support
+        secondaryWeapon: 'accelerator_burst_cannon', // Infantry support
         weaponChance: 0.6
       },
       siege: {
@@ -175,7 +189,7 @@ export const wargearSelectionRules = {
       },
       reconnaissance: {
         mainWeapon: 'railgun',
-        secondaryWeapon: 'burst_cannon',
+        secondaryWeapon: 'accelerator_burst_cannon',
         weaponChance: 0.4
       },
       research: {
@@ -249,6 +263,448 @@ export const wargearSelectionRules = {
         upgrade: null,
         upgradeChance: 0.3
       }
+    }
+  },
+
+  // Riptide Battlesuit
+  riptide_battlesuit: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'ion_accelerator',
+        secondaryWeapon: 'twin_fusion_blaster',
+        weaponChance: 0.8
+      },
+      assault: {
+        mainWeapon: 'heavy_burst_cannon',
+        secondaryWeapon: 'twin_plasma_rifle', 
+        weaponChance: 0.7
+      },
+      siege: {
+        mainWeapon: 'amplified_ion_accelerator',
+        secondaryWeapon: 'twin_fusion_blaster',
+        weaponChance: 0.9
+      },
+      reconnaissance: {
+        mainWeapon: 'ion_accelerator',
+        secondaryWeapon: 'twin_plasma_rifle',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.5 },
+      normal: { weaponChance: 0.7 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Ghostkeel Battlesuit
+  ghostkeel_battlesuit: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'fusion_collider',
+        secondaryWeapon: 'shield_generator',
+        weaponChance: 0.7
+      },
+      assault: {
+        mainWeapon: 'cyclic_ion_raker',
+        secondaryWeapon: 'advanced_targeting_system',
+        weaponChance: 0.8
+      },
+      siege: {
+        mainWeapon: 'fusion_collider',
+        secondaryWeapon: 'advanced_targeting_system',
+        weaponChance: 0.9
+      },
+      reconnaissance: {
+        mainWeapon: 'cyclic_ion_raker',
+        secondaryWeapon: 'target_lock',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.4 },
+      normal: { weaponChance: 0.7 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Stormsurge Battlesuit
+  stormsurge_battlesuit: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'pulse_blast_cannon',
+        secondaryWeapon: 'shield_generator',
+        weaponChance: 0.9
+      },
+      assault: {
+        mainWeapon: 'pulse_driver_cannon',
+        secondaryWeapon: 'velocity_tracker',
+        weaponChance: 0.8
+      },
+      siege: {
+        mainWeapon: 'pulse_blast_cannon',
+        secondaryWeapon: 'target_lock',
+        weaponChance: 0.9
+      },
+      reconnaissance: {
+        mainWeapon: 'pulse_driver_cannon',
+        secondaryWeapon: 'velocity_tracker',
+        weaponChance: 0.7
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.3 },
+      normal: { weaponChance: 0.6 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Ta'unar Supremacy Armour
+  taunar_supremacy_armour: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'tri_axis_ion_cannon',
+        secondaryWeapon: 'shield_generator',
+        weaponChance: 0.9
+      },
+      assault: {
+        mainWeapon: 'pulse_ordnance_multi_driver',
+        secondaryWeapon: 'nexus_missile_system',
+        weaponChance: 0.8
+      },
+      siege: {
+        mainWeapon: 'pulse_ordnance_multi_driver',
+        secondaryWeapon: 'nexus_missile_system',
+        weaponChance: 0.9
+      },
+      reconnaissance: {
+        mainWeapon: 'tri_axis_ion_cannon',
+        secondaryWeapon: 'shield_generator',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.1 },
+      normal: { weaponChance: 0.3 },
+      hard: { weaponChance: 0.7 }
+    }
+  },
+
+  // Kroot Units
+  kroot_carnivores: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'kroot_rifle',
+        secondaryWeapon: 'kroot_hound',
+        weaponChance: 0.6
+      },
+      assault: {
+        mainWeapon: 'kroot_rifle',
+        secondaryWeapon: 'kroot_gun',
+        weaponChance: 0.7
+      },
+      siege: {
+        mainWeapon: 'kroot_rifle',
+        secondaryWeapon: 'kroot_gun',
+        weaponChance: 0.8
+      },
+      reconnaissance: {
+        mainWeapon: 'kroot_rifle',
+        secondaryWeapon: 'kroot_hound',
+        weaponChance: 0.9
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.3 },
+      normal: { weaponChance: 0.5 },
+      hard: { weaponChance: 0.7 }
+    }
+  },
+
+  // Vespid Stingwings
+  vespid_stingwings: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'neutron_blaster',
+        weaponChance: 0.5
+      },
+      assault: {
+        mainWeapon: 'neutron_blaster',
+        weaponChance: 0.8
+      },
+      siege: {
+        mainWeapon: 'neutron_blaster',
+        weaponChance: 0.7
+      },
+      reconnaissance: {
+        mainWeapon: 'neutron_blaster',
+        weaponChance: 0.9
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.4 },
+      normal: { weaponChance: 0.6 },
+      hard: { weaponChance: 0.8 }
+    }
+  },
+
+  // SPACE MARINE UNITS
+
+  // Dreadnought
+  dreadnought: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'twin_lascannon',
+        secondaryWeapon: 'missile_launcher',
+        weaponChance: 0.8
+      },
+      assault: {
+        mainWeapon: 'assault_cannon',
+        secondaryWeapon: 'heavy_flamer',
+        weaponChance: 0.7
+      },
+      siege: {
+        mainWeapon: 'plasma_cannon',
+        secondaryWeapon: 'missile_launcher',
+        weaponChance: 0.8
+      },
+      reconnaissance: {
+        mainWeapon: 'assault_cannon',
+        secondaryWeapon: 'heavy_flamer',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.5 },
+      normal: { weaponChance: 0.7 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Redemptor Dreadnought
+  redemptor_dreadnought: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'macro_plasma_incinerator',
+        secondaryWeapon: 'onslaught_gatling_cannon',
+        weaponChance: 0.8
+      },
+      assault: {
+        mainWeapon: 'heavy_onslaught_gatling_cannon',
+        secondaryWeapon: 'heavy_flamer',
+        weaponChance: 0.7
+      },
+      siege: {
+        mainWeapon: 'macro_plasma_incinerator',
+        secondaryWeapon: 'onslaught_gatling_cannon',
+        weaponChance: 0.9
+      },
+      reconnaissance: {
+        mainWeapon: 'heavy_onslaught_gatling_cannon',
+        secondaryWeapon: 'storm_bolters',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.5 },
+      normal: { weaponChance: 0.7 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Brutalis Dreadnought
+  brutalis_dreadnought: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'twin_lascannon',
+        secondaryWeapon: 'hurricane_bolter',
+        weaponChance: 0.7
+      },
+      assault: {
+        mainWeapon: 'brutalis_fists',
+        secondaryWeapon: 'hurricane_bolter',
+        weaponChance: 0.9
+      },
+      siege: {
+        mainWeapon: 'twin_lascannon',
+        secondaryWeapon: 'hurricane_bolter',
+        weaponChance: 0.8
+      },
+      reconnaissance: {
+        mainWeapon: 'brutalis_fists',
+        secondaryWeapon: 'hurricane_bolter',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.4 },
+      normal: { weaponChance: 0.7 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Librarian Dreadnought
+  librarian_dreadnought: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'twin_lascannon',
+        secondaryWeapon: 'psychic_powers',
+        weaponChance: 0.8
+      },
+      assault: {
+        mainWeapon: 'multi_melta',
+        secondaryWeapon: 'psychic_powers',
+        weaponChance: 0.7
+      },
+      siege: {
+        mainWeapon: 'plasma_cannon',
+        secondaryWeapon: 'psychic_powers',
+        weaponChance: 0.8
+      },
+      reconnaissance: {
+        mainWeapon: 'missile_launcher',
+        secondaryWeapon: 'psychic_powers',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.3 },
+      normal: { weaponChance: 0.6 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Repulsor Tank
+  repulsor_tank: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'twin_lascannon',
+        secondaryWeapon: 'icarus_rocket_pod',
+        weaponChance: 0.8
+      },
+      assault: {
+        mainWeapon: 'las_talon',
+        secondaryWeapon: 'twin_plasma_incinerator',
+        weaponChance: 0.7
+      },
+      siege: {
+        mainWeapon: 'las_talon',
+        secondaryWeapon: 'icarus_rocket_pod',
+        weaponChance: 0.8
+      },
+      reconnaissance: {
+        mainWeapon: 'twin_lascannon',
+        secondaryWeapon: 'ironhail_heavy_stubber',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.4 },
+      normal: { weaponChance: 0.7 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Repulsor Executioner
+  repulsor_executioner: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'heavy_laser_destroyer',
+        secondaryWeapon: 'icarus_rocket_pod',
+        weaponChance: 0.9
+      },
+      assault: {
+        mainWeapon: 'macro_plasma_incinerator',
+        secondaryWeapon: 'ironhail_heavy_stubber',
+        weaponChance: 0.8
+      },
+      siege: {
+        mainWeapon: 'heavy_laser_destroyer',
+        secondaryWeapon: 'icarus_rocket_pod',
+        weaponChance: 0.9
+      },
+      reconnaissance: {
+        mainWeapon: 'macro_plasma_incinerator',
+        secondaryWeapon: 'ironhail_heavy_stubber',
+        weaponChance: 0.7
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.3 },
+      normal: { weaponChance: 0.6 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Subfaction-specific units
+  sanguinary_guard: {
+    scenarios: {
+      defensive: {
+        mainWeapon: 'encarmine_sword',
+        secondaryWeapon: 'inferno_pistol',
+        weaponChance: 0.7
+      },
+      assault: {
+        mainWeapon: 'encarmine_axe',
+        secondaryWeapon: 'plasma_pistol',
+        weaponChance: 0.9
+      },
+      siege: {
+        mainWeapon: 'power_fist',
+        secondaryWeapon: 'inferno_pistol',
+        weaponChance: 0.8
+      },
+      reconnaissance: {
+        mainWeapon: 'encarmine_sword',
+        secondaryWeapon: 'plasma_pistol',
+        weaponChance: 0.6
+      }
+    },
+    difficulty: {
+      easy: { weaponChance: 0.4 },
+      normal: { weaponChance: 0.7 },
+      hard: { weaponChance: 0.9 }
+    }
+  },
+
+  // Enhanced unit selection priorities for centerpiece units
+  centerpiecePriorities: {
+    tau_empire: {
+      riptide_battlesuit: { easy: 0.3, normal: 0.6, hard: 0.8 },
+      ghostkeel_battlesuit: { easy: 0.2, normal: 0.5, hard: 0.7 },
+      stormsurge_battlesuit: { easy: 0.1, normal: 0.3, hard: 0.6 },
+      taunar_supremacy_armour: { easy: 0.05, normal: 0.15, hard: 0.4 }
+    },
+    space_marines: {
+      redemptor_dreadnought: { easy: 0.4, normal: 0.7, hard: 0.9 },
+      brutalis_dreadnought: { easy: 0.2, normal: 0.5, hard: 0.8 },
+      librarian_dreadnought: { easy: 0.1, normal: 0.3, hard: 0.6 },
+      repulsor_executioner: { easy: 0.2, normal: 0.5, hard: 0.8 },
+      repulsor_tank: { easy: 0.3, normal: 0.6, hard: 0.8 }
+    }
+  },
+
+  // Scenario modifiers for unit selection
+  scenarioModifiers: {
+    defensive: {
+      heavy_support_bias: 1.5,
+      centerpiece_bias: 1.3,
+      long_range_bias: 1.4
+    },
+    assault: {
+      fast_attack_bias: 1.4,
+      melee_bias: 1.5,
+      centerpiece_bias: 1.2
+    },
+    siege: {
+      heavy_support_bias: 1.6,
+      centerpiece_bias: 1.4,
+      anti_armor_bias: 1.5
+    },
+    reconnaissance: {
+      fast_attack_bias: 1.6,
+      elite_bias: 1.3,
+      centerpiece_bias: 0.8
     }
   }
 };
@@ -332,9 +788,9 @@ export function selectWargear(unit, scenario, difficulty) {
       }
       if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
         if (scenarioRules.secondaryWeapon === 'smart_missile_system') {
-          selectedOptions.push('Smart missile system');
-        } else if (scenarioRules.secondaryWeapon === 'burst_cannon') {
-          selectedOptions.push('Burst cannon');
+          selectedOptions.push('Smart missile system (replaces gun drones)');
+        } else if (scenarioRules.secondaryWeapon === 'accelerator_burst_cannon') {
+          selectedOptions.push('Accelerator burst cannon (replaces gun drones)');
         }
       }
       break;
@@ -359,6 +815,132 @@ export function selectWargear(unit, scenario, difficulty) {
       }
       if (Math.random() < scenarioRules.upgradeChance && scenarioRules.upgrade) {
         selectedOptions.push('Seeker missiles x2');
+      }
+      break;
+
+    case 'riptide_battlesuit':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Ion accelerator');
+        selectedOptions.push('Twin fusion blaster');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'ghostkeel_battlesuit':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Fusion collider');
+        selectedOptions.push('Shield generator');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'stormsurge_battlesuit':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Pulse blast cannon');
+        selectedOptions.push('Shield generator');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'taunar_supremacy_armour':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Tri-axis ion cannon');
+        selectedOptions.push('Shield generator');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'kroot_carnivores':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Kroot rifle');
+        selectedOptions.push('Kroot hound');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'vespid_stingwings':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Neutron blaster');
+      }
+      break;
+
+    case 'dreadnought':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Twin lascannon');
+        selectedOptions.push('Missile launcher');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'redemptor_dreadnought':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Macro plasma incinerator');
+        selectedOptions.push('Onslaught gatling cannon');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'brutalis_dreadnought':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Twin lascannon');
+        selectedOptions.push('Hurricane bolter');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'librarian_dreadnought':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Twin lascannon');
+        selectedOptions.push('Psychic powers');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'repulsor_tank':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Twin lascannon');
+        selectedOptions.push('Icarus rocket pod');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'repulsor_executioner':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Heavy laser destroyer');
+        selectedOptions.push('Icarus rocket pod');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
+      }
+      break;
+
+    case 'sanguinary_guard':
+      if (Math.random() < scenarioRules.weaponChance) {
+        selectedOptions.push('Encarmine sword');
+        selectedOptions.push('Inferno pistol');
+      }
+      if (Math.random() < scenarioRules.weaponChance && scenarioRules.secondaryWeapon) {
+        selectedOptions.push(scenarioRules.secondaryWeapon);
       }
       break;
 

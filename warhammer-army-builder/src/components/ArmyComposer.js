@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { getFactionData } from '../data/factionRegistry';
+import { selectWargear } from '../data/wargearSelection';
+import { selectSpaceMarineWargear } from '../data/spaceMarineWargear';
 import './ArmyComposer.css';
 
 function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
@@ -13,6 +15,51 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
     includeNamedCharacter: false,
     useRealWorldDoctrine: true
   });
+
+  // Enhanced wargear selection function
+  const selectOptimalWargear = (unit, scenarioContext, difficultyLevel, factionType) => {
+    let wargearResult = { selectedOptions: [], description: 'Standard equipment only' };
+    
+    // Determine which wargear system to use based on faction
+    if (factionType === 'tau_empire' || ['tau_sept', 'farsight_enclaves', 'bork_an', 'vior_la', 'sacea'].includes(factionType)) {
+      wargearResult = selectWargear(unit, scenarioContext, difficultyLevel);
+    } else if (factionType === 'space_marines' || ['ultramarines', 'blood_angels', 'dark_angels', 'imperial_fists', 'iron_hands', 'salamanders'].includes(factionType)) {
+      // Extract chapter from faction
+      const chapter = ['ultramarines', 'blood_angels', 'dark_angels', 'imperial_fists', 'iron_hands', 'salamanders'].includes(factionType) 
+        ? factionType 
+        : 'ultramarines';
+      wargearResult = selectSpaceMarineWargear(unit, scenarioContext, difficultyLevel, chapter);
+    }
+
+    // Convert string options to proper option objects with costs
+    const processedOptions = wargearResult.selectedOptions.map(option => {
+      if (typeof option === 'string') {
+        // Try to extract cost from option string patterns like "Equipment (+5pts)"
+        const costMatch = option.match(/\(.*?(\+\d+)pts?\)/);
+        const cost = costMatch ? parseInt(costMatch[1]) : 0;
+        const cleanName = option.replace(/\s*\(.*?\)/, ''); // Remove cost text
+        
+        return {
+          name: cleanName,
+          cost: cost
+        };
+      }
+      return option;
+    });
+
+    return {
+      selectedOptions: processedOptions,
+      description: wargearResult.description,
+      tacticalRationale: wargearResult.tacticalRationale || `Equipment optimized for ${scenarioContext} operations`
+    };
+  };
+
+  // Calculate total equipment cost
+  const calculateEquipmentCost = (selectedOptions) => {
+    return selectedOptions.reduce((total, option) => {
+      return total + (option.cost || 0);
+    }, 0);
+  };
 
   // Get faction data dynamically
   const getFactionUnitsAndData = (selectedFaction) => {
@@ -224,15 +271,17 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       return score;
     };
 
-    // Select best unit from category
+    // Enhanced unit selection that accounts for Rule of Three
     const selectBestUnit = (units, excludeIds = [], unitCounts = {}) => {
       const availableUnits = filterUnitsByFaction(units, faction).filter(unit => {
-        // Exclude units already used (for first instance)
-        if (excludeIds.includes(unit.id)) return false;
-        
-        // Rule of Three: Maximum 3 of each datasheet in matched play
+        // Rule of Three: max 3 of any datasheet
         const currentCount = unitCounts[unit.id] || 0;
         if (currentCount >= 3) return false;
+        
+        // Character uniqueness: only one of each character
+        if (unit.keywords?.includes('Character') && excludeIds.includes(unit.id)) {
+          return false;
+        }
         
         return true;
       });
@@ -248,6 +297,185 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       return scoredUnits[0];
     };
 
+    // Enhanced equipment processing with proper replacement handling
+    const processUnitEquipment = (unit, selectedWargear) => {
+      let finalEquipment = [...unit.equipment.base];
+      const equipmentChanges = [];
+
+      // Apply wargear selections with proper replacement logic
+      selectedWargear.selectedOptions.forEach(option => {
+        // Handle both string and object options
+        const optionName = typeof option === 'string' ? option : (option.name || option);
+        const optionLower = optionName.toLowerCase();
+        
+        // T'AU EMPIRE REPLACEMENTS
+        if (unit.id === 'hammerhead') {
+          if (optionLower.includes('ion cannon')) {
+            // Replace railgun with ion cannon
+            const railgunIndex = finalEquipment.findIndex(item => item.toLowerCase().includes('railgun'));
+            if (railgunIndex !== -1) {
+              finalEquipment[railgunIndex] = 'Ion cannon';
+              equipmentChanges.push('Railgun → Ion cannon');
+            }
+          }
+          if (optionLower.includes('smart missile system')) {
+            // Replace gun drones with smart missile system
+            finalEquipment = finalEquipment.filter(item => !item.toLowerCase().includes('gun drone'));
+            finalEquipment.push('Smart missile system');
+            equipmentChanges.push('Gun drones → Smart missile system');
+          }
+          if (optionLower.includes('accelerator burst cannon')) {
+            // Replace gun drones with accelerator burst cannon
+            finalEquipment = finalEquipment.filter(item => !item.toLowerCase().includes('gun drone'));
+            finalEquipment.push('Accelerator burst cannon');
+            equipmentChanges.push('Gun drones → Accelerator burst cannon');
+          }
+        }
+
+        else if (unit.id === 'piranhas') {
+          if (optionLower.includes('fusion blaster')) {
+            // Replace burst cannon with fusion blaster
+            const burstIndex = finalEquipment.findIndex(item => item.toLowerCase().includes('burst cannon'));
+            if (burstIndex !== -1) {
+              finalEquipment[burstIndex] = 'Fusion blaster';
+              equipmentChanges.push('Burst cannon → Fusion blaster');
+            }
+          }
+          if (optionLower.includes('seeker missiles')) {
+            finalEquipment.push('Seeker missiles x2');
+            equipmentChanges.push('Added seeker missiles');
+          }
+        }
+
+        else if (unit.id === 'broadside_suits') {
+          if (optionLower.includes('high-yield missile pod')) {
+            // Replace heavy rail rifle with high-yield missile pod
+            const railIndex = finalEquipment.findIndex(item => item.toLowerCase().includes('heavy rail rifle'));
+            if (railIndex !== -1) {
+              finalEquipment[railIndex] = 'High-yield missile pod';
+              equipmentChanges.push('Heavy rail rifle → High-yield missile pod');
+            }
+          }
+          if (optionLower.includes('seeker missiles')) {
+            finalEquipment.push('Seeker missiles x2');
+            equipmentChanges.push('Added seeker missiles');
+          }
+          if (optionLower.includes('velocity tracker')) {
+            finalEquipment.push('Velocity tracker');
+            equipmentChanges.push('Added velocity tracker');
+          }
+        }
+
+        // SPACE MARINE REPLACEMENTS
+        else if (unit.id === 'intercessor_squad') {
+          if (optionLower.includes('auto bolt rifle')) {
+            // Replace all bolt rifles with auto bolt rifles
+            finalEquipment = finalEquipment.map(item => 
+              item.toLowerCase().includes('bolt rifle') ? 'Auto bolt rifle' : item
+            );
+            equipmentChanges.push('Bolt rifles → Auto bolt rifles (squad)');
+          }
+          else if (optionLower.includes('stalker bolt rifle')) {
+            // Replace all bolt rifles with stalker bolt rifles
+            finalEquipment = finalEquipment.map(item => 
+              item.toLowerCase().includes('bolt rifle') ? 'Stalker bolt rifle' : item
+            );
+            equipmentChanges.push('Bolt rifles → Stalker bolt rifles (squad)');
+          }
+          if (optionLower.includes('sergeant') && optionLower.includes('power')) {
+            finalEquipment.push(optionName.split(': ')[1] || optionName);
+            equipmentChanges.push('Sergeant upgrade added');
+          }
+        }
+
+        else if (unit.id === 'tactical_squad') {
+          if (optionLower.includes('heavy bolter') || optionLower.includes('lascannon') || 
+              optionLower.includes('missile launcher') || optionLower.includes('multi-melta')) {
+            // Heavy weapon replaces one marine's boltgun
+            const boltgunIndex = finalEquipment.findIndex(item => 
+              item.toLowerCase().includes('bolt rifle') || item.toLowerCase().includes('boltgun')
+            );
+            if (boltgunIndex !== -1) {
+              const heavyWeapon = optionName.includes('Sergeant:') ? optionName : optionName.split(' ')[0] + ' ' + optionName.split(' ')[1];
+              finalEquipment[boltgunIndex] = heavyWeapon;
+              equipmentChanges.push(`Boltgun → ${heavyWeapon} (1 model)`);
+            }
+          }
+          if (optionLower.includes('plasma gun') || optionLower.includes('meltagun') || 
+              optionLower.includes('flamer')) {
+            // Special weapon replaces another marine's boltgun
+            const boltgunIndex = finalEquipment.findIndex((item, index) => 
+              (item.toLowerCase().includes('bolt rifle') || item.toLowerCase().includes('boltgun')) &&
+              !equipmentChanges.some(change => change.includes(`Boltgun → ${item}`))
+            );
+            if (boltgunIndex !== -1) {
+              const specialWeapon = optionName.includes('Sergeant:') ? optionName : optionName;
+              finalEquipment[boltgunIndex] = specialWeapon;
+              equipmentChanges.push(`Boltgun → ${specialWeapon} (1 model)`);
+            }
+          }
+          if (optionLower.includes('sergeant') && optionLower.includes('power')) {
+            finalEquipment.push(optionName.split(': ')[1] || optionName);
+            equipmentChanges.push('Sergeant upgrade added');
+          }
+        }
+
+        else if (unit.id === 'heavy_intercessor_squad') {
+          if (optionLower.includes('executor heavy bolter')) {
+            // Replace heavy bolt rifle with executor heavy bolter (1 model)
+            const heavyBoltIndex = finalEquipment.findIndex(item => item.toLowerCase().includes('heavy bolt rifle'));
+            if (heavyBoltIndex !== -1) {
+              finalEquipment[heavyBoltIndex] = 'Executor heavy bolter';
+              equipmentChanges.push('Heavy bolt rifle → Executor heavy bolter (1 model)');
+            }
+          }
+          if (optionLower.includes('sergeant') && optionLower.includes('power')) {
+            finalEquipment.push(optionName.split(': ')[1] || optionName);
+            equipmentChanges.push('Sergeant upgrade added');
+          }
+        }
+
+        else if (unit.id === 'inceptor_squad') {
+          if (optionLower.includes('plasma exterminator')) {
+            // Replace assault bolters with plasma exterminators (all models)
+            finalEquipment = finalEquipment.map(item => 
+              item.toLowerCase().includes('assault bolter') ? 'Plasma exterminator x2' : item
+            );
+            equipmentChanges.push('Assault bolters → Plasma exterminators (squad)');
+          }
+        }
+
+        else if (unit.id === 'devastator_squad') {
+          // Devastators replace boltguns with heavy weapons
+          if (optionLower.includes('heavy bolter') || optionLower.includes('lascannon') || 
+              optionLower.includes('missile launcher') || optionLower.includes('multi-melta')) {
+            const boltgunIndex = finalEquipment.findIndex(item => item.toLowerCase().includes('boltgun'));
+            if (boltgunIndex !== -1) {
+              finalEquipment[boltgunIndex] = optionName;
+              equipmentChanges.push(`Boltgun → ${optionName} (1 model)`);
+            } else {
+              finalEquipment.push(optionName);
+              equipmentChanges.push(`Added ${optionName}`);
+            }
+          }
+        }
+
+        // GENERAL ADDITIONS (not replacements)
+        else {
+          // For Fire Warriors, Stealth Suits, Pathfinders, etc. - additions, not replacements
+          if (!optionLower.includes('replaces') && !optionLower.includes('→')) {
+            finalEquipment.push(optionName);
+            equipmentChanges.push(`Added ${optionName}`);
+          }
+        }
+      });
+
+      return {
+        equipment: finalEquipment,
+        changes: equipmentChanges
+      };
+    };
+
     if (useCustomChoices) {
       // Custom army composition logic - Point-aware generation with Rule of Three
       const usedUnitIds = [];
@@ -255,18 +483,39 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       const TARGET_POINTS = 2000;
       const MINIMUM_POINTS = 1900; // Allow some flexibility
 
-      // Helper function to add unit and update tracking
+      // Enhanced helper function to add unit with wargear selection
       const addUnit = (unit) => {
         if (!unit) return false;
         
-        army.units.push({ ...unit, selectedOptions: [] });
-        army.totalPoints += unit.points;
+        // Select optimal wargear for this unit
+        const wargearSelection = selectOptimalWargear(unit, scenario.context, difficulty, factionData.mainFaction);
+        const equipmentCost = calculateEquipmentCost(wargearSelection.selectedOptions);
+        const totalUnitCost = unit.points + equipmentCost;
+        
+        // Create enhanced unit with selected wargear
+        const enhancedUnit = {
+          ...unit,
+          selectedOptions: wargearSelection.selectedOptions,
+          optionsPoints: equipmentCost,
+          tacticalRationale: wargearSelection.tacticalRationale,
+          wargearDescription: wargearSelection.description
+        };
+        
+        // Process equipment
+        const equipmentResult = processUnitEquipment(enhancedUnit, wargearSelection);
+        enhancedUnit.equipment = equipmentResult.equipment;
+        enhancedUnit.equipmentChanges = equipmentResult.changes;
+        
+        army.units.push(enhancedUnit);
+        army.totalPoints += totalUnitCost;
         unitCounts[unit.id] = (unitCounts[unit.id] || 0) + 1;
         
         // Only add to excludeIds for first instance (for HQ uniqueness)
         if (!usedUnitIds.includes(unit.id)) {
           usedUnitIds.push(unit.id);
         }
+        
+        console.log(`Added ${unit.name} with wargear: ${wargearSelection.selectedOptions.map(opt => opt.name).join(', ')} (+${equipmentCost}pts)`);
         
         return true;
       };
@@ -397,22 +646,43 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       const doctrineTargets = calculateDoctrineTargets(TARGET_POINTS, customChoices.useRealWorldDoctrine);
       let currentComposition = { command: 0, infantry: 0, armor: 0, support: 0 };
 
-      // Helper function to add unit and update tracking
+      // Enhanced helper function to add unit with wargear selection
       const addUnit = (unit) => {
         if (!unit) return false;
         
-        army.units.push({ ...unit, selectedOptions: [] });
-        army.totalPoints += unit.points;
+        // Select optimal wargear for this unit
+        const wargearSelection = selectOptimalWargear(unit, scenario.context, difficulty, factionData.mainFaction);
+        const equipmentCost = calculateEquipmentCost(wargearSelection.selectedOptions);
+        const totalUnitCost = unit.points + equipmentCost;
+        
+        // Create enhanced unit with selected wargear
+        const enhancedUnit = {
+          ...unit,
+          selectedOptions: wargearSelection.selectedOptions,
+          optionsPoints: equipmentCost,
+          tacticalRationale: wargearSelection.tacticalRationale,
+          wargearDescription: wargearSelection.description
+        };
+        
+        // Process equipment
+        const equipmentResult = processUnitEquipment(enhancedUnit, wargearSelection);
+        enhancedUnit.equipment = equipmentResult.equipment;
+        enhancedUnit.equipmentChanges = equipmentResult.changes;
+        
+        army.units.push(enhancedUnit);
+        army.totalPoints += totalUnitCost;
         unitCounts[unit.id] = (unitCounts[unit.id] || 0) + 1;
         
         // Update military composition tracking
         const unitRole = getMilitaryRole(unit);
-        currentComposition[unitRole] += unit.points;
+        currentComposition[unitRole] += totalUnitCost;
         
         // Only add to excludeIds for first instance (for HQ uniqueness)
         if (!usedUnitIds.includes(unit.id)) {
           usedUnitIds.push(unit.id);
         }
+        
+        console.log(`Added ${unit.name} with wargear: ${wargearSelection.selectedOptions.map(opt => opt.name).join(', ')} (+${equipmentCost}pts)`);
         
         return true;
       };
@@ -447,165 +717,47 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       const namedCharacterThreshold = militaryDoctrine.commandStructure?.namedCharacterThreshold || 500;
       if (difficultyMods.namedCharacters && army.totalPoints >= namedCharacterThreshold) {
         const namedChar = selectBestUnitWithDoctrine(units.namedCharacters, usedUnitIds, unitCounts);
-        if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 100) {
+        if (namedChar && army.totalPoints + namedChar.points <= TARGET_POINTS - 300) {
           addUnit(namedChar);
         }
       }
 
-      // Phase 3: Build doctrine-compliant force structure
-      let attempts = 20;
-      while (army.totalPoints < MINIMUM_TARGET && attempts > 0) {
-        // Determine what type of unit we need most based on doctrine
-        let neededRole = null;
-        let highestNeed = 0;
+      // Phase 3: Core doctrine-based force structure
+      const maxAttempts = 30;
+      let attempts = 0;
+      
+      while (army.totalPoints < MINIMUM_TARGET && attempts < maxAttempts) {
+        let addedAnyUnit = false;
         
-        for (const [role, target] of Object.entries(doctrineTargets)) {
-          const current = currentComposition[role] || 0;
-          const needScore = Math.max(0, target.min - current) + 
-                          (current < target.max ? (target.max - current) * 0.5 : 0);
-          
-          if (needScore > highestNeed) {
-            highestNeed = needScore;
-            neededRole = role;
-          }
-        }
+        // Select best unit from any category using doctrine scoring
+        const allCategories = [units.troops, units.elites, units.fastAttack, units.heavySupport];
+        let bestUnit = null;
+        let bestScore = -1;
         
-        // Select units based on needed role
-        let selectedUnit = null;
-        
-        if (neededRole === 'command') {
-          selectedUnit = selectBestUnitWithDoctrine(units.hq, [], unitCounts);
-        } else if (neededRole === 'infantry') {
-          selectedUnit = selectBestUnitWithDoctrine(units.troops, [], unitCounts);
-        } else if (neededRole === 'armor') {
-          const armorUnits = [...units.elites, ...units.heavySupport];
-          selectedUnit = selectBestUnitWithDoctrine(armorUnits, [], unitCounts);
-        } else if (neededRole === 'support') {
-          selectedUnit = selectBestUnitWithDoctrine(units.fastAttack, [], unitCounts);
-        }
-        
-        // Fallback to any good unit if specific role selection fails
-        if (!selectedUnit || army.totalPoints + selectedUnit.points > TARGET_POINTS) {
-          const allCategories = [units.troops, units.elites, units.heavySupport, units.fastAttack];
-          for (const category of allCategories) {
-            selectedUnit = selectBestUnitWithDoctrine(category, [], unitCounts);
-            if (selectedUnit && army.totalPoints + selectedUnit.points <= TARGET_POINTS) {
-              break;
+        for (const category of allCategories) {
+          const unit = selectBestUnitWithDoctrine(category, [], unitCounts);
+          if (unit && army.totalPoints + unit.points + 50 <= TARGET_POINTS) { // Leave room for equipment
+            if (unit.score > bestScore) {
+              bestScore = unit.score;
+              bestUnit = unit;
             }
           }
         }
         
-        if (selectedUnit && army.totalPoints + selectedUnit.points <= TARGET_POINTS) {
-          addUnit(selectedUnit);
-        } else {
-          break;
+        if (bestUnit) {
+          addUnit(bestUnit);
+          addedAnyUnit = true;
         }
         
-        attempts--;
+        if (!addedAnyUnit) break;
+        attempts++;
       }
-
-      // Phase 4: Final optimization (same as before)
-      let maxAttempts = 10;
-      while (army.totalPoints < TARGET_POINTS - 20 && maxAttempts > 0) {
-        let foundSomething = false;
-        
-        // Try equipment first
-        if (difficultyMods.optimizedLoadouts) {
-          for (const unit of army.units) {
-            if (unit.equipment?.options && (!unit.selectedOptions || unit.selectedOptions.length === 0)) {
-              const availableOptions = unit.equipment.options.filter(opt => 
-                army.totalPoints + opt.cost <= TARGET_POINTS
-              );
-              
-              if (availableOptions.length > 0) {
-                const bestOption = availableOptions.reduce((max, opt) => 
-                  opt.cost > max.cost ? opt : max
-                );
-                
-                unit.selectedOptions = [bestOption];
-                unit.optionsPoints = bestOption.cost;
-                army.totalPoints += bestOption.cost;
-                foundSomething = true;
-                break;
-              }
-            }
-          }
-        }
-        
-        // Try smaller units if equipment doesn't work
-        if (!foundSomething) {
-          const allCategories = [units.fastAttack, units.elites, units.troops, units.heavySupport];
-          
-          for (const category of allCategories) {
-            const unit = selectBestUnitWithDoctrine(category, [], unitCounts);
-            if (unit && army.totalPoints + unit.points <= TARGET_POINTS) {
-              addUnit(unit);
-              foundSomething = true;
-              break;
-            }
-          }
-        }
-        
-        if (!foundSomething) break;
-        maxAttempts--;
-      }
-
-      // Add doctrine information to army
-      if (customChoices.useRealWorldDoctrine) {
-        const realismDescription = militaryDoctrine.realismScaling?.[difficulty]?.description || 
-                                 getDifficultyDescription(difficulty, army.mainFaction);
-                                 
-        army.militaryDoctrine = {
-          scenario: scenarioDoctrine.name || scenario.name,
-          description: scenarioDoctrine.description || scenario.description,
-          realWorldAnalog: scenarioDoctrine.realWorldAnalog || 'Combined arms doctrine',
-          composition: currentComposition,
-          targets: doctrineTargets,
-          adherence: realismDescription
-        };
-      }
-    }
-
-    // Add equipment optimizations based on difficulty
-    if (difficultyMods.optimizedLoadouts) {
-      army.units.forEach(unit => {
-        if (unit.equipment?.options && (!unit.selectedOptions || unit.selectedOptions.length === 0)) {
-          // Add competitive equipment based on scenario and faction
-          const competitiveOptions = getCompetitiveLoadout(unit, scenario.context, faction, difficulty);
-          if (competitiveOptions.length > 0) {
-            unit.selectedOptions = competitiveOptions;
-            unit.optionsPoints = competitiveOptions.reduce((sum, opt) => sum + opt.cost, 0);
-            army.totalPoints += unit.optionsPoints || 0;
-          }
-        }
-      });
     }
 
     // Generate lore justification
     army.loreJustification = generateLoreJustification(army, scenario, faction, difficulty, militaryRoles);
 
     onArmyGenerated(army);
-  };
-
-  const getCompetitiveLoadout = (unit, context, subfaction, difficulty) => {
-    const options = [];
-    
-    // Simplified competitive loadout logic
-    if (unit.id === 'crisis_suits') {
-      if (subfaction === 'farsight_enclaves') {
-        options.push({ name: 'Fusion blaster', cost: 5 });
-        options.push({ name: 'Shield drone x2', cost: 20 });
-      } else if (context === 'defensive') {
-        options.push({ name: 'Missile pod', cost: 10 });
-        options.push({ name: 'Gun drone x2', cost: 15 });
-      }
-    }
-    
-    if (unit.id === 'hammerhead' && subfaction === 'bork_an') {
-      options.push({ name: 'Smart missile system', cost: 15 });
-    }
-
-    return options;
   };
 
   const generateLoreJustification = (army, scenario, subfaction, difficulty, militaryRoles) => {
@@ -648,19 +800,39 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       justification += `Space Marine squads provide versatile infantry backbone, while elite units deliver decisive strikes at critical moments.\n\n`;
     }
 
-    // List key units with tactical roles
+    // List key units with tactical roles and equipment
     justification += `**Key Force Elements:**\n`;
     army.units.forEach(unit => {
       const role = unit.loreRoles?.[0] || 'Combat Unit';
-      justification += `• ${unit.name}: ${role} (${unit.points}pts)\n`;
+      const basePoints = unit.points;
+      const equipmentPoints = unit.optionsPoints || 0;
+      const totalPoints = basePoints + equipmentPoints;
+      
+      justification += `• ${unit.name}: ${role} (${totalPoints}pts`;
+      if (equipmentPoints > 0) {
+        justification += ` - ${basePoints}pts base + ${equipmentPoints}pts equipment`;
+      }
+      justification += `)\n`;
+      
+      // Add equipment rationale if available
+      if (unit.tacticalRationale) {
+        justification += `  └─ ${unit.tacticalRationale}\n`;
+      }
     });
+
+    // Add wargear optimization summary
+    const totalEquipmentCost = army.units.reduce((total, unit) => total + (unit.optionsPoints || 0), 0);
+    if (totalEquipmentCost > 0) {
+      justification += `\n**Equipment Optimization:**\n`;
+      justification += `Total equipment investment: ${totalEquipmentCost}pts optimized for ${scenario.context} operations and ${difficulty} difficulty requirements.\n\n`;
+    }
 
     // Military doctrine composition if used
     if (army.militaryDoctrine) {
       const total = army.totalPoints;
       const comp = army.militaryDoctrine.composition;
       
-      justification += `\n**Military Doctrine Composition:**\n`;
+      justification += `**Military Doctrine Composition:**\n`;
       justification += `• Command Elements: ${Math.round((comp.command / total) * 100)}% (${comp.command}pts) - ${militaryRoles.command?.description || 'Command structure'}\n`;
       justification += `• Infantry Forces: ${Math.round((comp.infantry / total) * 100)}% (${comp.infantry}pts) - ${militaryRoles.line_infantry?.description || 'Main battle line'}\n`;
       

@@ -1,415 +1,634 @@
-/* ArmyDisplay - Modern Mobile-First Design */
+/* Modern Army Display Styles */
 .army-display {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0;
-}
-
-/* Army Header */
-.army-header {
-  text-align: center;
-  margin-bottom: var(--space-xl);
-  padding: var(--space-lg);
   background: var(--card-bg);
   border-radius: var(--radius-lg);
+  padding: var(--space-2xl);
+  margin: var(--space-lg) 0;
+  backdrop-filter: blur(10px);
   border: 1px solid var(--card-border);
-  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-xl);
+}
+
+.army-header {
+  border-bottom: 2px solid var(--accent-blue);
+  padding-bottom: var(--space-lg);
+  margin-bottom: var(--space-xl);
+  text-align: center;
 }
 
 .army-header h2 {
-  color: var(--accent-gold);
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-size: var(--font-size-3xl);
   font-weight: 700;
-  margin: 0 0 var(--space-lg) 0;
-  letter-spacing: -0.025em;
+  background: var(--gradient-primary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: var(--space-md);
 }
 
-/* Army Summary - Mobile First */
 .army-summary {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
-}
-
-@media (min-width: 640px) {
-  .army-summary {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 768px) {
-  .army-summary {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
+  display: flex;
+  justify-content: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+  margin-top: var(--space-md);
 }
 
 .army-summary span {
-  background: var(--card-bg);
-  padding: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid var(--accent-blue);
   border-radius: var(--radius-md);
-  color: var(--text-primary);
   font-weight: 600;
-  border: 1px solid var(--card-border);
-  text-align: center;
-  transition: all 0.2s ease;
-  min-height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.army-summary span:hover {
-  border-color: var(--accent-blue);
-  transform: translateY(-1px);
+  font-size: var(--font-size-sm);
 }
 
 .points-total {
-  background: rgba(16, 185, 129, 0.1) !important;
-  border-color: var(--success) !important;
-  color: var(--success) !important;
-  font-weight: 700 !important;
+  background: var(--gradient-gold) !important;
+  color: var(--primary-bg) !important;
+  border-color: var(--accent-gold) !important;
 }
 
-/* Army Content Layout */
+/* Army Content Sections */
 .army-content {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
+  gap: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
 }
 
-@media (min-width: 1024px) {
-  .army-content {
-    grid-template-columns: 2fr 1fr;
-  }
-}
-
-/* Scenario Info */
 .scenario-info {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-lg);
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid var(--accent-purple);
+  border-radius: var(--radius-md);
   padding: var(--space-lg);
-  backdrop-filter: blur(20px);
-  order: 2;
-}
-
-@media (min-width: 1024px) {
-  .scenario-info {
-    order: 1;
-  }
 }
 
 .scenario-info h3 {
-  color: var(--accent-gold);
-  margin: 0 0 var(--space-lg) 0;
-  font-size: clamp(1.25rem, 3vw, 1.5rem);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.scenario-info p {
-  color: var(--text-secondary);
-  line-height: 1.6;
+  color: var(--accent-purple);
   margin-bottom: var(--space-md);
-  font-size: 0.95rem;
+  font-size: var(--font-size-xl);
 }
 
-/* Unit Lists */
-.army-units {
-  order: 1;
-}
-
-@media (min-width: 1024px) {
-  .army-units {
-    order: 2;
-  }
-}
-
-.battlefield-role {
-  margin-bottom: var(--space-xl);
-}
-
-.battlefield-role h3 {
-  color: var(--accent-blue);
-  font-size: clamp(1.1rem, 2.5vw, 1.3rem);
-  font-weight: 600;
-  margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--card-border);
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+.lore-justification {
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-top: var(--space-md);
+  line-height: 1.6;
 }
 
 /* Unit Cards */
+.army-units h3 {
+  margin-bottom: var(--space-lg);
+  font-size: var(--font-size-2xl);
+  color: var(--text-primary);
+}
+
+.units-list {
+  display: grid;
+  gap: var(--space-lg);
+}
+
 .unit-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-lg);
-  margin-bottom: var(--space-md);
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-md);
 }
 
 .unit-card:hover {
-  border-color: var(--accent-blue);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--accent-blue);
 }
 
-.unit-card:last-child {
-  margin-bottom: 0;
+.unit-card.expanded {
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-2xl);
 }
 
-/* Unit Header */
 .unit-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--space-md);
+  align-items: center;
+  padding: var(--space-lg);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.05));
+  border-bottom: 1px solid var(--card-border);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.unit-header:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1));
+}
+
+.unit-title {
+  display: flex;
+  align-items: center;
   gap: var(--space-md);
 }
 
-.unit-header h4 {
+.unit-title h4 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
   color: var(--text-primary);
   margin: 0;
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  font-weight: 600;
-  flex: 1;
-  line-height: 1.3;
+}
+
+.model-count {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  background: rgba(139, 92, 246, 0.2);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.unit-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
 }
 
 .unit-points {
-  color: var(--accent-gold);
   font-weight: 700;
-  font-size: 0.95rem;
-  background: rgba(251, 191, 36, 0.1);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  white-space: nowrap;
+  color: var(--accent-gold);
+  font-size: var(--font-size-lg);
+}
+
+.expand-indicator {
+  font-size: var(--font-size-lg);
+  color: var(--accent-blue);
+  transition: transform 0.2s ease;
+}
+
+.unit-card.expanded .expand-indicator {
+  transform: rotate(180deg);
 }
 
 /* Unit Details */
 .unit-details {
+  padding: var(--space-lg);
+}
+
+.equipment-overview {
+  margin-bottom: var(--space-lg);
+}
+
+.equipment-category {
   color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-/* Unit Equipment Details */
-.unit-equipment {
-  margin-top: var(--space-md);
-}
-
-.additional-equipment {
-  background: rgba(59, 130, 246, 0.05);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  border-radius: var(--radius-sm);
-  padding: var(--space-md);
-  margin: var(--space-sm) 0;
-}
-
-.additional-equipment ul {
-  list-style: none;
-  padding: 0;
-  margin: var(--space-sm) 0;
-}
-
-.additional-equipment li {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.4;
-  margin-bottom: var(--space-xs);
-  padding-left: var(--space-md);
-  position: relative;
-}
-
-.additional-equipment li::before {
-  content: "•";
+.equipment-name {
   color: var(--accent-blue);
-  position: absolute;
-  left: 0;
-  font-weight: bold;
+  font-weight: 500;
+  cursor: help;
+  transition: color 0.2s ease;
 }
 
-.equipment-summary {
-  color: var(--text-muted) !important;
-  font-size: 0.85rem !important;
-  font-style: italic;
-  margin-top: var(--space-sm) !important;
+.equipment-name:hover {
+  color: var(--accent-gold);
 }
 
-/* Tactical Rationale */
-.tactical-rationale {
-  background: rgba(16, 185, 129, 0.05);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: var(--radius-sm);
+/* Detailed Equipment Sections */
+.detailed-equipment {
+  background: rgba(17, 24, 39, 0.6);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  margin-top: var(--space-lg);
+  border: 1px solid rgba(75, 85, 99, 0.2);
+}
+
+.equipment-section {
+  margin-bottom: var(--space-xl);
+}
+
+.equipment-section:last-child {
+  margin-bottom: 0;
+}
+
+.equipment-section h5 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.weapon-profiles {
+  display: grid;
+  gap: var(--space-md);
+}
+
+/* Weapon Profile Cards */
+.weapon-profile-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
   padding: var(--space-md);
-  margin: var(--space-sm) 0;
+  transition: all 0.2s ease;
 }
 
-.tactical-rationale p {
+.weapon-profile-card:hover {
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-md);
+}
+
+.weapon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-md);
+}
+
+.weapon-name {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-primary);
   margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.4;
 }
 
-.tactical-rationale em {
-  color: var(--success);
+.weapon-category {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  background: rgba(75, 85, 99, 0.3);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
   font-weight: 500;
 }
 
-/* Drone Selection Info */
-.drone-selection {
-  background: rgba(245, 158, 11, 0.05);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+.weapon-stats {
+  margin-bottom: var(--space-md);
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-sm);
+  background: rgba(17, 24, 39, 0.4);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat label {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+}
+
+.stat .value {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.weapon-abilities {
+  margin-bottom: var(--space-md);
+}
+
+.weapon-abilities label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+  display: block;
+}
+
+.abilities-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.ability-tag {
+  background: var(--gradient-primary);
+  color: white;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.weapon-description {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-style: italic;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Unit Meta Information */
+.unit-meta {
+  background: rgba(17, 24, 39, 0.4);
   border-radius: var(--radius-sm);
   padding: var(--space-md);
+  margin-top: var(--space-lg);
+  border-left: 3px solid var(--accent-blue);
+}
+
+.unit-meta p {
   margin: var(--space-sm) 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
 }
 
-.drone-selection p {
-  margin: 0 0 var(--space-sm) 0;
-  color: var(--text-primary);
-  font-weight: 600;
-  font-size: 0.9rem;
+.unit-meta p:first-child {
+  margin-top: 0;
 }
 
-.drone-selection ul {
-  list-style: none;
-  padding: 0;
+.unit-meta p:last-child {
+  margin-bottom: 0;
+}
+
+/* Tactical Notes */
+.tactical-notes {
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid var(--accent-gold);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+}
+
+.tactical-notes h3 {
+  color: var(--accent-gold);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-xl);
+}
+
+.tactical-notes pre {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  font-family: inherit;
   margin: 0;
 }
 
-.drone-selection li {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  line-height: 1.4;
-  margin-bottom: var(--space-xs);
-  padding: var(--space-xs) 0;
-  border-bottom: 1px solid rgba(245, 158, 11, 0.1);
-}
-
-.drone-selection li:last-child {
-  border-bottom: none;
-}
-
-.drone-selection strong {
-  color: var(--warning);
-  font-weight: 600;
-}
-
-/* Action Buttons */
+/* Export and Actions */
 .army-actions {
   display: grid;
-  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-xl);
+}
+
+.export-section {
+  background: rgba(17, 24, 39, 0.6);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  border: 1px solid var(--card-border);
+}
+
+.export-section h3 {
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.export-options {
+  display: flex;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+.export-options label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+}
+
+.export-options input[type="radio"] {
+  width: auto;
+  margin: 0;
+}
+
+.export-buttons {
+  display: flex;
   gap: var(--space-md);
-  margin-top: var(--space-xl);
-  padding-top: var(--space-xl);
-  border-top: 1px solid var(--card-border);
+  flex-wrap: wrap;
 }
 
-@media (min-width: 640px) {
-  .army-actions {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 768px) {
-  .army-actions {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-}
-
-.export-btn {
-  background: var(--success);
+.export-btn, .copy-btn {
+  background: var(--gradient-primary);
+  border: none;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
   color: white;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  min-height: 48px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.export-btn:hover:not(:disabled) {
-  background: #059669;
+.export-btn:hover, .copy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
 }
 
-.copy-btn {
-  background: var(--accent-blue);
-  color: white;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  min-height: 48px;
+.navigation-actions {
+  text-align: center;
 }
 
-.copy-btn:hover:not(:disabled) {
-  background: #2563eb;
-}
-
-.reset-btn {
+.start-over-btn {
   background: var(--danger);
+  border: none;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
   color: white;
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  min-height: 48px;
+  font-size: var(--font-size-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.reset-btn:hover:not(:disabled) {
+.start-over-btn:hover {
   background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
 }
 
-/* Loading and Empty States */
-.loading-state {
+/* Footer */
+.army-footer {
+  border-top: 1px solid var(--card-border);
+  padding-top: var(--space-lg);
   text-align: center;
-  padding: var(--space-2xl);
   color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.disclaimer {
   font-style: italic;
+  margin-top: var(--space-md);
 }
 
-.empty-state {
-  text-align: center;
-  padding: var(--space-2xl);
-  color: var(--text-muted);
-  background: var(--card-bg);
-  border: 1px dashed var(--card-border);
-  border-radius: var(--radius-lg);
-}
+/* Responsive Design */
+@media (max-width: 768px) {
+  .army-display {
+    padding: var(--space-lg);
+    margin: var(--space-md) 0;
+  }
 
-/* Responsive adjustments */
-@media (max-width: 639px) {
-  .army-header {
-    padding: var(--space-md);
+  .army-summary {
+    flex-direction: column;
+    gap: var(--space-sm);
   }
-  
-  .scenario-info {
-    padding: var(--space-md);
-  }
-  
-  .unit-card {
-    padding: var(--space-md);
-  }
-  
+
   .unit-header {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-sm);
   }
-  
-  .unit-points {
+
+  .unit-summary {
     align-self: flex-end;
   }
+
+  .stat-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xs);
+  }
+
+  .stat-row .stat:nth-child(4),
+  .stat-row .stat:nth-child(5) {
+    grid-column: span 1;
+  }
+
+  .export-options {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .export-buttons {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .stat-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .abilities-list {
+    flex-direction: column;
+  }
+
+  .weapon-profiles {
+    gap: var(--space-sm);
+  }
+
+  .weapon-profile-card {
+    padding: var(--space-sm);
+  }
+}
+
+/* Animation and Transitions */
+.unit-card {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.detailed-equipment {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Accessibility */
+.unit-header:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+.weapon-profile-card:focus-within {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Print Styles */
+@media print {
+  .army-display {
+    background: white;
+    color: black;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .army-actions {
+    display: none;
+  }
+
+  .unit-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .weapon-profile-card {
+    background: #f5f5f5;
+    border: 1px solid #ccc;
+  }
+
+  .ability-tag {
+    background: #333;
+    color: white;
+  }
+}
+
+/* Equipment Changes Styling */
+.equipment-changes {
+  background: var(--accent-gold-faded);
+  border: 1px solid var(--accent-gold);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+  backdrop-filter: blur(5px);
+}
+
+.changes-label {
+  font-weight: 600;
+  color: var(--accent-gold);
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+
+.changes-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.equipment-change {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: var(--space-xs) var(--space-sm);
+  margin-bottom: var(--space-xs);
+  font-family: 'Courier New', monospace;
+  font-size: var(--font-size-sm);
+  border-left: 3px solid var(--accent-gold);
+}
+
+.equipment-change:last-child {
+  margin-bottom: 0;
+}
+
+.equipment-change:before {
+  content: "⚙️ ";
+  margin-right: var(--space-xs);
 } 

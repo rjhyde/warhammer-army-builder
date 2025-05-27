@@ -1,129 +1,174 @@
-// Adeptus Astartes (Space Marines) Unit Database
-// Comprehensive unit definitions for Space Marine army building
+// Space Marine Units Database for 10th Edition Warhammer 40,000
+// Points costs and unit compositions based on publicly available data
+
+// Data Version Information
+export const dataVersion = {
+  version: "1.0.0",
+  lastUpdated: "2024-01-15",
+  sources: [
+    "Warhammer 40,000 Core Rules",
+    "Codex: Space Marines (10th Edition)",
+    "Chapter Approved 2024"
+  ],
+  updateCheckUrl: "https://api.github.com/repos/your-repo/releases/latest", // For checking updates
+  warhammerCommunityCheck: true // Enable checking for updates
+};
 
 export const spaceMarineUnits = {
-  // HQ Units
+  // HQ
   hq: [
     {
       id: 'captain',
       name: 'Captain',
-      points: 90,
+      points: 80,
       models: 1,
-      keywords: ['Character', 'Captain', 'Infantry'],
+      keywords: ['Character', 'Infantry', 'Captain'],
       equipment: {
-        base: ['Bolt pistol', 'Power sword', 'Frag grenades', 'Krak grenades']
+        base: ['Bolt pistol', 'Chainsword'],
+        options: [
+          { name: 'Power sword', cost: 0 },
+          { name: 'Power fist', cost: 0 },
+          { name: 'Thunder hammer', cost: 0 },
+          { name: 'Storm shield', cost: 0 },
+          { name: 'Combi-weapon', cost: 0 }
+        ]
       },
+      loreRoles: ['leadership', 'command', 'melee_specialist'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'very_high',
+        dark_angels: 'very_high',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'very_high'
+      }
+    },
+    {
+      id: 'lieutenant',
+      name: 'Primaris Lieutenant',
+      points: 70,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Lieutenant', 'Primaris'],
+      equipment: {
+        base: ['Bolt pistol', 'Chainsword'],
+        options: [
+          { name: 'Power sword', cost: 0 },
+          { name: 'Power fist', cost: 0 },
+          { name: 'Storm shield', cost: 0 },
+          { name: 'Combi-weapon', cost: 0 }
+        ]
+      },
+      loreRoles: ['support_command', 'tactical_flexibility'],
+      competitiveLevel: 'high',
       subfactionSynergy: {
         ultramarines: 'very_high',
         blood_angels: 'high',
         dark_angels: 'high',
-        imperial_fists: 'high',
-        iron_hands: 'high',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
         salamanders: 'high'
-      },
-      competitiveLevel: 'high',
-      loreRoles: ['Command', 'Tactical Leadership', 'Close Combat'],
-      description: 'Battle-hardened company commander and tactical genius'
+      }
     },
     {
-      id: 'captain_terminator',
-      name: 'Captain in Terminator Armour',
-      points: 110,
+      id: 'librarian',
+      name: 'Librarian',
+      points: 90,
       models: 1,
-      keywords: ['Character', 'Captain', 'Infantry', 'Terminator'],
+      keywords: ['Character', 'Infantry', 'Psyker', 'Librarian'],
       equipment: {
-        base: ['Storm bolter', 'Power sword', 'Terminator armour', 'Teleport strike']
+        base: ['Bolt pistol', 'Force weapon', 'Psychic hood'],
+        options: [
+          { name: 'Force sword', cost: 0 },
+          { name: 'Force axe', cost: 0 },
+          { name: 'Force stave', cost: 0 },
+          { name: 'Combi-weapon', cost: 0 }
+        ]
       },
+      loreRoles: ['psyker', 'support', 'anti_psyker'],
+      competitiveLevel: 'very_high',
       subfactionSynergy: {
-        ultramarines: 'high',
-        blood_angels: 'medium',
+        ultramarines: 'very_high',
+        blood_angels: 'very_high',
         dark_angels: 'very_high',
         imperial_fists: 'high',
-        iron_hands: 'high',
-        salamanders: 'medium'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Heavy Assault', 'Elite Command', 'Teleport Strike'],
-      description: 'Elite commander in ancient Terminator armour'
+        iron_hands: 'medium',
+        salamanders: 'high'
+      }
     },
     {
       id: 'chaplain',
       name: 'Chaplain',
       points: 85,
       models: 1,
-      keywords: ['Character', 'Chaplain', 'Infantry', 'Priest'],
+      keywords: ['Character', 'Infantry', 'Chaplain'],
       equipment: {
-        base: ['Bolt pistol', 'Crozius arcanum', 'Rosarius', 'Litanies of battle']
+        base: ['Bolt pistol', 'Crozius arcanum', 'Rosarius'],
+        options: [
+          { name: 'Jump pack', cost: 0 },
+          { name: 'Combi-weapon', cost: 0 },
+          { name: 'Power fist', cost: 0 }
+        ]
       },
+      loreRoles: ['morale_support', 'melee_specialist', 'spiritual_leader'],
+      competitiveLevel: 'high',
       subfactionSynergy: {
         ultramarines: 'high',
         blood_angels: 'very_high',
-        dark_angels: 'high',
-        imperial_fists: 'high',
-        iron_hands: 'medium',
+        dark_angels: 'very_high',
+        imperial_fists: 'very_high',
+        iron_hands: 'high',
         salamanders: 'very_high'
-      },
-      competitiveLevel: 'high',
-      loreRoles: ['Spiritual Leadership', 'Close Combat', 'Morale Support'],
-      description: 'Spiritual leader inspiring righteous fury in battle'
+      }
     },
     {
-      id: 'librarian',
-      name: 'Librarian',
-      points: 95,
+      id: 'techmarine',
+      name: 'Techmarine',
+      points: 75,
       models: 1,
-      keywords: ['Character', 'Librarian', 'Infantry', 'Psyker'],
+      keywords: ['Character', 'Infantry', 'Techmarine'],
       equipment: {
-        base: ['Bolt pistol', 'Force sword', 'Psychic powers', 'Psychic hood']
+        base: ['Bolt pistol', 'Power axe', 'Servo-arm', 'Mechadendrites'],
+        options: [
+          { name: 'Servitors x4', cost: 0 },
+          { name: 'Conversion beamer', cost: 0 },
+          { name: 'Combi-weapon', cost: 0 }
+        ]
       },
+      loreRoles: ['vehicle_support', 'repair', 'tech_specialist'],
+      competitiveLevel: 'medium',
       subfactionSynergy: {
         ultramarines: 'high',
-        blood_angels: 'very_high',
+        blood_angels: 'medium',
         dark_angels: 'medium',
-        imperial_fists: 'medium',
-        iron_hands: 'medium',
-        salamanders: 'high'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Psychic Support', 'Anti-Psyker', 'Tactical Support'],
-      description: 'Warrior-psyker wielding the power of the Warp'
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'very_high'
+      }
     }
   ],
 
-  // Troops Units
+  // Troops
   troops: [
     {
       id: 'tactical_squad',
       name: 'Tactical Squad',
-      points: 180,
-      models: 10,
-      keywords: ['Infantry', 'Battleline', 'Tactical Squad'],
+      points: 90,
+      models: 5,
+      keywords: ['Infantry', 'Tactical Squad'],
       equipment: {
-        base: ['Bolt rifle', 'Bolt pistol', 'Frag grenades', 'Krak grenades'],
-        options: ['Heavy weapon', 'Special weapon', 'Sergeant upgrades']
+        base: ['Bolt gun', 'Bolt pistol', 'Frag grenades', 'Krak grenades'],
+        options: [
+          { name: 'Flamer', cost: 0 },
+          { name: 'Meltagun', cost: 0 },
+          { name: 'Plasma gun', cost: 0 },
+          { name: 'Missile launcher', cost: 0 },
+          { name: 'Heavy bolter', cost: 0 },
+          { name: 'Lascannon', cost: 0 }
+        ]
       },
-      subfactionSynergy: {
-        ultramarines: 'very_high',
-        blood_angels: 'high',
-        dark_angels: 'high',
-        imperial_fists: 'high',
-        iron_hands: 'high',
-        salamanders: 'high'
-      },
-      competitiveLevel: 'high',
-      loreRoles: ['Versatile Infantry', 'Objective Control', 'Fire Support'],
-      description: 'Versatile Space Marine squads forming the backbone of any force'
-    },
-    {
-      id: 'intercessor_squad',
-      name: 'Intercessor Squad',
-      points: 195,
-      models: 10,
-      keywords: ['Infantry', 'Battleline', 'Intercessor', 'Primaris'],
-      equipment: {
-        base: ['Bolt rifle', 'Bolt pistol', 'Frag grenades', 'Krak grenades'],
-        options: ['Auto bolt rifle', 'Stalker bolt rifle', 'Sergeant upgrades']
-      },
+      loreRoles: ['core_infantry', 'objective_secured', 'versatile'],
+      competitiveLevel: 'medium',
       subfactionSynergy: {
         ultramarines: 'very_high',
         blood_angels: 'high',
@@ -131,274 +176,584 @@ export const spaceMarineUnits = {
         imperial_fists: 'very_high',
         iron_hands: 'high',
         salamanders: 'high'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Line Infantry', 'Fire Support', 'Objective Holding'],
-      description: 'Advanced Primaris Marines with superior firepower and resilience'
+      }
     },
     {
-      id: 'assault_intercessor_squad',
-      name: 'Assault Intercessor Squad',
-      points: 180,
-      models: 10,
-      keywords: ['Infantry', 'Battleline', 'Assault Intercessor', 'Primaris'],
-      equipment: {
-        base: ['Astartes chainsword', 'Heavy bolt pistol', 'Frag grenades', 'Krak grenades'],
-        options: ['Sergeant upgrades', 'Jump packs (specific units)']
-      },
-      subfactionSynergy: {
-        ultramarines: 'high',
-        blood_angels: 'very_high',
-        dark_angels: 'high',
-        imperial_fists: 'medium',
-        iron_hands: 'medium',
-        salamanders: 'high'
-      },
-      competitiveLevel: 'high',
-      loreRoles: ['Close Combat', 'Rapid Assault', 'Urban Warfare'],
-      description: 'Close combat specialists optimized for brutal melee engagement'
-    }
-  ],
-
-  // Elites Units
-  elites: [
-    {
-      id: 'terminator_squad',
-      name: 'Terminator Squad',
-      points: 205,
+      id: 'intercessor_squad',
+      name: 'Intercessor Squad',
+      points: 100,
       models: 5,
-      keywords: ['Infantry', 'Terminator', 'Elite'],
+      keywords: ['Infantry', 'Primaris', 'Intercessor'],
       equipment: {
-        base: ['Storm bolter', 'Power fist', 'Terminator armour'],
-        options: ['Heavy weapons', 'Melee weapon variants', 'Teleport strike']
+        base: ['Bolt rifle', 'Bolt pistol', 'Frag grenades', 'Krak grenades'],
+        options: [
+          { name: 'Auto bolt rifle', cost: 0 },
+          { name: 'Stalker bolt rifle', cost: 0 },
+          { name: 'Auxiliary grenade launcher', cost: 0 },
+          { name: 'Power sword (Sergeant)', cost: 0 },
+          { name: 'Power fist (Sergeant)', cost: 0 }
+        ]
       },
+      loreRoles: ['core_infantry', 'objective_secured', 'fire_support'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'high',
+        dark_angels: 'high',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'infiltrator_squad',
+      name: 'Infiltrator Squad',
+      points: 130,
+      models: 5,
+      keywords: ['Infantry', 'Primaris', 'Infiltrator', 'Phobos'],
+      equipment: {
+        base: ['Marksman bolt carbine', 'Bolt pistol', 'Frag grenades', 'Krak grenades'],
+        options: [
+          { name: 'Infiltrator comms array', cost: 0 },
+          { name: 'Helix gauntlet', cost: 0 }
+        ]
+      },
+      loreRoles: ['scouts', 'infiltration', 'anti_infiltration'],
+      competitiveLevel: 'high',
       subfactionSynergy: {
         ultramarines: 'high',
         blood_angels: 'medium',
         dark_angels: 'very_high',
         imperial_fists: 'high',
-        iron_hands: 'very_high',
+        iron_hands: 'medium',
         salamanders: 'medium'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Heavy Assault', 'Elite Infantry', 'Breakthrough'],
-      description: 'Elite veterans in ancient Terminator armour'
+      }
     },
     {
-      id: 'assault_terminators',
-      name: 'Assault Terminator Squad',
-      points: 215,
+      id: 'scout_squad',
+      name: 'Scout Squad',
+      points: 70,
       models: 5,
-      keywords: ['Infantry', 'Terminator', 'Elite', 'Assault'],
+      keywords: ['Infantry', 'Scout'],
       equipment: {
-        base: ['Thunder hammer & Storm shield OR Lightning claws (pair)', 'Terminator armour'],
-        options: ['Weapon loadout selection', 'Teleport strike']
+        base: ['Scout bolter', 'Bolt pistol', 'Combat knife'],
+        options: [
+          { name: 'Sniper rifle', cost: 0 },
+          { name: 'Heavy bolter', cost: 0 },
+          { name: 'Missile launcher', cost: 0 },
+          { name: 'Shotgun', cost: 0 },
+          { name: 'Camo cloaks', cost: 0 }
+        ]
       },
+      loreRoles: ['scouts', 'reconnaissance', 'infiltration'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        ultramarines: 'high',
+        blood_angels: 'medium',
+        dark_angels: 'high',
+        imperial_fists: 'very_high',
+        iron_hands: 'medium',
+        salamanders: 'medium'
+      }
+    }
+  ],
+
+  // Elites
+  elites: [
+    {
+      id: 'terminator_squad',
+      name: 'Terminator Squad',
+      points: 175,
+      models: 5,
+      keywords: ['Infantry', 'Terminator'],
+      equipment: {
+        base: ['Storm bolter', 'Power fist'],
+        options: [
+          { name: 'Lightning claws (pair)', cost: 0 },
+          { name: 'Thunder hammer', cost: 0 },
+          { name: 'Storm shield', cost: 0 },
+          { name: 'Assault cannon', cost: 0 },
+          { name: 'Heavy flamer', cost: 0 },
+          { name: 'Cyclone missile launcher', cost: 0 }
+        ]
+      },
+      loreRoles: ['elite_assault', 'heavy_infantry', 'teleport_strike'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'high',
+        dark_angels: 'very_high',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'dreadnought',
+      name: 'Dreadnought',
+      points: 150,
+      models: 1,
+      keywords: ['Vehicle', 'Walker', 'Dreadnought'],
+      equipment: {
+        base: ['Multi-melta', 'Dreadnought combat weapon'],
+        options: [
+          { name: 'Twin lascannon', cost: 0 },
+          { name: 'Missile launcher', cost: 0 },
+          { name: 'Plasma cannon', cost: 0 },
+          { name: 'Assault cannon', cost: 0 },
+          { name: 'Heavy flamer', cost: 0 }
+        ]
+      },
+      loreRoles: ['heavy_support', 'anti_armor', 'firebase'],
+      competitiveLevel: 'high',
       subfactionSynergy: {
         ultramarines: 'high',
         blood_angels: 'very_high',
-        dark_angels: 'very_high',
-        imperial_fists: 'medium',
-        iron_hands: 'high',
-        salamanders: 'high'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Elite Close Combat', 'Breakthrough', 'Heavy Assault'],
-      description: 'Close combat specialists in Terminator armour'
-    },
-    {
-      id: 'bladeguard_veterans',
-      name: 'Bladeguard Veteran Squad',
-      points: 105,
-      models: 3,
-      keywords: ['Infantry', 'Bladeguard', 'Veteran', 'Primaris'],
-      equipment: {
-        base: ['Master-crafted power sword', 'Storm shield', 'Heavy bolt pistol']
-      },
-      subfactionSynergy: {
-        ultramarines: 'very_high',
-        blood_angels: 'very_high',
         dark_angels: 'high',
-        imperial_fists: 'high',
-        iron_hands: 'medium',
-        salamanders: 'high'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Elite Close Combat', 'Character Protection', 'Elite Infantry'],
-      description: 'Elite Primaris veterans with sword and shield'
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'very_high'
+      }
     },
     {
-      id: 'sternguard_veterans',
-      name: 'Sternguard Veteran Squad',
-      points: 160,
-      models: 5,
-      keywords: ['Infantry', 'Sternguard', 'Veteran'],
+      id: 'redemptor_dreadnought',
+      name: 'Redemptor Dreadnought',
+      points: 220,
+      models: 1,
+      keywords: ['Vehicle', 'Walker', 'Primaris', 'Redemptor'],
       equipment: {
-        base: ['Special issue boltgun', 'Bolt pistol', 'Special ammunition'],
-        options: ['Heavy weapons', 'Special weapons', 'Sergeant upgrades']
+        base: ['Macro plasma incinerator', 'Redemptor fist', 'Storm bolters x2', 'Fragstorm grenade launcher'],
+        options: [
+          { name: 'Heavy onslaught gatling cannon', cost: 0 },
+          { name: 'Heavy flamer', cost: 0 },
+          { name: 'Onslaught gatling cannon', cost: 0 },
+          { name: 'Storm bolters', cost: 0 }
+        ]
       },
+      loreRoles: ['centerpiece', 'heavy_fire_support', 'anti_infantry'],
+      competitiveLevel: 'very_high',
       subfactionSynergy: {
         ultramarines: 'very_high',
         blood_angels: 'high',
         dark_angels: 'high',
         imperial_fists: 'very_high',
-        iron_hands: 'high',
-        salamanders: 'medium'
-      },
-      competitiveLevel: 'high',
-      loreRoles: ['Veteran Infantry', 'Special Ammunition', 'Fire Support'],
-      description: 'Veteran marksmen with special issue ammunition'
+        iron_hands: 'very_high',
+        salamanders: 'very_high'
+      }
     },
     {
-      id: 'company_veterans',
-      name: 'Company Veterans',
-      points: 120,
-      models: 5,
-      keywords: ['Infantry', 'Veteran', 'Company Veterans'],
+      id: 'brutalis_dreadnought',
+      name: 'Brutalis Dreadnought',
+      points: 200,
+      models: 1,
+      keywords: ['Vehicle', 'Walker', 'Primaris', 'Brutalis'],
       equipment: {
-        base: ['Bolt rifle', 'Bolt pistol', 'Combat blade'],
-        options: ['Heavy weapons', 'Special weapons', 'Melee upgrades']
+        base: ['Brutalis fists x2', 'Twin bolt rifle x2', 'Multi-melta x2'],
+        options: [
+          { name: 'Twin lascannon', cost: 0 },
+          { name: 'Hurricane bolter', cost: 0 }
+        ]
       },
-      subfactionSynergy: {
-        ultramarines: 'high',
-        blood_angels: 'high',
-        dark_angels: 'high',
-        imperial_fists: 'high',
-        iron_hands: 'high',
-        salamanders: 'high'
-      },
-      competitiveLevel: 'medium',
-      loreRoles: ['Veteran Infantry', 'Flexible Support', 'Special Weapons'],
-      description: 'Experienced battle-brothers with specialized roles'
-    }
-  ],
-
-  // Fast Attack Units
-  fastAttack: [
-    {
-      id: 'assault_squad',
-      name: 'Assault Squad',
-      points: 140,
-      models: 5,
-      keywords: ['Infantry', 'Jump Pack', 'Assault Squad'],
-      equipment: {
-        base: ['Astartes chainsword', 'Bolt pistol', 'Jump pack'],
-        options: ['Flamers', 'Plasma pistols', 'Sergeant upgrades']
-      },
-      subfactionSynergy: {
-        ultramarines: 'medium',
-        blood_angels: 'very_high',
-        dark_angels: 'medium',
-        imperial_fists: 'low',
-        iron_hands: 'low',
-        salamanders: 'high'
-      },
-      competitiveLevel: 'medium',
-      loreRoles: ['Mobile Assault', 'Close Combat', 'Rapid Deployment'],
-      description: 'Jump pack equipped close combat specialists'
-    },
-    {
-      id: 'inceptor_squad',
-      name: 'Inceptor Squad',
-      points: 115,
-      models: 3,
-      keywords: ['Infantry', 'Jump Pack', 'Inceptor', 'Primaris'],
-      equipment: {
-        base: ['Assault bolter x2', 'Jump pack'],
-        options: ['Plasma exterminator x2']
-      },
+      loreRoles: ['assault_specialist', 'melee_dominance', 'breakthrough'],
+      competitiveLevel: 'very_high',
       subfactionSynergy: {
         ultramarines: 'high',
         blood_angels: 'very_high',
         dark_angels: 'high',
         imperial_fists: 'medium',
+        iron_hands: 'very_high',
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'librarian_dreadnought',
+      name: 'Librarian Dreadnought',
+      points: 190,
+      models: 1,
+      keywords: ['Vehicle', 'Walker', 'Psyker', 'Librarian', 'Dreadnought'],
+      equipment: {
+        base: ['Force halberd', 'Storm bolter', 'Psychic hood'],
+        options: [
+          { name: 'Twin lascannon', cost: 0 },
+          { name: 'Missile launcher', cost: 0 },
+          { name: 'Plasma cannon', cost: 0 },
+          { name: 'Multi-melta', cost: 0 }
+        ]
+      },
+      loreRoles: ['psyker_support', 'heavy_assault', 'force_multiplier'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'very_high',
+        dark_angels: 'medium', // Dark Angels distrust psykers
+        imperial_fists: 'high',
         iron_hands: 'medium',
         salamanders: 'high'
+      }
+    },
+    {
+      id: 'sanguinary_guard',
+      name: 'Sanguinary Guard',
+      points: 150,
+      models: 5,
+      keywords: ['Infantry', 'Jump Pack', 'Sanguinary Guard'],
+      equipment: {
+        base: ['Angelus boltgun', 'Encarmine sword'],
+        options: [
+          { name: 'Encarmine axe', cost: 0 },
+          { name: 'Power fist', cost: 0 },
+          { name: 'Inferno pistol', cost: 0 },
+          { name: 'Plasma pistol', cost: 0 }
+        ]
       },
+      loreRoles: ['elite_assault', 'jump_infantry', 'honor_guard'],
+      competitiveLevel: 'very_high',
+      subfactionRestricted: ['blood_angels'], // Blood Angels only
+      subfactionSynergy: {
+        blood_angels: 'legendary'
+      }
+    },
+    {
+      id: 'death_company',
+      name: 'Death Company',
+      points: 120,
+      models: 5,
+      keywords: ['Infantry', 'Jump Pack', 'Death Company'],
+      equipment: {
+        base: ['Bolt pistol', 'Chainsword'],
+        options: [
+          { name: 'Power sword', cost: 0 },
+          { name: 'Power fist', cost: 0 },
+          { name: 'Thunder hammer', cost: 0 },
+          { name: 'Plasma pistol', cost: 0 },
+          { name: 'Inferno pistol', cost: 0 }
+        ]
+      },
+      loreRoles: ['berserker_assault', 'shock_troops', 'death_seekers'],
+      competitiveLevel: 'very_high',
+      subfactionRestricted: ['blood_angels'],
+      subfactionSynergy: {
+        blood_angels: 'legendary'
+      }
+    },
+    {
+      id: 'deathwing_knights',
+      name: 'Deathwing Knights',
+      points: 230,
+      models: 5,
+      keywords: ['Infantry', 'Terminator', 'Deathwing', 'Inner Circle'],
+      equipment: {
+        base: ['Storm shield', 'Mace of absolution'],
+        options: [
+          { name: 'Flail of the Unforgiven (Champion)', cost: 0 },
+          { name: 'Watcher in the Dark', cost: 0 }
+        ]
+      },
+      loreRoles: ['elite_melee', 'fortress_breakers', 'inner_circle'],
+      competitiveLevel: 'very_high',
+      subfactionRestricted: ['dark_angels'],
+      subfactionSynergy: {
+        dark_angels: 'legendary'
+      }
+    },
+    {
+      id: 'ravenwing_knights',
+      name: 'Ravenwing Black Knights',
+      points: 135,
+      models: 3,
+      keywords: ['Biker', 'Ravenwing'],
+      equipment: {
+        base: ['Twin boltgun', 'Corvus hammer', 'Plasma talon'],
+        options: [
+          { name: 'Huntmaster (Champion)', cost: 0 },
+          { name: 'Ravenwing grenade launcher', cost: 0 }
+        ]
+      },
+      loreRoles: ['fast_attack', 'plasma_specialists', 'hunt_the_fallen'],
+      competitiveLevel: 'very_high',
+      subfactionRestricted: ['dark_angels'],
+      subfactionSynergy: {
+        dark_angels: 'legendary'
+      }
+    },
+    {
+      id: 'centurion_devastators',
+      name: 'Centurion Devastator Squad',
+      points: 255,
+      models: 3,
+      keywords: ['Infantry', 'Centurion'],
+      equipment: {
+        base: ['Grav-cannon', 'Hurricane bolter'],
+        options: [
+          { name: 'Heavy bolter', cost: 0 },
+          { name: 'Lascannon', cost: 0 },
+          { name: 'Omniscope', cost: 0 }
+        ]
+      },
+      loreRoles: ['heavy_fire_support', 'fortress_assault', 'devastation'],
       competitiveLevel: 'high',
-      loreRoles: ['Mobile Fire Support', 'Rapid Assault', 'Deep Strike'],
-      description: 'Heavy weapons specialists with jump pack mobility'
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'medium',
+        dark_angels: 'medium',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'primaris_apothecary',
+      name: 'Primaris Apothecary',
+      points: 75,
+      models: 1,
+      keywords: ['Character', 'Infantry', 'Primaris', 'Apothecary'],
+      equipment: {
+        base: ['Absolvor bolt pistol', 'Reductor pistol', 'Narthecium'],
+        options: [
+          { name: 'Chief Apothecary upgrade', cost: 0 }
+        ]
+      },
+      loreRoles: ['medic', 'support', 'revival_specialist'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'very_high',
+        dark_angels: 'high',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'very_high'
+      }
+    }
+  ],
+
+  // Fast Attack
+  fastAttack: [
+    {
+      id: 'assault_squad',
+      name: 'Assault Squad',
+      points: 100,
+      models: 5,
+      keywords: ['Infantry', 'Jump Pack', 'Assault Squad'],
+      equipment: {
+        base: ['Bolt pistol', 'Chainsword', 'Jump pack'],
+        options: [
+          { name: 'Flamer', cost: 0 },
+          { name: 'Meltagun', cost: 0 },
+          { name: 'Plasma pistol', cost: 0 },
+          { name: 'Power sword', cost: 0 },
+          { name: 'Power fist', cost: 0 }
+        ]
+      },
+      loreRoles: ['fast_assault', 'jump_infantry', 'shock_troops'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        ultramarines: 'high',
+        blood_angels: 'very_high',
+        dark_angels: 'medium',
+        imperial_fists: 'medium',
+        iron_hands: 'medium',
+        salamanders: 'high'
+      }
     },
     {
       id: 'bike_squad',
       name: 'Bike Squad',
-      points: 135,
+      points: 85,
       models: 3,
-      keywords: ['Mounted', 'Bike', 'Fast Attack'],
+      keywords: ['Biker'],
       equipment: {
-        base: ['Twin boltgun', 'Bolt pistol', 'Space Marine bike'],
-        options: ['Heavy weapons', 'Special weapons', 'Sergeant upgrades']
+        base: ['Twin boltgun', 'Bolt pistol'],
+        options: [
+          { name: 'Flamer', cost: 0 },
+          { name: 'Meltagun', cost: 0 },
+          { name: 'Plasma gun', cost: 0 },
+          { name: 'Multi-melta attack bike', cost: 0 }
+        ]
       },
+      loreRoles: ['fast_attack', 'mobile_fire_support', 'reconnaissance'],
+      competitiveLevel: 'medium',
       subfactionSynergy: {
-        ultramarines: 'medium',
+        ultramarines: 'high',
         blood_angels: 'high',
         dark_angels: 'very_high',
         imperial_fists: 'medium',
         iron_hands: 'high',
         salamanders: 'medium'
+      }
+    },
+    {
+      id: 'land_speeder',
+      name: 'Land Speeder',
+      points: 70,
+      models: 1,
+      keywords: ['Vehicle', 'Fly', 'Land Speeder'],
+      equipment: {
+        base: ['Heavy bolter'],
+        options: [
+          { name: 'Multi-melta', cost: 0 },
+          { name: 'Assault cannon', cost: 0 },
+          { name: 'Typhoon missile launcher', cost: 0 },
+          { name: 'Heavy flamer', cost: 0 }
+        ]
       },
+      loreRoles: ['fast_support', 'reconnaissance', 'harassment'],
       competitiveLevel: 'medium',
-      loreRoles: ['Fast Reconnaissance', 'Mobile Fire Support', 'Harassment'],
-      description: 'Fast moving bike-mounted Marines'
+      subfactionSynergy: {
+        ultramarines: 'high',
+        blood_angels: 'high',
+        dark_angels: 'very_high',
+        imperial_fists: 'high',
+        iron_hands: 'medium',
+        salamanders: 'medium'
+      }
+    },
+    {
+      id: 'inceptor_squad',
+      name: 'Inceptor Squad',
+      points: 150,
+      models: 3,
+      keywords: ['Infantry', 'Jump Pack', 'Fly', 'Primaris', 'Inceptor'],
+      equipment: {
+        base: ['Assault bolter x2'],
+        options: [
+          { name: 'Plasma exterminator x2', cost: 0 }
+        ]
+      },
+      loreRoles: ['fast_assault', 'fire_support', 'deep_strike'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'very_high',
+        dark_angels: 'high',
+        imperial_fists: 'very_high',
+        iron_hands: 'high',
+        salamanders: 'high'
+      }
     },
     {
       id: 'outrider_squad',
       name: 'Outrider Squad',
       points: 135,
       models: 3,
-      keywords: ['Mounted', 'Outrider', 'Primaris', 'Fast Attack'],
+      keywords: ['Biker', 'Primaris', 'Outrider'],
       equipment: {
-        base: ['Twin bolt rifle', 'Bolt pistol', 'Primaris bike'],
-        options: ['Sergeant upgrades']
+        base: ['Twin bolt rifle', 'Bolt pistol', 'Astartes chainsword'],
+        options: [
+          { name: 'Plasma pistol', cost: 0 },
+          { name: 'Power sword', cost: 0 }
+        ]
       },
+      loreRoles: ['fast_assault', 'mobile_firebase', 'flanking'],
+      competitiveLevel: 'high',
       subfactionSynergy: {
         ultramarines: 'high',
-        blood_angels: 'high',
+        blood_angels: 'very_high',
         dark_angels: 'very_high',
         imperial_fists: 'medium',
         iron_hands: 'high',
         salamanders: 'medium'
-      },
-      competitiveLevel: 'high',
-      loreRoles: ['Fast Reconnaissance', 'Mobile Fire Support', 'Objective Control'],
-      description: 'Primaris bike-mounted reconnaissance specialists'
+      }
     }
   ],
 
-  // Heavy Support Units
+  // Heavy Support
   heavySupport: [
     {
       id: 'devastator_squad',
       name: 'Devastator Squad',
-      points: 160,
+      points: 95,
       models: 5,
-      keywords: ['Infantry', 'Devastator Squad', 'Heavy Weapons'],
+      keywords: ['Infantry', 'Devastator'],
       equipment: {
         base: ['Boltgun', 'Bolt pistol'],
-        options: ['Heavy bolter', 'Multi-melta', 'Lascannon', 'Missile launcher']
+        options: [
+          { name: 'Heavy bolter', cost: 0 },
+          { name: 'Missile launcher', cost: 0 },
+          { name: 'Lascannon', cost: 0 },
+          { name: 'Multi-melta', cost: 0 },
+          { name: 'Plasma cannon', cost: 0 },
+          { name: 'Grav-cannon', cost: 0 }
+        ]
       },
+      loreRoles: ['heavy_fire_support', 'anti_armor', 'firebase'],
+      competitiveLevel: 'medium',
       subfactionSynergy: {
         ultramarines: 'high',
         blood_angels: 'medium',
+        dark_angels: 'medium',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'predator_tank',
+      name: 'Predator',
+      points: 130,
+      models: 1,
+      keywords: ['Vehicle', 'Predator'],
+      equipment: {
+        base: ['Predator autocannon', 'Storm bolter'],
+        options: [
+          { name: 'Twin lascannon turret', cost: 0 },
+          { name: 'Lascannon sponsons', cost: 0 },
+          { name: 'Heavy bolter sponsons', cost: 0 },
+          { name: 'Hunter-killer missile', cost: 0 }
+        ]
+      },
+      loreRoles: ['main_battle_tank', 'fire_support', 'anti_armor'],
+      competitiveLevel: 'medium',
+      subfactionSynergy: {
+        ultramarines: 'high',
+        blood_angels: 'medium',
+        dark_angels: 'medium',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'repulsor_tank',
+      name: 'Repulsor',
+      points: 275,
+      models: 1,
+      keywords: ['Vehicle', 'Fly', 'Transport', 'Repulsor', 'Primaris'],
+      equipment: {
+        base: ['Twin heavy bolter', 'Twin lascannon', 'Onslaught gatling cannon', 'Fragstorm grenade launcher', 'Storm bolter x2'],
+        options: [
+          { name: 'Las-talon', cost: 0 },
+          { name: 'Twin plasma incinerator', cost: 0 },
+          { name: 'Icarus rocket pod', cost: 0 },
+          { name: 'Ironhail heavy stubber', cost: 0 }
+        ]
+      },
+      loreRoles: ['battle_tank', 'transport', 'firebase'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'high',
         dark_angels: 'high',
         imperial_fists: 'very_high',
         iron_hands: 'very_high',
-        salamanders: 'medium'
-      },
-      competitiveLevel: 'high',
-      loreRoles: ['Heavy Fire Support', 'Anti-Armor', 'Area Denial'],
-      description: 'Heavy weapons specialists providing devastating fire support'
+        salamanders: 'high'
+      }
     },
     {
-      id: 'heavy_intercessor_squad',
-      name: 'Heavy Intercessor Squad',
-      points: 180,
-      models: 5,
-      keywords: ['Infantry', 'Heavy Intercessor', 'Primaris', 'Heavy Weapons'],
+      id: 'repulsor_executioner',
+      name: 'Repulsor Executioner',
+      points: 325,
+      models: 1,
+      keywords: ['Vehicle', 'Fly', 'Repulsor', 'Primaris'],
       equipment: {
-        base: ['Heavy bolt rifle', 'Bolt pistol'],
-        options: ['Executor heavy bolter', 'Heavy bolter', 'Sergeant upgrades']
+        base: ['Macro plasma incinerator', 'Twin heavy bolter', 'Twin Icarus ironhail heavy stubber', 'Fragstorm grenade launcher x2'],
+        options: [
+          { name: 'Heavy laser destroyer', cost: 0 },
+          { name: 'Icarus rocket pod', cost: 0 },
+          { name: 'Ironhail heavy stubber', cost: 0 }
+        ]
       },
+      loreRoles: ['heavy_battle_tank', 'anti_armor', 'centerpiece'],
+      competitiveLevel: 'very_high',
       subfactionSynergy: {
         ultramarines: 'very_high',
         blood_angels: 'medium',
@@ -406,129 +761,206 @@ export const spaceMarineUnits = {
         imperial_fists: 'very_high',
         iron_hands: 'very_high',
         salamanders: 'high'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Heavy Infantry', 'Fire Support', 'Defensive Line'],
-      description: 'Heavily armed Primaris Marines for sustained fire support'
-    },
-    {
-      id: 'predator',
-      name: 'Predator',
-      points: 130,
-      models: 1,
-      keywords: ['Vehicle', 'Predator', 'Tank'],
-      equipment: {
-        base: ['Predator autocannon', 'Storm bolter'],
-        options: ['Lascannon sponsons', 'Heavy bolter sponsons', 'Hunter-killer missile']
-      },
-      subfactionSynergy: {
-        ultramarines: 'high',
-        blood_angels: 'medium',
-        dark_angels: 'high',
-        imperial_fists: 'high',
-        iron_hands: 'very_high',
-        salamanders: 'medium'
-      },
-      competitiveLevel: 'medium',
-      loreRoles: ['Mobile Fire Support', 'Anti-Armor', 'Vehicle Support'],
-      description: 'Main battle tank with flexible weapon options'
-    },
-    {
-      id: 'whirlwind',
-      name: 'Whirlwind',
-      points: 125,
-      models: 1,
-      keywords: ['Vehicle', 'Whirlwind', 'Artillery'],
-      equipment: {
-        base: ['Whirlwind multiple missile launcher', 'Storm bolter']
-      },
-      subfactionSynergy: {
-        ultramarines: 'high',
-        blood_angels: 'low',
-        dark_angels: 'medium',
-        imperial_fists: 'very_high',
-        iron_hands: 'high',
-        salamanders: 'medium'
-      },
-      competitiveLevel: 'medium',
-      loreRoles: ['Artillery Support', 'Area Denial', 'Indirect Fire'],
-      description: 'Self-propelled artillery for indirect fire support'
+      }
     },
     {
       id: 'land_raider',
       name: 'Land Raider',
       points: 285,
       models: 1,
-      keywords: ['Vehicle', 'Land Raider', 'Transport', 'Tank'],
+      keywords: ['Vehicle', 'Transport', 'Land Raider'],
       equipment: {
-        base: ['Twin lascannon x2', 'Twin heavy bolter', 'Transport capacity 10']
+        base: ['Twin lascannon x2', 'Twin heavy bolter'],
+        options: [
+          { name: 'Hunter-killer missile', cost: 0 },
+          { name: 'Storm bolter', cost: 0 }
+        ]
       },
+      loreRoles: ['assault_transport', 'heavy_armor', 'breakthrough'],
+      competitiveLevel: 'high',
       subfactionSynergy: {
-        ultramarines: 'high',
+        ultramarines: 'very_high',
         blood_angels: 'high',
         dark_angels: 'very_high',
-        imperial_fists: 'high',
+        imperial_fists: 'very_high',
         iron_hands: 'very_high',
-        salamanders: 'medium'
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'land_raider_crusader',
+      name: 'Land Raider Crusader',
+      points: 270,
+      models: 1,
+      keywords: ['Vehicle', 'Transport', 'Land Raider'],
+      equipment: {
+        base: ['Twin assault cannon', 'Hurricane bolter x2'],
+        options: [
+          { name: 'Multi-melta', cost: 0 },
+          { name: 'Hunter-killer missile', cost: 0 }
+        ]
       },
+      loreRoles: ['assault_transport', 'infantry_support', 'urban_warfare'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        ultramarines: 'high',
+        blood_angels: 'very_high',
+        dark_angels: 'very_high',
+        imperial_fists: 'very_high',
+        iron_hands: 'high',
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'whirlwind',
+      name: 'Whirlwind',
+      points: 125,
+      models: 1,
+      keywords: ['Vehicle', 'Whirlwind'],
+      equipment: {
+        base: ['Whirlwind castellan launcher', 'Storm bolter'],
+        options: [
+          { name: 'Whirlwind vengeance launcher', cost: 0 },
+          { name: 'Hunter-killer missile', cost: 0 }
+        ]
+      },
+      loreRoles: ['artillery', 'indirect_fire', 'infantry_support'],
       competitiveLevel: 'medium',
-      loreRoles: ['Heavy Transport', 'Assault Vehicle', 'Mobile Fortress'],
-      description: 'Legendary assault transport and mobile fortress'
+      subfactionSynergy: {
+        ultramarines: 'high',
+        blood_angels: 'medium',
+        dark_angels: 'medium',
+        imperial_fists: 'very_high',
+        iron_hands: 'high',
+        salamanders: 'medium'
+      }
+    },
+    {
+      id: 'eliminator_squad',
+      name: 'Eliminator Squad',
+      points: 90,
+      models: 3,
+      keywords: ['Infantry', 'Primaris', 'Phobos', 'Eliminator'],
+      equipment: {
+        base: ['Bolt sniper rifle', 'Bolt pistol', 'Camo cloak'],
+        options: [
+          { name: 'Las fusil', cost: 0 },
+          { name: 'Instigator bolt carbine (Sergeant)', cost: 0 }
+        ]
+      },
+      loreRoles: ['sniper', 'infiltration', 'character_assassination'],
+      competitiveLevel: 'very_high',
+      subfactionSynergy: {
+        ultramarines: 'high',
+        blood_angels: 'medium',
+        dark_angels: 'very_high',
+        imperial_fists: 'very_high',
+        iron_hands: 'high',
+        salamanders: 'medium'
+      }
     }
   ],
 
-  // Named Characters
-  namedCharacters: [
+  // Dedicated Transports
+  dedicatedTransports: [
     {
-      id: 'marneus_calgar',
-      name: 'Marneus Calgar',
-      points: 210,
+      id: 'rhino',
+      name: 'Rhino',
+      points: 80,
       models: 1,
-      keywords: ['Character', 'Epic Hero', 'Chapter Master', 'Terminator'],
+      keywords: ['Vehicle', 'Transport', 'Rhino'],
       equipment: {
-        base: ['Gauntlets of Ultramar', 'Terminator armour', 'Iron halo']
+        base: ['Storm bolter'],
+        options: [
+          { name: 'Additional storm bolter', cost: 0 },
+          { name: 'Hunter-killer missile', cost: 0 }
+        ]
       },
-      restrictions: ['ultramarines_only'],
+      loreRoles: ['transport', 'mobile_support'],
+      competitiveLevel: 'medium',
       subfactionSynergy: {
-        ultramarines: 'very_high'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Supreme Command', 'Chapter Master', 'Elite Combat'],
-      description: 'Chapter Master of the Ultramarines, Lord of Macragge'
+        ultramarines: 'high',
+        blood_angels: 'high',
+        dark_angels: 'high',
+        imperial_fists: 'very_high',
+        iron_hands: 'high',
+        salamanders: 'high'
+      }
     },
     {
-      id: 'dante',
-      name: 'Commander Dante',
-      points: 180,
+      id: 'razorback',
+      name: 'Razorback',
+      points: 95,
       models: 1,
-      keywords: ['Character', 'Epic Hero', 'Chapter Master', 'Jump Pack'],
+      keywords: ['Vehicle', 'Transport', 'Razorback'],
       equipment: {
-        base: ['Axe Mortalis', 'Inferno pistol', 'Death mask of Sanguinius', 'Jump pack']
+        base: ['Twin heavy bolter'],
+        options: [
+          { name: 'Twin assault cannon', cost: 0 },
+          { name: 'Twin lascannon', cost: 0 },
+          { name: 'Lascannon and twin plasma gun', cost: 0 },
+          { name: 'Hunter-killer missile', cost: 0 }
+        ]
       },
-      restrictions: ['blood_angels_only'],
+      loreRoles: ['armed_transport', 'fire_support'],
+      competitiveLevel: 'medium',
       subfactionSynergy: {
-        blood_angels: 'very_high'
-      },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Chapter Master', 'Close Combat', 'Aerial Assault'],
-      description: 'Ancient Chapter Master of the Blood Angels'
+        ultramarines: 'high',
+        blood_angels: 'medium',
+        dark_angels: 'medium',
+        imperial_fists: 'very_high',
+        iron_hands: 'very_high',
+        salamanders: 'high'
+      }
     },
     {
-      id: 'azrael',
-      name: 'Azrael',
-      points: 160,
+      id: 'drop_pod',
+      name: 'Drop Pod',
+      points: 85,
       models: 1,
-      keywords: ['Character', 'Epic Hero', 'Chapter Master'],
+      keywords: ['Vehicle', 'Transport', 'Drop Pod'],
       equipment: {
-        base: ['Sword of Secrets', 'Combi-plasma', 'Lion helm']
+        base: ['Storm bolter'],
+        options: [
+          { name: 'Deathwind launcher', cost: 0 }
+        ]
       },
-      restrictions: ['dark_angels_only'],
+      loreRoles: ['deep_strike_transport', 'tactical_insertion'],
+      competitiveLevel: 'medium',
       subfactionSynergy: {
-        dark_angels: 'very_high'
+        ultramarines: 'very_high',
+        blood_angels: 'high',
+        dark_angels: 'medium',
+        imperial_fists: 'very_high',
+        iron_hands: 'medium',
+        salamanders: 'high'
+      }
+    },
+    {
+      id: 'impulsor',
+      name: 'Impulsor',
+      points: 100,
+      models: 1,
+      keywords: ['Vehicle', 'Transport', 'Impulsor', 'Primaris'],
+      equipment: {
+        base: ['Twin bolt rifle', 'Impulsor shield dome'],
+        options: [
+          { name: 'Bellicatus missile array', cost: 0 },
+          { name: 'Fragstorm grenade launcher', cost: 0 },
+          { name: 'Ironhail heavy stubber', cost: 0 },
+          { name: 'Orbital comms array', cost: 0 }
+        ]
       },
-      competitiveLevel: 'very_high',
-      loreRoles: ['Chapter Master', 'Plasma Weaponry', 'Tactical Command'],
-      description: 'Supreme Grand Master of the Dark Angels'
+      loreRoles: ['fast_transport', 'primaris_support'],
+      competitiveLevel: 'high',
+      subfactionSynergy: {
+        ultramarines: 'very_high',
+        blood_angels: 'high',
+        dark_angels: 'high',
+        imperial_fists: 'high',
+        iron_hands: 'high',
+        salamanders: 'high'
+      }
     }
   ]
 };
