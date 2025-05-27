@@ -1,249 +1,162 @@
-import React from 'react';
+// Multi-Faction Selector Component
+// Allows users to select different factions and subfactions
+
+import React, { useState, useEffect } from 'react';
+import { getAvailableFactions, getSubfactions } from '../data/factionRegistry';
 import './FactionSelector.css';
 
-const tauSubfactions = [
-  {
-    id: 'tau_empire',
-    name: 'T\'au Empire (T\'au Sept)',
-    description: 'The original T\'au Sept, masters of combined arms warfare and technological innovation.',
-    strengths: [
-      'Balanced combined arms approach',
-      'Strong Fire Warrior core',
-      'Excellent drone support',
-      'Flexible tactics'
-    ],
-    loreTraits: [
-      'Disciplined military doctrine',
-      'Advanced technology integration',
-      'Coordinated battlefield tactics',
-      'Moderate range preferences'
-    ],
-    preferredScenarios: ['defensive', 'general', 'research'],
-    color: '#FFA726'
-  },
-  {
-    id: 'farsight_enclaves',
-    name: 'Farsight Enclaves',
-    description: 'Rebel T\'au forces led by Commander Farsight, favoring close-range battlesuit warfare.',
-    strengths: [
-      'Elite battlesuit formations',
-      'Close-range specialists',
-      'Aggressive tactics',
-      'Named character support'
-    ],
-    loreTraits: [
-      'Aggressive military doctrine',
-      'Battlesuit-heavy forces',
-      'Short to medium range focus',
-      'Independent operations'
-    ],
-    preferredScenarios: ['assault', 'siege', 'excavation'],
-    color: '#E57373'
-  },
-  {
-    id: 'bork_an',
-    name: 'Bork\'an Sept',
-    description: 'Masters of long-range warfare and advanced weapon technology.',
-    strengths: [
-      'Extended weapon ranges',
-      'Superior marksmanship',
-      'Advanced weapon systems',
-      'Long-range fire support'
-    ],
-    loreTraits: [
-      'Technological superiority',
-      'Long-range engagement preference',
-      'Precise targeting doctrine',
-      'Defensive positioning'
-    ],
-    preferredScenarios: ['defensive', 'research', 'general'],
-    color: '#81C784'
-  },
-  {
-    id: 'vior_la',
-    name: 'Vior\'la Sept',
-    description: 'Aggressive hunters known for rapid deployment and aggressive tactics.',
-    strengths: [
-      'Rapid deployment',
-      'Aggressive fire tactics',
-      'Mobile warfare',
-      'Hunter-killer doctrine'
-    ],
-    loreTraits: [
-      'Aggressive pursuit tactics',
-      'Mobile strike forces',
-      'Hunt-focused doctrine',
-      'Fast engagement preference'
-    ],
-    preferredScenarios: ['assault', 'patrol', 'excavation'],
-    color: '#9575CD'
-  },
-  {
-    id: 'sacea',
-    name: 'Sa\'cea Sept',
-    description: 'Masters of defensive warfare and strategic positioning.',
-    strengths: [
-      'Defensive expertise',
-      'Strategic positioning',
-      'Coordinated fire support',
-      'Battlefield control'
-    ],
-    loreTraits: [
-      'Defensive mastery',
-      'Strategic doctrine',
-      'Coordinated tactics',
-      'Territorial control'
-    ],
-    preferredScenarios: ['defensive', 'siege', 'research'],
-    color: '#64B5F6'
-  }
-];
+const FactionSelector = ({ onFactionChange, selectedFaction, selectedSubfaction }) => {
+  const [availableFactions, setAvailableFactions] = useState([]);
+  const [availableSubfactions, setAvailableSubfactions] = useState([]);
+  const [showSubfactions, setShowSubfactions] = useState(false);
 
-function FactionSelector({ onFactionSelect, scenario, difficulty }) {
-  const getRecommendationScore = (subfaction) => {
-    let score = 0;
-    
-    // Scenario compatibility
-    if (subfaction.preferredScenarios.includes(scenario?.context)) {
-      score += 2;
+  useEffect(() => {
+    const factions = getAvailableFactions();
+    setAvailableFactions(factions);
+  }, []);
+
+  useEffect(() => {
+    if (selectedFaction) {
+      const subfactions = getSubfactions(selectedFaction);
+      setAvailableSubfactions(subfactions);
+      setShowSubfactions(subfactions.length > 0);
+    } else {
+      setAvailableSubfactions([]);
+      setShowSubfactions(false);
     }
-    
-    // Difficulty considerations
-    if (difficulty === 'hard' || difficulty === 'extreme') {
-      if (subfaction.id === 'farsight_enclaves') score += 1; // Named characters
-      if (subfaction.id === 'bork_an') score += 1; // Competitive range advantage
-    }
-    
-    return score;
+  }, [selectedFaction]);
+
+  const handleFactionSelect = (factionId) => {
+    const faction = availableFactions.find(f => f.id === factionId);
+    onFactionChange(factionId, null, faction);
   };
 
-  const getSuitabilityText = (subfaction) => {
-    const score = getRecommendationScore(subfaction);
-    if (score >= 2) return '🎯 Highly Recommended';
-    if (score === 1) return '✅ Good Match';
-    return '⚪ Suitable';
+  const handleSubfactionSelect = (subfactionId) => {
+    const faction = availableFactions.find(f => f.id === selectedFaction);
+    const subfaction = availableSubfactions.find(s => s.id === subfactionId);
+    onFactionChange(selectedFaction, subfactionId, faction, subfaction);
   };
 
-  const getLoreJustification = (subfaction) => {
-    const justifications = {
-      tau_empire: {
-        defensive: 'T\'au Sept\'s disciplined doctrine excels at organized defense',
-        assault: 'Balanced approach allows for coordinated assault operations',
-        siege: 'Combined arms doctrine effective in siege warfare',
-        excavation: 'Technological expertise aids in archaeological operations',
-        research: 'Advanced technology perfect for research facility operations',
-        general: 'Versatile doctrine suitable for general engagements'
-      },
-      farsight_enclaves: {
-        defensive: 'Aggressive doctrine can be adapted for defensive positions',
-        assault: 'Battlesuit specialists excel at spearhead assaults',
-        siege: 'Close-range battlesuit warfare perfect for siege breaking',
-        excavation: 'Independent operations suit excavation missions',
-        research: 'Elite forces capable of rapid facility capture',
-        general: 'Experienced rebels adapt to various battlefield conditions'
-      },
-      bork_an: {
-        defensive: 'Long-range superiority ideal for defensive positions',
-        assault: 'Extended range allows for assault fire support',
-        siege: 'Advanced weapons effective against fortifications',
-        excavation: 'Precision weapons protect valuable archaeological sites',
-        research: 'Technological mastery suits research operations',
-        general: 'Superior marksmanship effective in all engagements'
-      },
-      vior_la: {
-        defensive: 'Aggressive hunters can adapt to defensive hunting',
-        assault: 'Rapid deployment perfect for assault operations',
-        siege: 'Mobile warfare effective in siege scenarios',
-        excavation: 'Hunter doctrine suits site exploration',
-        research: 'Fast strike forces can quickly secure facilities',
-        general: 'Aggressive tactics effective across scenarios'
-      },
-      sacea: {
-        defensive: 'Masters of defensive warfare in their element',
-        assault: 'Strategic positioning aids assault coordination',
-        siege: 'Defensive expertise translates to siege warfare',
-        excavation: 'Strategic control secures excavation sites',
-        research: 'Battlefield control protects research operations',
-        general: 'Strategic mastery applicable to all scenarios'
-      }
-    };
-
-    return justifications[subfaction.id]?.[scenario?.context] || 'Suitable for the mission parameters';
-  };
-
-  const sortedSubfactions = [...tauSubfactions].sort((a, b) => 
-    getRecommendationScore(b) - getRecommendationScore(a)
-  );
+  const selectedFactionData = availableFactions.find(f => f.id === selectedFaction);
+  const selectedSubfactionData = availableSubfactions.find(s => s.id === selectedSubfaction);
 
   return (
     <div className="faction-selector">
-      <h2>Choose T\'au Subfaction</h2>
-      <div className="scenario-summary">
-        <p><strong>Scenario:</strong> {scenario?.name}</p>
-        <p><strong>Context:</strong> {scenario?.context}</p>
-        <p><strong>Difficulty:</strong> {difficulty}</p>
+      <div className="faction-selector-header">
+        <h2>🌌 Multi-Faction Army Builder</h2>
+        <p>Choose your faction and forge your battle force</p>
       </div>
 
-      <div className="subfaction-grid">
-        {sortedSubfactions.map(subfaction => (
-          <div key={subfaction.id} className="subfaction-card">
-            <div 
-              className="subfaction-header"
-              style={{ borderTopColor: subfaction.color }}
+      {/* Faction Selection */}
+      <div className="faction-grid">
+        <h3>Select Faction</h3>
+        <div className="faction-cards">
+          {availableFactions.map(faction => (
+            <div
+              key={faction.id}
+              className={`faction-card ${selectedFaction === faction.id ? 'selected' : ''}`}
+              onClick={() => handleFactionSelect(faction.id)}
+              style={{
+                borderColor: selectedFaction === faction.id ? faction.primaryColor : '#374151'
+              }}
             >
-              <div className="recommendation-badge">
-                {getSuitabilityText(subfaction)}
-              </div>
-              <h3>{subfaction.name}</h3>
-              <p className="subfaction-description">{subfaction.description}</p>
-            </div>
-
-            <div className="subfaction-content">
-              <div className="subfaction-section">
-                <h4>Combat Strengths:</h4>
-                <ul>
-                  {subfaction.strengths.map((strength, index) => (
-                    <li key={index}>{strength}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="subfaction-section">
-                <h4>Lore Characteristics:</h4>
-                <ul>
-                  {subfaction.loreTraits.map((trait, index) => (
-                    <li key={index}>{trait}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="lore-justification">
-                <h4>Why for this scenario:</h4>
-                <p>{getLoreJustification(subfaction)}</p>
+              <div className="faction-icon">{faction.icon}</div>
+              <div className="faction-info">
+                <h4>{faction.name}</h4>
+                <p className="faction-description">{faction.description}</p>
+                <div className="faction-meta">
+                  <span className="playstyle">📋 {faction.playstyle}</span>
+                  <span className="difficulty">⚡ {faction.difficulty}</span>
+                </div>
               </div>
             </div>
+          ))}
+        </div>
+      </div>
 
-            <button 
-              className="select-subfaction-btn"
-              onClick={() => onFactionSelect(subfaction.id)}
-              style={{ backgroundColor: subfaction.color }}
-            >
-              Deploy {subfaction.name}
-            </button>
+      {/* Subfaction Selection */}
+      {showSubfactions && (
+        <div className="subfaction-grid">
+          <h3>{selectedFactionData?.shortName} Subfactions</h3>
+          <div className="subfaction-cards">
+            {availableSubfactions.map(subfaction => (
+              <div
+                key={subfaction.id}
+                className={`subfaction-card ${selectedSubfaction === subfaction.id ? 'selected' : ''}`}
+                onClick={() => handleSubfactionSelect(subfaction.id)}
+              >
+                <div className="subfaction-info">
+                  <h4>{subfaction.name}</h4>
+                  <p className="subfaction-description">{subfaction.description}</p>
+                  <div className="subfaction-playstyle">
+                    <span>🎯 {subfaction.playstyle}</span>
+                  </div>
+                  <div className="subfaction-bonuses">
+                    {subfaction.bonuses.map((bonus, index) => (
+                      <span key={index} className="bonus-tag">
+                        ✨ {bonus}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      )}
 
-      <div className="faction-note">
-        <h4>🏛️ Lore Considerations:</h4>
-        <p>
-          Each T\'au sept has distinct tactical doctrines and cultural approaches to warfare. 
-          The recommendations above consider which subfaction would most likely be deployed 
-          for your chosen scenario based on established lore and tactical preferences.
-        </p>
-      </div>
+      {/* Selected Faction Summary */}
+      {selectedFactionData && (
+        <div className="faction-summary">
+          <div className="summary-header">
+            <span className="summary-icon">{selectedFactionData.icon}</span>
+            <div className="summary-text">
+              <h3>
+                {selectedFactionData.name}
+                {selectedSubfactionData && (
+                  <span className="subfaction-name"> - {selectedSubfactionData.name}</span>
+                )}
+              </h3>
+              <p>{selectedFactionData.description}</p>
+              {selectedSubfactionData && (
+                <p className="subfaction-summary">{selectedSubfactionData.description}</p>
+              )}
+            </div>
+          </div>
+          
+          <div className="summary-stats">
+            <div className="stat-item">
+              <span className="stat-label">Playstyle:</span>
+              <span className="stat-value">
+                {selectedSubfactionData ? selectedSubfactionData.playstyle : selectedFactionData.playstyle}
+              </span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Difficulty:</span>
+              <span className="stat-value">{selectedFactionData.difficulty}</span>
+            </div>
+            {selectedSubfactionData && selectedSubfactionData.bonuses.length > 0 && (
+              <div className="stat-item">
+                <span className="stat-label">Special Rules:</span>
+                <div className="special-rules">
+                  {selectedSubfactionData.bonuses.map((bonus, index) => (
+                    <span key={index} className="rule-tag">{bonus}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Action Prompt */}
+      {selectedFaction && (
+        <div className="action-prompt">
+          <p>🚀 Ready to build your army! Configure your scenario and difficulty below.</p>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default FactionSelector; 

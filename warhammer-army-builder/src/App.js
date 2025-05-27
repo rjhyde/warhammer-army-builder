@@ -10,7 +10,8 @@ import UpdateNotification from './components/UpdateNotification';
 function App() {
   const [scenario, setScenario] = useState(null);
   const [difficulty, setDifficulty] = useState('medium');
-  const [selectedFaction, setSelectedFaction] = useState('tau_empire');
+  const [selectedFaction, setSelectedFaction] = useState(null);
+  const [selectedSubfaction, setSelectedSubfaction] = useState(null);
   const [generatedArmy, setGeneratedArmy] = useState(null);
   const [currentStep, setCurrentStep] = useState('scenario');
 
@@ -24,9 +25,15 @@ function App() {
     setCurrentStep('faction');
   };
 
-  const handleFactionSelect = (faction) => {
-    setSelectedFaction(faction);
-    setCurrentStep('compose');
+  const handleFactionChange = (factionId, subfactionId, factionData, subfactionData) => {
+    setSelectedFaction(factionId);
+    setSelectedSubfaction(subfactionId);
+    setGeneratedArmy(null); // Reset army when faction changes
+    
+    // Only proceed to compose step if we have both faction and subfaction selected
+    if (factionId && subfactionId) {
+      setCurrentStep('compose');
+    }
   };
 
   const handleArmyGenerated = (army) => {
@@ -37,10 +44,14 @@ function App() {
   const resetBuilder = () => {
     setScenario(null);
     setDifficulty('medium');
-    setSelectedFaction('tau_empire');
+    setSelectedFaction(null);
+    setSelectedSubfaction(null);
     setGeneratedArmy(null);
     setCurrentStep('scenario');
   };
+
+  // For backward compatibility with ArmyComposer that expects the old faction string format
+  const legacyFactionString = selectedSubfaction || selectedFaction;
 
   return (
     <div className="App">
@@ -70,9 +81,9 @@ function App() {
 
         {currentStep === 'faction' && (
           <FactionSelector 
-            onFactionSelect={handleFactionSelect}
-            scenario={scenario}
-            difficulty={difficulty}
+            onFactionChange={handleFactionChange}
+            selectedFaction={selectedFaction}
+            selectedSubfaction={selectedSubfaction}
           />
         )}
 
@@ -80,7 +91,7 @@ function App() {
           <ArmyComposer
             scenario={scenario}
             difficulty={difficulty}
-            faction={selectedFaction}
+            faction={legacyFactionString}
             onArmyGenerated={handleArmyGenerated}
           />
         )}
@@ -90,7 +101,7 @@ function App() {
             army={generatedArmy}
             scenario={scenario}
             difficulty={difficulty}
-            faction={selectedFaction}
+            faction={legacyFactionString}
             onStartOver={resetBuilder}
           />
         )}

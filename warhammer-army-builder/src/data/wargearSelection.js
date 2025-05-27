@@ -361,6 +361,10 @@ export function selectWargear(unit, scenario, difficulty) {
         selectedOptions.push('Seeker missiles x2');
       }
       break;
+
+    default:
+      // Handle unknown unit types with standard equipment
+      break;
   }
 
   // Generate description based on difficulty and selections
@@ -406,4 +410,5 @@ function getTacticalRationale(unitId, scenario, options) {
   return `Equipment selected for ${scenario} operations`;
 }
 
-export default { wargearSelectionRules, selectWargear }; 
+const wargearSelectionExports = { wargearSelectionRules, selectWargear };
+export default wargearSelectionExports; 

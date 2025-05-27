@@ -4,7 +4,7 @@
 import { tauUnits, scenarioModifiers as tauScenarioModifiers, difficultyModifiers as tauDifficultyModifiers } from './tauUnits';
 import { spaceMarineUnits, scenarioModifiers as smScenarioModifiers, difficultyModifiers as smDifficultyModifiers } from './spaceMarineUnits';
 import { militaryDoctrine as tauDoctrine, tauMilitaryRoles } from './militaryDoctrine';
-import { spaceMarineDoctrine, spaceMarineMilitaryRoles } from './spaceMarineDoctrine';
+import { spaceMarineDoctrine, spaceMarineMilitaryRoles } from './codex_astartes';
 
 // Faction metadata and UI information
 export const factionMetadata = {
@@ -206,19 +206,19 @@ export function generateMatchupScenarios(faction1, faction2) {
   return [
     {
       name: 'Clash of Doctrines',
-      description: `${factionMetadata[faction1].name} tactical doctrine vs ${factionMetadata[faction2].name} military tradition`,
+      description: `${factionMetadata[faction1]?.name || faction1} tactical doctrine vs ${factionMetadata[faction2]?.name || faction2} military tradition`,
       context: 'assault',
       specialRules: {}
     },
     {
       name: 'Defensive Stand',
-      description: `${factionMetadata[faction1].name} defensive positions against ${factionMetadata[faction2].name} assault`,
+      description: `${factionMetadata[faction1]?.name || faction1} defensive positions against ${factionMetadata[faction2]?.name || faction2} assault`,
       context: 'defensive', 
       specialRules: {}
     },
     {
       name: 'Mobile Engagement',
-      description: `Fast-moving battle between ${factionMetadata[faction1].name} and ${factionMetadata[faction2].name} forces`,
+      description: `Fast-moving battle between ${factionMetadata[faction1]?.name || faction1} and ${factionMetadata[faction2]?.name || faction2} forces`,
       context: 'reconnaissance',
       specialRules: {}
     }

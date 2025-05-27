@@ -1,170 +1,403 @@
+/* Multi-Faction Selector Styling */
+
 .faction-selector {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-.faction-selector h2 {
+.faction-selector-header {
   text-align: center;
+  margin-bottom: 3rem;
+}
+
+.faction-selector-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.faction-selector-header p {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* Faction Grid */
+.faction-grid {
+  margin-bottom: 3rem;
+}
+
+.faction-grid h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #374151;
   margin-bottom: 1.5rem;
-  color: #ffd700;
-  font-size: 2rem;
-}
-
-.scenario-summary {
   text-align: center;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.scenario-summary p {
-  margin: 0.5rem 0;
-  color: #d1d5db;
-}
-
-.subfaction-grid {
+.faction-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
-.subfaction-card {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  overflow: hidden;
+.faction-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 2px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  cursor: pointer;
   transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.faction-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.faction-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  border-color: #9ca3af;
+}
+
+.faction-card:hover::before {
+  opacity: 1;
+}
+
+.faction-card.selected {
+  border-width: 3px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  transform: translateY(-2px);
+}
+
+.faction-card.selected::before {
+  opacity: 1;
+}
+
+.faction-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.faction-info h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.faction-description {
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.faction-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.faction-meta span {
+  background: #f3f4f6;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  flex: 1;
+  text-align: center;
+}
+
+.playstyle {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%) !important;
+  color: #92400e !important;
+}
+
+.difficulty {
+  background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%) !important;
+  color: #5b21b6 !important;
+}
+
+/* Subfaction Grid */
+.subfaction-grid {
+  margin-bottom: 3rem;
+  animation: fadeInUp 0.5s ease;
+}
+
+.subfaction-grid h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.subfaction-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.subfaction-card {
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .subfaction-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #9ca3af;
 }
 
-.subfaction-header {
-  padding: 1.5rem;
-  border-top: 4px solid;
-  position: relative;
+.subfaction-card.selected {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.recommendation-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 0.3rem 0.6rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-.subfaction-header h3 {
-  margin: 0 0 0.5rem 0;
-  color: #fff;
-  font-size: 1.3rem;
-  padding-right: 8rem;
+.subfaction-info h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
 }
 
 .subfaction-description {
-  color: #d1d5db;
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
 }
 
-.subfaction-content {
-  padding: 0 1.5rem 1.5rem;
+.subfaction-playstyle {
+  margin-bottom: 0.75rem;
 }
 
-.subfaction-section {
+.subfaction-playstyle span {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.subfaction-bonuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.bonus-tag {
+  background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+  color: #0277bd;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #81d4fa;
+}
+
+/* Faction Summary */
+.faction-summary {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.summary-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.subfaction-section h4 {
-  color: #ffd700;
-  margin: 0 0 0.5rem 0;
-  font-size: 1rem;
+.summary-icon {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
-.subfaction-section ul {
-  margin: 0;
-  padding-left: 1.5rem;
-  color: #d1d5db;
+.summary-text h3 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
 }
 
-.subfaction-section li {
-  margin-bottom: 0.3rem;
-  font-size: 0.9rem;
+.subfaction-name {
+  color: #6366f1;
+  font-weight: 600;
 }
 
-.lore-justification {
-  background: rgba(255, 215, 0, 0.1);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  border-radius: 6px;
-  padding: 1rem;
-  margin-top: 1rem;
-}
-
-.lore-justification h4 {
-  color: #ffd700;
-  margin: 0 0 0.5rem 0;
+.summary-text p {
+  color: #6b7280;
   font-size: 0.95rem;
-}
-
-.lore-justification p {
-  color: #e0e0e0;
-  margin: 0;
-  font-style: italic;
-  font-size: 0.9rem;
   line-height: 1.5;
+  margin-bottom: 0.5rem;
 }
 
-.select-subfaction-btn {
-  width: 100%;
-  margin: 1rem 1.5rem 1.5rem 1.5rem;
-  width: calc(100% - 3rem);
-  color: white;
-  font-weight: bold;
-  border: none;
+.subfaction-summary {
+  color: #4338ca;
+  font-style: italic;
+  font-weight: 500;
 }
 
-.faction-note {
-  background: rgba(139, 92, 246, 0.1);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-  border-radius: 8px;
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.stat-value {
+  font-size: 0.95rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.special-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.rule-tag {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #047857;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #6ee7b7;
+}
+
+/* Action Prompt */
+.action-prompt {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #7dd3fc;
+  border-radius: 0.75rem;
   padding: 1.5rem;
-  margin-top: 2rem;
+  text-align: center;
 }
 
-.faction-note h4 {
-  color: #a78bfa;
-  margin: 0 0 1rem 0;
+.action-prompt p {
+  color: #0c4a6e;
   font-size: 1.1rem;
-}
-
-.faction-note p {
-  color: #d1d5db;
+  font-weight: 600;
   margin: 0;
-  line-height: 1.6;
 }
 
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .subfaction-grid {
+  .faction-selector {
+    padding: 1rem;
+  }
+
+  .faction-selector-header h2 {
+    font-size: 2rem;
+  }
+
+  .faction-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .faction-card {
+    padding: 1rem;
+  }
+
+  .faction-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .subfaction-cards {
     grid-template-columns: 1fr;
   }
-  
-  .subfaction-header h3 {
-    padding-right: 0;
+
+  .summary-header {
+    flex-direction: column;
+    text-align: center;
   }
-  
-  .recommendation-badge {
-    position: static;
-    margin-bottom: 1rem;
-    display: inline-block;
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .faction-selector-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .faction-summary {
+    padding: 1.5rem;
+  }
+
+  .summary-text h3 {
+    font-size: 1.5rem;
   }
 } 
