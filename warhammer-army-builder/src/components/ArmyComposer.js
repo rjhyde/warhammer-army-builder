@@ -184,6 +184,42 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       const currentRolePoints = currentComposition[unitRole] || 0;
       const roleTarget = targets[unitRole];
       
+      // VARIETY BONUS - Encourage diverse force composition
+      const existingUnitCount = army.units.filter(u => u.id === unit.id).length;
+      const primaryRole = unit.loreRoles?.[0] || 'general';
+      
+      // Classify unit for variety scoring
+      const isSpecialist = ['reconnaissance', 'markerlight_support', 'stealth_specialist', 'scout', 'infiltration'].some(role => primaryRole.includes(role));
+      const isSupport = ['fire_support', 'transport', 'mobile_support', 'logistics'].some(role => primaryRole.includes(role));
+      const isElite = ['elite_assault', 'elite_command', 'veteran', 'specialist'].some(role => primaryRole.includes(role));
+      const isBattleLine = unit.keywords?.includes('troops') || unitRole === 'infantry';
+      
+      // Apply variety bonuses/penalties
+      if (existingUnitCount === 0) {
+        // Bonus for units we don't have yet
+        if (isSpecialist || isSupport || isElite) {
+          score += 4; // Strong bonus for new specialist/support capabilities
+        } else if (isBattleLine) {
+          score += 2; // Moderate bonus for new battle-line units
+        } else {
+          score += 3; // Standard bonus for any new unit type
+        }
+      } else if (existingUnitCount === 1) {
+        // Moderate penalty for duplicating specialist units
+        if (isSpecialist || isSupport || isElite) {
+          score -= 3; // Discourage duplicate specialists
+        } else if (isBattleLine) {
+          score += 1; // Slight bonus for second battle-line unit (redundancy)
+        }
+      } else if (existingUnitCount >= 2) {
+        // Heavy penalty for too many duplicates
+        if (isSpecialist || isSupport || isElite) {
+          score -= 8; // Heavily discourage multiple specialists
+        } else if (isBattleLine) {
+          score -= 2; // Moderate penalty for too many battle-line
+        }
+      }
+      
       // Bonus for filling needed roles
       if (currentRolePoints < roleTarget.min) {
         score += 5; // Strong bonus for filling minimum requirements
@@ -289,8 +325,87 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       const currentRolePoints = currentComposition[unitRole] || 0;
       const roleTarget = doctrineTargets[unitRole];
       
+      // DIMINISHING RETURNS CLASSIFICATION
+      // Different unit types have different optimal quantities based on tactical employment
+      const unitClassification = {
+        // Battle-line units - can scale up for mass and redundancy
+        battleLine: ['line_infantry', 'core_infantry', 'troops', 'objective_holding'],
+        
+        // Specialist units - diminishing returns after 1-2 units
+        specialists: ['reconnaissance', 'markerlight_support', 'stealth_specialist', 'scout', 'infiltration'],
+        
+        // Support units - 1-2 optimal, more creates logistics burden
+        support: ['fire_support', 'transport', 'mobile_support', 'logistics'],
+        
+        // Elite units - expensive, 1-2 optimal
+        elites: ['elite_assault', 'elite_command', 'veteran', 'specialist'],
+        
+        // Heavy assets - 1 optimal, centerpiece units
+        heavyAssets: ['heavy_fire_support', 'anti_armor', 'centerpiece', 'super_heavy', 'fortress_breaker'],
+        
+        // Command units - very limited
+        command: ['elite_command', 'tactical_coordination', 'command', 'leadership']
+      };
+      
+      // Determine unit classification
+      let unitClass = 'battleLine'; // Default
+      for (const [classification, roles] of Object.entries(unitClassification)) {
+        if (roles.some(role => primaryRole.includes(role))) {
+          unitClass = classification;
+          break;
+        }
+      }
+      
+      // Override classification for specific unit categories
+      if (unitRole === 'command' || unit.keywords?.includes('Character')) {
+        unitClass = 'command';
+      } else if (unitCost > 200) {
+        unitClass = 'heavyAssets';
+      } else if (unit.keywords?.includes('troops') || unitRole === 'infantry') {
+        // Check if it's actually a specialist infantry unit
+        if (unit.id.includes('pathfinder') || unit.id.includes('stealth') || unit.id.includes('scout')) {
+          unitClass = 'specialists';
+        } else {
+          unitClass = 'battleLine';
+        }
+      }
+      
+      // OPTIMAL QUANTITY BASED ON CLASSIFICATION AND DIMINISHING RETURNS
+      const optimalQuantities = {
+        battleLine: { min: 1, optimal: 2, max: 3, diminishingReturns: false },
+        specialists: { min: 1, optimal: 1, max: 2, diminishingReturns: true },
+        support: { min: 1, optimal: 1, max: 2, diminishingReturns: true },
+        elites: { min: 1, optimal: 1, max: 2, diminishingReturns: true },
+        heavyAssets: { min: 1, optimal: 1, max: 1, diminishingReturns: true },
+        command: { min: 1, optimal: 1, max: 2, diminishingReturns: true }
+      };
+      
+      const quantityLimits = optimalQuantities[unitClass];
+      
+      // VARIETY ENCOURAGEMENT - Check how many of this unit we already have
+      const existingUnitCount = currentArmy.units.filter(u => u.id === unit.id).length;
+      
+      // DIMINISHING RETURNS PENALTY
+      let varietyMultiplier = 1.0;
+      if (quantityLimits.diminishingReturns && existingUnitCount > 0) {
+        // Severe penalty for adding more specialist/support units
+        switch (existingUnitCount) {
+          case 1:
+            varietyMultiplier = 0.3; // 70% reduction in desirability
+            break;
+          case 2:
+            varietyMultiplier = 0.1; // 90% reduction
+            break;
+          default:
+            varietyMultiplier = 0.05; // 95% reduction
+        }
+      } else if (!quantityLimits.diminishingReturns && existingUnitCount >= 2) {
+        // Moderate penalty for too many battle-line units
+        varietyMultiplier = 0.6; // 40% reduction
+      }
+      
       // Cost-based quantity limits (Rule of Three maximum)
-      let maxQuantity = 3;
+      let maxQuantity = Math.min(3, quantityLimits.max);
       
       // REAL-WORLD MILITARY DOCTRINE PRINCIPLES
       
@@ -376,11 +491,8 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
           break;
       }
       
-      // 5. INFANTRY-CENTRIC DOCTRINE (80/20 rule)
-      // Real militaries are ~80% infantry, 20% everything else
-      const infantryRoles = ['line_infantry', 'core_infantry', 'troops', 'scouts', 'assault_infantry'];
-      if (infantryRoles.includes(primaryRole)) {
-        // Encourage more infantry units (backbone of any army)
+      // 5. INFANTRY-CENTRIC DOCTRINE (80/20 rule) - Only for battle-line units
+      if (unitClass === 'battleLine') {
         const totalInfantryPoints = currentComposition.infantry || 0;
         const infantryRatio = totalInfantryPoints / (currentArmy.totalPoints || 1);
         
@@ -392,7 +504,6 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       }
       
       // 6. SUPPORT-TO-COMBAT RATIO
-      // Real militaries maintain ~70% combat, 30% support
       const supportRoles = ['fire_support', 'support', 'logistics', 'command'];
       if (supportRoles.includes(primaryRole)) {
         const totalSupportPoints = (currentComposition.support || 0) + (currentComposition.command || 0);
@@ -409,51 +520,33 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
       const maxBudgetPerDatasheet = remainingPoints * 0.3;
       const maxAffordableQuantity = Math.floor(maxBudgetPerDatasheet / unitCost);
       
-      // 8. TACTICAL FLEXIBILITY DOCTRINE
-      // Different unit types have different optimal quantities based on real-world employment
-      const tacticalQuantityLimits = {
-        // Command elements - small numbers
-        'command': { min: 1, optimal: 1, max: 2 },
-        'character': { min: 1, optimal: 1, max: 2 },
-        
-        // Infantry - larger numbers for mass and redundancy
-        'line_infantry': { min: 2, optimal: 3, max: 4 },
-        'core_infantry': { min: 2, optimal: 3, max: 4 },
-        'troops': { min: 2, optimal: 3, max: 4 },
-        
-        // Specialists - moderate numbers
-        'elite_assault': { min: 1, optimal: 2, max: 3 },
-        'scouts': { min: 1, optimal: 2, max: 3 },
-        'fast_attack': { min: 1, optimal: 2, max: 3 },
-        
-        // Heavy assets - limited numbers
-        'heavy_fire_support': { min: 1, optimal: 1, max: 2 },
-        'anti_armor': { min: 1, optimal: 1, max: 2 },
-        'centerpiece': { min: 1, optimal: 1, max: 1 },
-        'super_heavy': { min: 1, optimal: 1, max: 1 },
-        
-        // Support - minimal numbers
-        'support': { min: 1, optimal: 1, max: 2 },
-        'logistics': { min: 1, optimal: 1, max: 2 }
-      };
+      // Calculate target quantity using classification and variety considerations
+      let baseTargetQuantity = quantityLimits.optimal;
       
-      const tacticalLimits = tacticalQuantityLimits[primaryRole] || { min: 1, optimal: 2, max: 3 };
+      // Apply mission and role multipliers only to base optimal quantity for battle-line units
+      if (unitClass === 'battleLine') {
+        baseTargetQuantity = Math.max(1, Math.floor(roleMultiplier * missionMultiplier * quantityLimits.optimal));
+      }
       
-      // Calculate final quantity using all doctrine considerations
-      let targetQuantity = Math.max(1, Math.floor(roleMultiplier * missionMultiplier * tacticalLimits.optimal));
+      // Apply variety multiplier to discourage duplicates
+      const varietyAdjustedQuantity = Math.max(1, Math.floor(baseTargetQuantity * varietyMultiplier));
       
       // Apply all military doctrine constraints
       const finalQuantity = Math.min(
-        maxQuantity,                    // Rule of Three
-        targetQuantity,                 // Doctrine-calculated target
+        maxQuantity,                    // Rule of Three and classification limits
+        varietyAdjustedQuantity,        // Variety-adjusted target
         budgetLimitQuantity,           // Budget constraints
         maxAffordableQuantity,         // Budget allocation limits
-        tacticalLimits.max,            // Tactical employment limits
         Math.floor(remainingPoints / unitCost) // Absolute affordability
       );
       
-      // Ensure minimum tactical requirements
-      const minimumQuantity = Math.max(1, tacticalLimits.min);
+      // For non-battle-line units, strongly prefer 1 unless role is critically needed
+      if (unitClass !== 'battleLine' && existingUnitCount >= quantityLimits.optimal) {
+        return 0; // Don't add more specialists/support beyond optimal
+      }
+      
+      // Ensure minimum requirements for battle-line units
+      const minimumQuantity = (unitClass === 'battleLine' && existingUnitCount === 0) ? 1 : Math.max(0, quantityLimits.min - existingUnitCount);
       
       return Math.max(minimumQuantity, finalQuantity);
     };
@@ -1508,7 +1601,22 @@ function ArmyComposer({ scenario, difficulty, faction, onArmyGenerated }) {
             <li><strong>Cost-Effectiveness:</strong> Expensive units limited to prevent over-investment in single capabilities</li>
             <li><strong>Infantry-Centric Doctrine:</strong> Emphasis on infantry backbone (80/20 rule) with appropriate support</li>
             <li><strong>Budget Allocation:</strong> No single unit type consumes more than 30% of total force budget</li>
+            <li><strong>🎲 Diminishing Returns:</strong> Specialist units (pathfinders, stealth suits) limited to 1-2 units for optimal variety</li>
+            <li><strong>⚡ Variety Encouragement:</strong> Strong preference for diverse capabilities over duplicate specialist units</li>
           </ul>
+        </div>
+
+        <div className="variety-system">
+          <h4>🎲 Intelligent Unit Variety System:</h4>
+          <ul>
+            <li><strong>Battle-Line Units:</strong> Fire Warriors, basic infantry - can scale to 2-3 units for mass and redundancy</li>
+            <li><strong>Specialist Units:</strong> Pathfinders, Stealth Suits - optimal at 1 unit, severe penalty for duplicates</li>
+            <li><strong>Support Units:</strong> Transports, fire support - optimal at 1 unit, diminishing returns for more</li>
+            <li><strong>Elite Units:</strong> Crisis Suits, special units - optimal at 1-2 units maximum</li>
+            <li><strong>Heavy Assets:</strong> Hammerheads, Riptides - strictly 1 unit optimal for cost-effectiveness</li>
+            <li><strong>Command Units:</strong> Characters, commanders - very limited quantities (1-2 maximum)</li>
+          </ul>
+          <p><em>This system prevents "3 Pathfinder squads" scenarios and ensures tactical variety while maintaining battle-line redundancy.</em></p>
         </div>
 
         <div className="tactical-principles">
